@@ -10,6 +10,7 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 
 public class DescentListener implements Listener{
+	public long timestart = 0;
 	@EventHandler
     public void onPlayerJoin(PlayerJoinEvent event)
     {
@@ -21,11 +22,20 @@ public class DescentListener implements Listener{
 		event.setQuitMessage("Goodbye, " + event.getPlayer().getName() + "...");
     }
 	@EventHandler
-	public void onRightClick(PlayerInteractEvent event)
-    {
-		if (event.getItem() != null && (event.getAction() == Action.RIGHT_CLICK_AIR || event.getAction() == Action.RIGHT_CLICK_BLOCK) && event.getItem().getType() == Material.BOW) {
-			Bukkit.broadcastMessage("True");
-		
+	public void onSwordSwing(PlayerInteractEvent event) {
+		if (event.getItem() != null && (event.getAction() == Action.LEFT_CLICK_AIR || event.getAction() == Action.LEFT_CLICK_BLOCK) && event.getItem().getType() == Material.IRON_SWORD) {
+			if(event.getPlayer().getWorld().getTime() - 60 > timestart) {
+				Bukkit.broadcastMessage("ACTIVATE!");
+			}
+		    timestart = event.getPlayer().getWorld().getTime();
 		}
-    }
+	}
+//	@EventHandler
+//	public void onRightClick(PlayerInteractEvent event)
+//    {
+//		if (event.getItem() != null && (event.getAction() == Action.RIGHT_CLICK_AIR || event.getAction() == Action.RIGHT_CLICK_BLOCK) && event.getItem().getType() == Material.BOW) {
+//			Bukkit.broadcastMessage("True");
+//		
+//		}
+//    }
 }
