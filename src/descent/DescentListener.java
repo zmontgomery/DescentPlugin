@@ -28,7 +28,8 @@ public class DescentListener implements Listener{
 		if(currentTime - timesinceSwing > 2) {
 			if (event.getItem() != null && (event.getAction() == Action.LEFT_CLICK_AIR || 
 			event.getAction() == Action.LEFT_CLICK_BLOCK) && event.getItem().getType() == Material.IRON_SWORD) {
-				Bukkit.broadcastMessage("ABILITY EXECUTE");
+				//ABILITY CODE GOES HERE
+				Bukkit.broadcastMessage("ABILITY EXECUTED");
 				timesinceSwing = Main.timeElapsed;
 			}
 		}
