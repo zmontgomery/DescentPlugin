@@ -10,7 +10,8 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 
 public class DescentListener implements Listener{
-	public long timestart = 0;
+	public float currentTime = 4;
+	public float timesinceSwing = 0;
 	@EventHandler
     public void onPlayerJoin(PlayerJoinEvent event)
     {
@@ -23,11 +24,13 @@ public class DescentListener implements Listener{
     }
 	@EventHandler
 	public void onSwordSwing(PlayerInteractEvent event) {
-		if (event.getItem() != null && (event.getAction() == Action.LEFT_CLICK_AIR || event.getAction() == Action.LEFT_CLICK_BLOCK) && event.getItem().getType() == Material.IRON_SWORD) {
-			if(event.getPlayer().getWorld().getTime() - 60 > timestart) {
-				Bukkit.broadcastMessage("ACTIVATE!");
+		currentTime = Main.timeElapsed;
+		if(currentTime - timesinceSwing > 2) {
+			if (event.getItem() != null && (event.getAction() == Action.LEFT_CLICK_AIR || 
+			event.getAction() == Action.LEFT_CLICK_BLOCK) && event.getItem().getType() == Material.IRON_SWORD) {
+				Bukkit.broadcastMessage("ABILITY EXECUTE");
+				timesinceSwing = Main.timeElapsed;
 			}
-		    timestart = event.getPlayer().getWorld().getTime();
 		}
 	}
 //BOW
