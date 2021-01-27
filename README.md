@@ -1,2 +1,0 @@
-# DescentPlugin
-FPS game minecraft

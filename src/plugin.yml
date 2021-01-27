@@ -1,8 +1,0 @@
-name: DescentPlugin
-main: descent.Main
-version: 1.0
-api-version: 1.16
-commands:
-   hello:
-      description: says hello hopefully
-      usage: /<command>
