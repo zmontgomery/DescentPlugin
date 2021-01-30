@@ -10,20 +10,22 @@ public class Main extends JavaPlugin {
     @Override
     public void onEnable() {
     	getServer().getPluginManager().registerEvents(new DescentListener(), this);
-    	this.getCommand("hello").setExecutor(new CommandHello());
+    	this.getCommand("resetnexus").setExecutor(new CommandResetNexus());
   
     }
+    
     @Override
     public void onDisable() {
 
     }
-    public static void respawnHunger(Player pl) {
-		Bukkit.getScheduler().scheduleSyncDelayedTask(getPlugin(Main.class), new Runnable() {
-		    @Override
-		    public void run() {
-		    	pl.setFoodLevel(5);
-		    }
-		}, 20L); //20 Tick (1 Second) delay before run() is called
-    }
+    
+//    public static void respawnHunger(Player pl) {
+//		Bukkit.getScheduler().scheduleSyncDelayedTask(getPlugin(Main.class), new Runnable() {
+//		    @Override
+//		    public void run() {
+//		    	pl.setFoodLevel(5);
+//		    }
+//		}, 20L); //20 Tick (1 Second) delay before run() is called
+//    }
     
 }

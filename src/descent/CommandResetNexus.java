@@ -5,7 +5,7 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 
-public class CommandHello implements CommandExecutor {
+public class CommandResetNexus implements CommandExecutor {
 	
 	public static int nexusHealth = 75;
 	public static int inhibHealth = 30;

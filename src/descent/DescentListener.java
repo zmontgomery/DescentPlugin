@@ -5,6 +5,7 @@ import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
+import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -14,7 +15,11 @@ import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
+import org.bukkit.event.entity.EntityShootBowEvent;
+import org.bukkit.event.entity.EntitySpawnEvent;
 import org.bukkit.event.entity.FoodLevelChangeEvent;
+import org.bukkit.event.entity.ProjectileHitEvent;
+import org.bukkit.event.entity.ProjectileLaunchEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
@@ -26,6 +31,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
+import org.bukkit.projectiles.ProjectileSource;
 import org.bukkit.util.Vector;
 
 import net.minecraft.server.v1_16_R3.DoubleBlockFinder.BlockType;
@@ -43,7 +49,7 @@ public class DescentListener implements Listener{
 	@EventHandler
     public void onPlayerJoin(PlayerJoinEvent event)
     {
-		event.setJoinMessage("Welcome, " + event.getPlayer().getName() + ", to the Descent Project!");
+		event.setJoinMessage("Welcome, " + event.getPlayer().getName() + ", to Descent Mini v0.0.1!");
 		arrowCooldown.put(event.getPlayer(), System.currentTimeMillis());
 		jumpCooldown.put(event.getPlayer(), System.currentTimeMillis());
 		hitCooldown.put(event.getPlayer(), System.currentTimeMillis());
@@ -76,13 +82,26 @@ public class DescentListener implements Listener{
 			long timeOfSwing = arrowCooldown.get(event.getPlayer());
 			
 			if(currentTime - timeOfSwing > 250) {
-				//ABILITY CODE GOES HERE
 				Location pl = new Location(event.getPlayer().getWorld(), event.getPlayer().getLocation().getX(), event.getPlayer().getLocation().getY() + event.getPlayer().getEyeHeight(), event.getPlayer().getLocation().getZ());
-				event.getPlayer().getWorld().spawnArrow(pl, event.getPlayer().getLocation().getDirection(), 4, 0);
+				//INSTANCE OF ARROW
+				Arrow knife = event.getPlayer().getWorld().spawnArrow(pl, event.getPlayer().getLocation().getDirection(), 4, 0);
+				// SET SHOOTER TO PLAYER
+				knife.setShooter(event.getPlayer());
+				
 				arrowCooldown.replace(event.getPlayer(), currentTime);
 			}
 		}
 	}
+//	@EventHandler
+//	public void KnifeThrow(ProjectileLaunchEvent event) {
+//		Bukkit.broadcastMessage("Proj shot");
+//		Arrow knife = (Arrow) event.getEntity();
+//		Bukkit.broadcastMessage(knife.getShooter().toString());
+//		if(knife.getShooter() instanceof Player) {
+//			Bukkit.broadcastMessage("shot from player");
+//		}
+//		
+//	}
 	@EventHandler
 	public void SwordDoubleJump(PlayerInteractEvent event) {
 
@@ -158,12 +177,12 @@ public class DescentListener implements Listener{
 		event.setCancelled(true);
 		event.setFoodLevel(5);
 	}
-	@EventHandler
-	public void PlayerRespawn(PlayerRespawnEvent event) {
-		
-		Main.respawnHunger(event.getPlayer());
-		
-	}
+//	@EventHandler
+//	public void PlayerRespawn(PlayerRespawnEvent event) {
+//		
+//		Main.respawnHunger(event.getPlayer());
+//		
+//	}
 	@EventHandler
     public void onInventoryClick(InventoryClickEvent event) {
 		if(event.getInventory() == inv) {
@@ -191,16 +210,16 @@ public class DescentListener implements Listener{
 			
 			event.setCancelled(true);
 			
-			if(event.getBlock().getType() == Material.RED_STAINED_GLASS && CommandHello.inhibHealth <= 0) {
+			if(event.getBlock().getType() == Material.RED_STAINED_GLASS && CommandResetNexus.inhibHealth <= 0) {
 				
-				CommandHello.nexusHealth = CommandHello.nexusHealth - 1;
+				CommandResetNexus.nexusHealth = CommandResetNexus.nexusHealth - 1;
 				
-				if(CommandHello.nexusHealth >= 1) {
+				if(CommandResetNexus.nexusHealth >= 1) {
 					
-					Bukkit.broadcastMessage("Nexus health is " + CommandHello.nexusHealth + "/75!");
+					Bukkit.broadcastMessage("Nexus health is " + CommandResetNexus.nexusHealth + "/75!");
 					
 				}
-				if(CommandHello.nexusHealth <= 0) {
+				if(CommandResetNexus.nexusHealth <= 0) {
 					
 					Bukkit.broadcastMessage("NEXUS DESTROYED! ATTACKERS WIN!");
 					
@@ -208,14 +227,14 @@ public class DescentListener implements Listener{
 				
 			} else if(event.getBlock().getType() == Material.RED_WOOL){
 				
-				CommandHello.inhibHealth = CommandHello.inhibHealth - 1;
+				CommandResetNexus.inhibHealth = CommandResetNexus.inhibHealth - 1;
 				
-				if(CommandHello.inhibHealth >= 1) {
+				if(CommandResetNexus.inhibHealth >= 1) {
 					
-					Bukkit.broadcastMessage("Inhibitor health is " + CommandHello.inhibHealth + "/30!");
+					Bukkit.broadcastMessage("Inhibitor health is " + CommandResetNexus.inhibHealth + "/30!");
 					
 				}
-				if(CommandHello.inhibHealth <= 0) {
+				if(CommandResetNexus.inhibHealth <= 0) {
 					
 					Bukkit.broadcastMessage("INHIBITOR DESTROYED!");
 					
