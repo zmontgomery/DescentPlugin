@@ -1,0 +1,5 @@
+healer
+team color (armor)
+fix bugs
+have timer
+hitmarker/sound
