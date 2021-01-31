@@ -11,14 +11,39 @@ public class DamageSystem {
 	public static void damagePlayerMelee(Player plattack, Player pldefend) {
 		
 		if(plattack.getInventory().getItemInMainHand().getType() == Material.IRON_SWORD) {
+			Bukkit.broadcastMessage("HIT");
 			
 			if(System.currentTimeMillis() - ChampCooldowns.swordSwingCooldown.get(plattack) > (1000 * ChampList.swordSwingCooldown)) {
+				Bukkit.broadcastMessage("DAMAGE");
 			
 				int damage = ChampList.sword.baseDamage;
 				
 				ChampCooldowns.swordSwingCooldown.replace(plattack, System.currentTimeMillis());
 				
 				plattack.playSound(pldefend.getLocation(), Sound.BLOCK_STONE_BREAK, 1f, 1f);
+			
+				if(pldefend.getLevel() <= damage) {
+				
+					playerKill(plattack, pldefend);
+				
+				} else {
+				
+					pldefend.setLevel(pldefend.getLevel() - damage);
+					ChampConstructor cc = ChampList.playerChamp.get(pldefend);
+					pldefend.setHealth(20 * ((double)pldefend.getLevel()/cc.maxHealth));
+				
+				}
+			}
+		}
+		if(plattack.getInventory().getItemInMainHand().getType() == Material.GOLDEN_AXE) {
+			
+			if(System.currentTimeMillis() - ChampCooldowns.axeSwingCooldown.get(plattack) > (1000 * ChampList.axeSwingCooldown)) {
+			
+				int damage = ChampList.axe.baseDamage;
+				
+				ChampCooldowns.axeSwingCooldown.replace(plattack, System.currentTimeMillis());
+				
+				plattack.playSound(pldefend.getLocation(), Sound.ITEM_SHIELD_BREAK, 1f, 1f);
 			
 				if(pldefend.getLevel() <= damage) {
 				

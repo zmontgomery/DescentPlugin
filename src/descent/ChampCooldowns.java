@@ -12,5 +12,12 @@ public class ChampCooldowns {
 	
 		//SWORD
 	public static HashMap<Player, Long> swordSwingCooldown = new HashMap<Player, Long>();
+		
+		//AXE
+	public static HashMap<Player, Long> axeSwingCooldown = new HashMap<Player, Long>();
+	public static HashMap<Player, Long> axeLeapCooldown = new HashMap<Player, Long>();
+	
+		//GUN
+	public static HashMap<Player, Long> gunCooldown = new HashMap<Player, Long>();
 	
 }

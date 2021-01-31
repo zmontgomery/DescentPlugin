@@ -7,6 +7,7 @@ import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
@@ -16,86 +17,97 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
+import org.bukkit.util.Vector;
 
 public class DescentListener implements Listener {
-	@EventHandler
-	public static void playerDamageEvent(EntityDamageByEntityEvent e) {
+	@EventHandler(priority = EventPriority.HIGHEST)
+	public static void playerDamageEvent(EntityDamageByEntityEvent event) {
 		
-		e.setCancelled(true);
+		event.setCancelled(true);
 		
 		Player plattack;
 		Player pldefend;
 		Projectile projectile;
-		
-		if(e.getDamager() instanceof Player && e.getEntity() instanceof Player) {
+
+		if(event.getDamager() instanceof Player && event.getEntity() instanceof Player) {
+
 			
-			plattack = (Player)e.getDamager();
-			pldefend = (Player)e.getEntity();
+			plattack = (Player)event.getDamager();
+			pldefend = (Player)event.getEntity();
 			
 			DamageSystem.damagePlayerMelee(plattack, pldefend);
 			
 		}
-		if(e.getDamager() instanceof Projectile && e.getEntity() instanceof Player) {
+		if(event.getDamager() instanceof Projectile && event.getEntity() instanceof Player) {
 			
-			projectile = (Projectile) e.getDamager();
+			projectile = (Projectile) event.getDamager();
 			plattack = Bukkit.getPlayerExact(projectile.getCustomName());
-			pldefend = (Player)e.getEntity();
+			pldefend = (Player)event.getEntity();
 			
 			DamageSystem.damagePlayerProjectile(plattack, pldefend, projectile);
 			
 		}
 	}
 	@EventHandler
-	public static void damageEvent(EntityDamageEvent e) {
+	public static void playerInteractEvent(PlayerInteractEvent event) {
 		
-		e.setCancelled(true);
-
-	}
-	@EventHandler
-	public static void playerInteractEvent(PlayerInteractEvent e) {
-		
-		if(e.getPlayer().getInventory().getItemInMainHand().getType() == Material.ARROW && (e.getAction() == Action.LEFT_CLICK_AIR || e.getAction() == Action.LEFT_CLICK_BLOCK)) {
+		if(event.getPlayer().getInventory().getItemInMainHand().getType() == Material.ARROW && (event.getAction() == Action.LEFT_CLICK_AIR || event.getAction() == Action.LEFT_CLICK_BLOCK)) {
 			
-			Arrow knife = e.getPlayer().getWorld().spawnArrow(new Location(e.getPlayer().getWorld(), e.getPlayer().getLocation().getX(), e.getPlayer().getLocation().getY() + e.getPlayer().getEyeHeight(), e.getPlayer().getLocation().getZ()), e.getPlayer().getLocation().getDirection(), 3, 0);
-			knife.setCustomName(e.getPlayer().getName());
+			Arrow knife = event.getPlayer().getWorld().spawnArrow(new Location(event.getPlayer().getWorld(), event.getPlayer().getLocation().getX(), event.getPlayer().getLocation().getY() + event.getPlayer().getEyeHeight(), event.getPlayer().getLocation().getZ()), event.getPlayer().getLocation().getDirection(), 3, 0);
+			knife.setCustomName(event.getPlayer().getName());
 			knife.setBounce(false);
 			
 		}
+		if(event.getPlayer().getInventory().getItemInMainHand().getType() == Material.GOLDEN_AXE && (event.getAction() == Action.RIGHT_CLICK_AIR || event.getAction() == Action.RIGHT_CLICK_BLOCK)) {
+			if(System.currentTimeMillis() - ChampCooldowns.axeLeapCooldown.get(event.getPlayer()) > (1000 * ChampList.axeLeapCooldown)) {
+				event.getPlayer().setVelocity(new Vector(event.getPlayer().getVelocity().getX() + event.getPlayer().getLocation().getDirection().getX()*1.3, event.getPlayer().getVelocity().getY() + event.getPlayer().getLocation().getDirection().getY()*1.3, event.getPlayer().getVelocity().getZ() + event.getPlayer().getLocation().getDirection().getZ()*1.3));
+				ChampCooldowns.axeLeapCooldown.replace(event.getPlayer(), System.currentTimeMillis());
+			}
+		}
+	}
+	@EventHandler
+	public static void playerJoinEvent(PlayerJoinEvent event) {
+		
+		ChampList.playerChamp.remove(event.getPlayer());
+		event.getPlayer().getInventory().clear();
+		event.getPlayer().setLevel(0);
+		event.getPlayer().setHealth(20);
+		event.getPlayer().setFoodLevel(5);
+		
+		ChampCooldowns.knifeSwingCooldown.put(event.getPlayer(), (long)0);
+		ChampCooldowns.swordSwingCooldown.put(event.getPlayer(), (long)0);
+		ChampCooldowns.axeSwingCooldown.put(event.getPlayer(), (long)0);
+		ChampCooldowns.axeLeapCooldown.put(event.getPlayer(), (long)0);
 		
 	}
 	@EventHandler
-	public static void playerJoinEvent(PlayerJoinEvent e) {
+	public static void playerQuitEvent(PlayerQuitEvent event) {
 		
-		ChampList.playerChamp.remove(e.getPlayer());
-		e.getPlayer().getInventory().clear();
-		e.getPlayer().setLevel(0);
-		e.getPlayer().setHealth(20);
-		e.getPlayer().setFoodLevel(5);
-		
-		ChampCooldowns.knifeSwingCooldown.put(e.getPlayer(), (long)0);
-		ChampCooldowns.swordSwingCooldown.put(e.getPlayer(), (long)0);
+		ChampCooldowns.knifeSwingCooldown.remove(event.getPlayer());
+		ChampCooldowns.swordSwingCooldown.remove(event.getPlayer());
+		ChampCooldowns.axeSwingCooldown.remove(event.getPlayer());
+		ChampCooldowns.axeLeapCooldown.remove(event.getPlayer());
 		
 	}
 	@EventHandler
-	public static void playerQuitEvent(PlayerQuitEvent e) {
+	public static void playerDeathEvent(PlayerDeathEvent event) {
 		
-		ChampCooldowns.knifeSwingCooldown.remove(e.getPlayer());
-		ChampCooldowns.swordSwingCooldown.remove(e.getPlayer());
-		
-	}
-	@EventHandler
-	public static void playerDeathEvent(PlayerDeathEvent e) {
-		
-		e.setDeathMessage("");
+		event.setDeathMessage("");
 		
 	}
 	@EventHandler
-	public static void playerRespawnEvent(PlayerRespawnEvent e) {
+	public static void playerRespawnEvent(PlayerRespawnEvent event) {
 		Bukkit.getScheduler().scheduleSyncDelayedTask(Main.getPlugin(Main.class), new Runnable() {
 		    @Override
 		    public void run() {
-		        e.getPlayer().setFoodLevel(5);
+		        event.getPlayer().setFoodLevel(5);
 		    }
 		}, 1L);	
+	}
+	@EventHandler
+	public static void damageEvent(EntityDamageEvent event) {
+		
+		event.setCancelled(true);
+
 	}
 }

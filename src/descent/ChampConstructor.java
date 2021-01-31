@@ -11,8 +11,9 @@ public class ChampConstructor {
 	
 	ItemStack[] items;
 	ItemStack[] armor;
+	ItemStack offHand;
 	
-	public ChampConstructor(String nm, int mh, float ms, int bd, ItemStack[] it, ItemStack[] ar) {
+	public ChampConstructor(String nm, int mh, float ms, int bd, ItemStack[] it, ItemStack[] ar, ItemStack oh) {
 		
 		name = nm;
 		maxHealth = mh;
@@ -20,6 +21,7 @@ public class ChampConstructor {
 		items = it;
 		armor = ar;
 		baseDamage = bd;
+		offHand = oh;
 		
 	}
 	
