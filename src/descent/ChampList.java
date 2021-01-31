@@ -17,14 +17,18 @@ public class ChampList {
 	final static float knifeMoveSpeed = 0.24f;
 	final static int knifeBaseDamage = 24;
 	
+	public final static double knifeSwingCooldown = 0.25;
+	
 	final static ItemStack[] knifeItems = new ItemStack[]{new ItemStack(Material.ARROW)};
 	final static ItemStack[] knifeArmor = new ItemStack[]{null, null, null, new ItemStack(Material.LEATHER_HELMET)};
 	
 		//SWORD
 	final static String swordName = "Sword";
-	final static int swordMaxHealth = 225;
+	final static int swordMaxHealth = 300;
 	final static float swordMoveSpeed = 0.24f;
 	final static int swordBaseDamage = 40;
+	
+	public final static double swordSwingCooldown = 0.5;
 	
 	final static ItemStack[] swordItems = new ItemStack[]{new ItemStack(Material.IRON_SWORD)};
 	final static ItemStack[] swordArmor = new ItemStack[]{null, null, new ItemStack(Material.IRON_CHESTPLATE), null};

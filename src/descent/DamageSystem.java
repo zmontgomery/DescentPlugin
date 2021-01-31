@@ -2,34 +2,47 @@ package descent;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
+import org.bukkit.Sound;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.Projectile;
 
 public class DamageSystem {
 	
-	public static void damagePlayer(Player plattack, Player pldefend) {
+	public static void damagePlayerMelee(Player plattack, Player pldefend) {
 		
 		if(plattack.getInventory().getItemInMainHand().getType() == Material.IRON_SWORD) {
 			
-			int damage = ChampList.sword.baseDamage;
+			if(System.currentTimeMillis() - ChampCooldowns.swordSwingCooldown.get(plattack) > (1000 * ChampList.swordSwingCooldown)) {
 			
-			if(pldefend.getLevel() <= damage) {
+				int damage = ChampList.sword.baseDamage;
 				
-				playerKill(plattack, pldefend);
+				ChampCooldowns.swordSwingCooldown.replace(plattack, System.currentTimeMillis());
 				
-			} else {
+				plattack.playSound(pldefend.getLocation(), Sound.BLOCK_STONE_BREAK, 1f, 1f);
+			
+				if(pldefend.getLevel() <= damage) {
 				
-				pldefend.setLevel(pldefend.getLevel() - damage);
-				ChampConstructor cc = ChampList.playerChamp.get(pldefend);
-				pldefend.setHealth(20 * ((double)pldefend.getLevel()/cc.maxHealth));
-				Bukkit.broadcastMessage(20 * ((double)pldefend.getLevel()/cc.maxHealth) + "");
+					playerKill(plattack, pldefend);
 				
+				} else {
+				
+					pldefend.setLevel(pldefend.getLevel() - damage);
+					ChampConstructor cc = ChampList.playerChamp.get(pldefend);
+					pldefend.setHealth(20 * ((double)pldefend.getLevel()/cc.maxHealth));
+				
+				}
 			}
 		}
+	}
+	
+	public static void damagePlayerProjectile(Player plattack, Player pldefend, Projectile p) {
 		
 		if(plattack.getInventory().getItemInMainHand().getType() == Material.ARROW) {
 			
 			int damage = ChampList.knife.baseDamage;
 			
+			p.remove();
+			
 			if(pldefend.getLevel() <= damage) {
 				
 				playerKill(plattack, pldefend);
@@ -39,7 +52,6 @@ public class DamageSystem {
 				pldefend.setLevel(pldefend.getLevel() - damage);
 				ChampConstructor cc = ChampList.playerChamp.get(pldefend);
 				pldefend.setHealth(20 * ((double)pldefend.getLevel()/cc.maxHealth));
-				Bukkit.broadcastMessage(20 * ((double)pldefend.getLevel()/cc.maxHealth) + "");
 				
 			}
 		}
