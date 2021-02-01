@@ -89,6 +89,21 @@ public class DamageSystem {
 			}
 		}	
 	}
+	public static void healPlayer(Player healer, Player healee, int heal) {
+		
+		if(healee.getLevel() + heal < ChampList.playerChamp.get(healee).maxHealth) {
+			
+			healee.setLevel(healee.getLevel() + heal);
+			healee.setHealth(20 * ((double)healee.getLevel()/ChampList.playerChamp.get(healee).maxHealth));
+			
+		} else {
+			
+			healee.setLevel(ChampList.playerChamp.get(healee).maxHealth);
+			healee.setHealth(20);
+			
+		}
+			
+	}
 	public static void playerKill(Player plattack, Player pldefend) {
 		
 		pldefend.setHealth(0);

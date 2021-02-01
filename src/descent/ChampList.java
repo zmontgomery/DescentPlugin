@@ -49,11 +49,25 @@ public class ChampList {
 	final static ItemStack[] axeArmor = new ItemStack[]{new ItemStack(Material.CHAINMAIL_BOOTS), null, null, new ItemStack(Material.CHAINMAIL_HELMET)};
 	final static ItemStack axeOffHand = null;
 	
+		//GUN
+	final static String gunName = "Gun";
+	final static int gunMaxHealth = 200;
+	final static float gunMoveSpeed = 0.25f;
+	final static int gunBaseDamage = 75;
+	
+	public final static double gunShootCooldown = 2.0;
+	public final static double gunHealCooldown = 5.0;
+	
+	final static ItemStack[] gunItems = new ItemStack[]{new ItemStack(Material.NETHERITE_HOE)};
+	final static ItemStack[] gunArmor = new ItemStack[]{null, new ItemStack(Material.CHAINMAIL_LEGGINGS), null, null};
+	final static ItemStack gunOffHand = null;
+	
 	//CHAMPION INITIALIZATION
 	
 	public static ChampConstructor knife = new ChampConstructor(knifeName, knifeMaxHealth, knifeMoveSpeed, knifeBaseDamage, knifeItems, knifeArmor, knifeOffHand);
 	public static ChampConstructor sword = new ChampConstructor(swordName, swordMaxHealth, swordMoveSpeed, swordBaseDamage, swordItems, swordArmor, swordOffHand);
 	public static ChampConstructor axe = new ChampConstructor(axeName, axeMaxHealth, axeMoveSpeed, axeBaseDamage, axeItems, axeArmor, axeOffHand);
+	public static ChampConstructor gun = new ChampConstructor(gunName, gunMaxHealth, gunMoveSpeed, gunBaseDamage, gunItems, gunArmor, gunOffHand);
 	
 	public static void setChamp(Player pl, ChampConstructor cc) {
 		

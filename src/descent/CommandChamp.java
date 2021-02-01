@@ -18,6 +18,8 @@ public class CommandChamp implements CommandExecutor {
 				ChampList.setChamp(Bukkit.getPlayerExact(sender.getName()), ChampList.sword);
 			} else if(args[0].equalsIgnoreCase("axe")) {
 				ChampList.setChamp(Bukkit.getPlayerExact(sender.getName()), ChampList.axe);
+			} else if(args[0].equalsIgnoreCase("gun")) {
+				ChampList.setChamp(Bukkit.getPlayerExact(sender.getName()), ChampList.gun);
 			} else {
 				Bukkit.broadcastMessage("Please enter a champion.");
 			}

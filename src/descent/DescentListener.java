@@ -3,6 +3,8 @@ package descent;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.Particle;
+import org.bukkit.Sound;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
@@ -50,6 +52,7 @@ public class DescentListener implements Listener {
 	@EventHandler
 	public static void playerInteractEvent(PlayerInteractEvent event) {
 		
+		//LEFT CLICK ARROW
 		if(event.getPlayer().getInventory().getItemInMainHand().getType() == Material.ARROW && (event.getAction() == Action.LEFT_CLICK_AIR || event.getAction() == Action.LEFT_CLICK_BLOCK)) {
 			
 			if(System.currentTimeMillis() - ChampCooldowns.knifeSwingCooldown.get(event.getPlayer()) > (1000 * ChampList.knifeSwingCooldown)) {
@@ -62,6 +65,8 @@ public class DescentListener implements Listener {
 				
 			}
 		}
+		
+		//RIGHT CLICK GOLDEN AXE (LEAP)
 		if(event.getPlayer().getInventory().getItemInMainHand().getType() == Material.GOLDEN_AXE && (event.getAction() == Action.RIGHT_CLICK_AIR || event.getAction() == Action.RIGHT_CLICK_BLOCK)) {
 			if(System.currentTimeMillis() - ChampCooldowns.axeLeapCooldown.get(event.getPlayer()) > (1000 * ChampList.axeLeapCooldown)) {
 				
@@ -71,13 +76,43 @@ public class DescentListener implements Listener {
 				
 			}
 		}
+		
+		//LEFT CLICK NETHERITE HOE (SHOOT)
 		if(event.getPlayer().getInventory().getItemInMainHand().getType() == Material.NETHERITE_HOE && (event.getAction() == Action.LEFT_CLICK_AIR || event.getAction() == Action.LEFT_CLICK_BLOCK)) {
-						
-			Player hit = Ray.playerRayCast(event.getPlayer(), 99);
+				
+			if(System.currentTimeMillis() - ChampCooldowns.gunShootCooldown.get(event.getPlayer()) > (1000 * ChampList.gunShootCooldown)) {
 			
-			if(hit != null) {
-				Bukkit.broadcastMessage("Hit " + hit.getName() + "!");
-			}	
+				event.getPlayer().playSound(event.getPlayer().getLocation(), Sound.ENTITY_DRAGON_FIREBALL_EXPLODE, 1f, 1f);
+				
+				Player hit = Ray.playerRayCast(event.getPlayer(), 99);
+			
+				if(hit != null) {
+					
+					Bukkit.broadcastMessage("Hit " + hit.getName() + "!");
+					
+					event.getPlayer().playSound(event.getPlayer().getLocation(), Sound.ENTITY_ARROW_HIT_PLAYER, 1f, 1f);
+				
+					DamageSystem.damagePlayer(event.getPlayer(), hit, ChampList.gunBaseDamage);
+				
+				}
+				
+				ChampCooldowns.gunShootCooldown.replace(event.getPlayer(), System.currentTimeMillis());
+				
+			}
+		}
+		
+		//RIGHT CLICK NETHERITE HOE (HEAL)
+		if(event.getPlayer().getInventory().getItemInMainHand().getType() == Material.NETHERITE_HOE && (event.getAction() == Action.RIGHT_CLICK_AIR || event.getAction() == Action.RIGHT_CLICK_BLOCK)) {
+			
+			if(System.currentTimeMillis() - ChampCooldowns.gunHealCooldown.get(event.getPlayer()) > (1000 * ChampList.gunHealCooldown)) {
+				
+				DamageSystem.healPlayer(event.getPlayer(), event.getPlayer(), 50);
+				event.getPlayer().spawnParticle(Particle.HEART, event.getPlayer().getEyeLocation(), 10, 0.5, 1, 0.5, 0);
+				event.getPlayer().playSound(event.getPlayer().getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1f, 1f);
+				ChampCooldowns.gunHealCooldown.replace(event.getPlayer(), System.currentTimeMillis());
+				
+			}
+			
 		}
 	}
 	@EventHandler
@@ -93,6 +128,8 @@ public class DescentListener implements Listener {
 		ChampCooldowns.swordSwingCooldown.put(event.getPlayer(), (long)0);
 		ChampCooldowns.axeSwingCooldown.put(event.getPlayer(), (long)0);
 		ChampCooldowns.axeLeapCooldown.put(event.getPlayer(), (long)0);
+		ChampCooldowns.gunShootCooldown.put(event.getPlayer(), (long)0);
+		ChampCooldowns.gunHealCooldown.put(event.getPlayer(), (long)0);
 		
 	}
 	@EventHandler
@@ -102,6 +139,8 @@ public class DescentListener implements Listener {
 		ChampCooldowns.swordSwingCooldown.remove(event.getPlayer());
 		ChampCooldowns.axeSwingCooldown.remove(event.getPlayer());
 		ChampCooldowns.axeLeapCooldown.remove(event.getPlayer());
+		ChampCooldowns.gunShootCooldown.remove(event.getPlayer());
+		ChampCooldowns.gunHealCooldown.remove(event.getPlayer());
 		
 	}
 	@EventHandler
