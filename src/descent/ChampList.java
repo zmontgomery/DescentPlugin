@@ -14,8 +14,8 @@ public class ChampList {
 		//KNIFE
 	final static String knifeName = "Knife";
 	final static int knifeMaxHealth = 200;
-	final static float knifeMoveSpeed = 0.3f;
-	final static int knifeBaseDamage = 24;
+	final static float knifeMoveSpeed = 0.29f;
+	final static int knifeBaseDamage = 20;
 	
 	public final static double knifeSwingCooldown = 0.25;
 	
@@ -28,6 +28,7 @@ public class ChampList {
 	final static int swordMaxHealth = 300;
 	final static float swordMoveSpeed = 0.23f;
 	final static int swordBaseDamage = 40;
+	final static double shieldDamageReduction = 0.8;
 	
 	public final static double swordSwingCooldown = 0.5;
 	

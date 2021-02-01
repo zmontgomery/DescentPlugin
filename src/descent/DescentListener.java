@@ -7,7 +7,6 @@ import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
 import org.bukkit.event.EventHandler;
-import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
@@ -20,7 +19,7 @@ import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.util.Vector;
 
 public class DescentListener implements Listener {
-	@EventHandler(priority = EventPriority.HIGHEST)
+	@EventHandler
 	public static void playerDamageEvent(EntityDamageByEntityEvent event) {
 		
 		event.setCancelled(true);
@@ -53,16 +52,32 @@ public class DescentListener implements Listener {
 		
 		if(event.getPlayer().getInventory().getItemInMainHand().getType() == Material.ARROW && (event.getAction() == Action.LEFT_CLICK_AIR || event.getAction() == Action.LEFT_CLICK_BLOCK)) {
 			
-			Arrow knife = event.getPlayer().getWorld().spawnArrow(new Location(event.getPlayer().getWorld(), event.getPlayer().getLocation().getX(), event.getPlayer().getLocation().getY() + event.getPlayer().getEyeHeight(), event.getPlayer().getLocation().getZ()), event.getPlayer().getLocation().getDirection(), 3, 0);
-			knife.setCustomName(event.getPlayer().getName());
-			knife.setBounce(false);
-			
+			if(System.currentTimeMillis() - ChampCooldowns.knifeSwingCooldown.get(event.getPlayer()) > (1000 * ChampList.knifeSwingCooldown)) {
+				
+				Arrow knife = event.getPlayer().getWorld().spawnArrow(new Location(event.getPlayer().getWorld(), event.getPlayer().getLocation().getX(), event.getPlayer().getLocation().getY() + event.getPlayer().getEyeHeight(), event.getPlayer().getLocation().getZ()), event.getPlayer().getLocation().getDirection(), 3, 0);
+				knife.setCustomName(event.getPlayer().getName());
+				knife.setBounce(false);
+				
+				ChampCooldowns.knifeSwingCooldown.replace(event.getPlayer(), System.currentTimeMillis());
+				
+			}
 		}
 		if(event.getPlayer().getInventory().getItemInMainHand().getType() == Material.GOLDEN_AXE && (event.getAction() == Action.RIGHT_CLICK_AIR || event.getAction() == Action.RIGHT_CLICK_BLOCK)) {
 			if(System.currentTimeMillis() - ChampCooldowns.axeLeapCooldown.get(event.getPlayer()) > (1000 * ChampList.axeLeapCooldown)) {
+				
 				event.getPlayer().setVelocity(new Vector(event.getPlayer().getVelocity().getX() + event.getPlayer().getLocation().getDirection().getX()*1.3, event.getPlayer().getVelocity().getY() + event.getPlayer().getLocation().getDirection().getY()*1.3, event.getPlayer().getVelocity().getZ() + event.getPlayer().getLocation().getDirection().getZ()*1.3));
 				ChampCooldowns.axeLeapCooldown.replace(event.getPlayer(), System.currentTimeMillis());
+				Bukkit.broadcastMessage(event.getPlayer().getLocation().getDirection().getX() + ", " + event.getPlayer().getLocation().getDirection().getY() + ", " + event.getPlayer().getLocation().getDirection().getZ());
+				
 			}
+		}
+		if(event.getPlayer().getInventory().getItemInMainHand().getType() == Material.NETHERITE_HOE && (event.getAction() == Action.LEFT_CLICK_AIR || event.getAction() == Action.LEFT_CLICK_BLOCK)) {
+						
+			Player hit = Ray.playerRayCast(event.getPlayer(), 99);
+			
+			if(hit != null) {
+				Bukkit.broadcastMessage("Hit " + hit.getName() + "!");
+			}	
 		}
 	}
 	@EventHandler

@@ -11,28 +11,18 @@ public class DamageSystem {
 	public static void damagePlayerMelee(Player plattack, Player pldefend) {
 		
 		if(plattack.getInventory().getItemInMainHand().getType() == Material.IRON_SWORD) {
-			Bukkit.broadcastMessage("HIT");
 			
 			if(System.currentTimeMillis() - ChampCooldowns.swordSwingCooldown.get(plattack) > (1000 * ChampList.swordSwingCooldown)) {
-				Bukkit.broadcastMessage("DAMAGE");
 			
 				int damage = ChampList.sword.baseDamage;
 				
 				ChampCooldowns.swordSwingCooldown.replace(plattack, System.currentTimeMillis());
 				
-				plattack.playSound(pldefend.getLocation(), Sound.BLOCK_STONE_BREAK, 1f, 1f);
+				plattack.playSound(pldefend.getLocation(), Sound.ITEM_SHIELD_BREAK, 1f, 1f);
+				pldefend.playSound(pldefend.getLocation(), Sound.ENTITY_PLAYER_ATTACK_CRIT, 1f, 1f);
 			
-				if(pldefend.getLevel() <= damage) {
+				damagePlayer(plattack, pldefend, damage);
 				
-					playerKill(plattack, pldefend);
-				
-				} else {
-				
-					pldefend.setLevel(pldefend.getLevel() - damage);
-					ChampConstructor cc = ChampList.playerChamp.get(pldefend);
-					pldefend.setHealth(20 * ((double)pldefend.getLevel()/cc.maxHealth));
-				
-				}
 			}
 		}
 		if(plattack.getInventory().getItemInMainHand().getType() == Material.GOLDEN_AXE) {
@@ -44,29 +34,33 @@ public class DamageSystem {
 				ChampCooldowns.axeSwingCooldown.replace(plattack, System.currentTimeMillis());
 				
 				plattack.playSound(pldefend.getLocation(), Sound.ITEM_SHIELD_BREAK, 1f, 1f);
+				pldefend.playSound(pldefend.getLocation(), Sound.ENTITY_PLAYER_ATTACK_CRIT, 1f, 1f);
 			
-				if(pldefend.getLevel() <= damage) {
+				damagePlayer(plattack, pldefend, damage);
 				
-					playerKill(plattack, pldefend);
-				
-				} else {
-				
-					pldefend.setLevel(pldefend.getLevel() - damage);
-					ChampConstructor cc = ChampList.playerChamp.get(pldefend);
-					pldefend.setHealth(20 * ((double)pldefend.getLevel()/cc.maxHealth));
-				
-				}
 			}
 		}
 	}
-	
 	public static void damagePlayerProjectile(Player plattack, Player pldefend, Projectile p) {
 		
 		if(plattack.getInventory().getItemInMainHand().getType() == Material.ARROW) {
 			
 			int damage = ChampList.knife.baseDamage;
 			
+			plattack.playSound(plattack.getLocation(), Sound.ENTITY_ARROW_HIT_PLAYER, 1f, 1f);
+			pldefend.playSound(pldefend.getLocation(), Sound.ENTITY_PLAYER_ATTACK_CRIT, 1f, 1f);
+			
 			p.remove();
+			
+			damagePlayer(plattack, pldefend, damage);
+		
+		}
+	}
+	public static void damagePlayer(Player plattack, Player pldefend, int damage) {
+		
+		if(pldefend.isBlocking() == true) {
+			
+			damage = (int)(damage * (1 - ChampList.shieldDamageReduction));
 			
 			if(pldefend.getLevel() <= damage) {
 				
@@ -79,7 +73,21 @@ public class DamageSystem {
 				pldefend.setHealth(20 * ((double)pldefend.getLevel()/cc.maxHealth));
 				
 			}
-		}
+			
+		} else {
+			
+			if(pldefend.getLevel() <= damage) {
+				
+				playerKill(plattack, pldefend);
+				
+			} else {
+				
+				pldefend.setLevel(pldefend.getLevel() - damage);
+				ChampConstructor cc = ChampList.playerChamp.get(pldefend);
+				pldefend.setHealth(20 * ((double)pldefend.getLevel()/cc.maxHealth));
+				
+			}
+		}	
 	}
 	public static void playerKill(Player plattack, Player pldefend) {
 		
