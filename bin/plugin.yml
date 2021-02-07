@@ -6,3 +6,6 @@ commands:
    champion:
       description: picks a champion
       usage: /<command>
+   setteam:
+      description: sets your team
+      usage: /<command>

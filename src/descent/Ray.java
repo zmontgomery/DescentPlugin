@@ -3,6 +3,7 @@ package descent;
 import java.util.Collection;
 
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.Particle;
 import org.bukkit.World;
 import org.bukkit.entity.Entity;
@@ -29,23 +30,34 @@ public class Ray {
 			
 			if(i > 1) {
 				
-				w.spawnParticle(Particle.CRIT, location.getX(), location.getY(), location.getZ(), 1, 0, 0, 0, 0);
+				if(shooter.getWorld().getBlockAt(location).getType() == Material.AIR) {
+					
+					w.spawnParticle(Particle.CRIT, location.getX(), location.getY(), location.getZ(), 1, 0, 0, 0, 0);
 				
-				if(entities.size() > 0) {
+					if(entities.size() > 0) {
 				
-					Entity[] entityArray = entities.toArray(new Entity[entities.size()]);
+						Entity[] entityArray = entities.toArray(new Entity[entities.size()]);
 				
-					for(int s = 0; s < entityArray.length; s++) {
+						for(int s = 0; s < entityArray.length; s++) {
 						
-						if(entityArray[s] instanceof Player) {
+							if(entityArray[s] instanceof Player) {
+								
+								if(entityArray[s] != shooter) {
 							
-							return (Player)entityArray[s];
-							
+									return (Player)entityArray[s];
+								
+								}
+								
+							}
 						}
-						
 					}
-			
+					
+				} else {
+					
+					return null;
+					
 				}
+			
 			}
 			
 		}

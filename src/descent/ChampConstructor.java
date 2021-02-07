@@ -13,15 +13,15 @@ public class ChampConstructor {
 	ItemStack[] armor;
 	ItemStack offHand;
 	
-	public ChampConstructor(String nm, int mh, float ms, int bd, ItemStack[] it, ItemStack[] ar, ItemStack oh) {
+	public ChampConstructor(String name, int maxHealth, float moveSpeed, int baseDamage, ItemStack[] items, ItemStack[] armor, ItemStack offHand) {
 		
-		name = nm;
-		maxHealth = mh;
-		moveSpeed = ms;
-		items = it;
-		armor = ar;
-		baseDamage = bd;
-		offHand = oh;
+		this.name = name;
+		this.maxHealth = maxHealth;
+		this.moveSpeed = moveSpeed;
+		this.items = items;
+		this.armor = armor;
+		this.baseDamage = baseDamage;
+		this.offHand = offHand;
 		
 	}
 	
