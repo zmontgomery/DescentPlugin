@@ -27,4 +27,7 @@ public class ChampCooldowns {
 	public static HashMap<Player, Long> gunShootCooldown = new HashMap<Player, Long>();
 	public static HashMap<Player, Long> gunHealCooldown = new HashMap<Player, Long>();
 	
+		//BOW
+	public static HashMap<Player, Long> bowPotCooldown = new HashMap<Player, Long>();
+	
 }

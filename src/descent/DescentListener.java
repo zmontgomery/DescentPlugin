@@ -1,11 +1,9 @@
 package descent;
 
-import java.util.Collection;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.Particle;
 import org.bukkit.Sound;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.block.Sign;
@@ -25,7 +23,6 @@ import org.bukkit.event.entity.EntityShootBowEvent;
 import org.bukkit.event.entity.ItemDespawnEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.entity.PotionSplashEvent;
-import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.event.hanging.HangingBreakByEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
@@ -33,7 +30,6 @@ import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.event.player.PlayerToggleSneakEvent;
 import org.bukkit.potion.PotionEffect;
-import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scoreboard.Scoreboard;
 import org.bukkit.scoreboard.ScoreboardManager;
@@ -123,28 +119,8 @@ public class DescentListener implements Listener {
 			
 					event.getPlayer().getWorld().playSound(event.getPlayer().getLocation(), Sound.ENTITY_DRAGON_FIREBALL_EXPLODE, 1f, 1f);
 				
-					Player hit = Ray.playerRayCast(event.getPlayer(), 99);
-			
-					if(hit != null) {
-						if(b.getEntryTeam(hit.getPlayer().getName()).getName() != "spec") {
-							if(b.getEntryTeam(event.getPlayer().getName()).getName() != b.getEntryTeam(hit.getPlayer().getName()).getName()) {
-						
-								event.getPlayer().playSound(event.getPlayer().getLocation(), Sound.ENTITY_ARROW_HIT_PLAYER, 1f, 1f);
-								hit.playSound(hit.getLocation(), Sound.ENTITY_GENERIC_HURT, 1f, 1f);
-				
-								DamageSystem.damagePlayer(event.getPlayer(), hit, ChampList.gunBaseDamage);
-						
-							} else if(b.getEntryTeam(event.getPlayer().getName()).getName() == b.getEntryTeam(hit.getPlayer().getName()).getName()) {
-								
-								event.getPlayer().playSound(event.getPlayer().getLocation(), Sound.ENTITY_ARROW_HIT_PLAYER, 1f, 1f);
-								event.getPlayer().getWorld().spawnParticle(Particle.HEART, hit.getEyeLocation(), 10, 0.5, 1, 0.5, 0);
-								
-								DamageSystem.healPlayer(event.getPlayer(), hit, ChampList.gun.baseDamage);
-								
-							}
-						}
-					}
-				
+					Ray.playerRayCast(event.getPlayer(), 99, ChampList.gun.baseDamage);
+					
 					ChampCooldowns.gunShootCooldown.replace(event.getPlayer(), System.currentTimeMillis());
 				
 				}
@@ -154,7 +130,7 @@ public class DescentListener implements Listener {
 			if(event.getPlayer().getInventory().getItemInMainHand().getType() == Material.NETHERITE_HOE && (event.getAction() == Action.RIGHT_CLICK_AIR || event.getAction() == Action.RIGHT_CLICK_BLOCK)) {
 			
 				if(System.currentTimeMillis() - ChampCooldowns.gunHealCooldown.get(event.getPlayer()) > (1000 * ChampList.gunHealCooldown)) {
-				
+				/*
 					event.getPlayer().playSound(event.getPlayer().getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1f, 1f);
 				
 					Collection<Entity> entities = event.getPlayer().getWorld().getNearbyEntities(event.getPlayer().getLocation(), 6, 6, 5);
@@ -178,7 +154,14 @@ public class DescentListener implements Listener {
 					}
 				
 					ChampCooldowns.gunHealCooldown.replace(event.getPlayer(), System.currentTimeMillis());
-				
+				*/
+					
+					ThrownPotion pot = event.getPlayer().launchProjectile(ThrownPotion.class);
+					pot.setVelocity(event.getPlayer().getLocation().getDirection());
+					pot.setCustomName(event.getPlayer().getName());
+					
+					ChampCooldowns.gunHealCooldown.replace(event.getPlayer(), System.currentTimeMillis());
+					
 				}
 			
 			}
@@ -208,10 +191,13 @@ public class DescentListener implements Listener {
 			}
 			//LEFT CLICK BOW (DISENGANGE)
 			if(event.getPlayer().getInventory().getItemInMainHand().getType() == Material.BOW && (event.getAction() == Action.LEFT_CLICK_AIR || event.getAction() == Action.LEFT_CLICK_BLOCK)) {
-				
-				ThrownPotion pot = event.getPlayer().launchProjectile(ThrownPotion.class);
-				//pot.setVelocity(event.getPlayer().getLocation().getDirection());
-				
+				if(System.currentTimeMillis() - ChampCooldowns.bowPotCooldown.get(event.getPlayer()) > (1000 * ChampList.bowPotCooldown)) {
+					ThrownPotion pot = event.getPlayer().launchProjectile(ThrownPotion.class);
+					pot.setVelocity(event.getPlayer().getLocation().getDirection());
+					pot.setCustomName(event.getPlayer().getName());
+					
+					ChampCooldowns.bowPotCooldown.replace(event.getPlayer(), System.currentTimeMillis());
+				}
 			}
 			//HIT PRESSURE PLATE EVENT
 			if(event.getAction() == Action.PHYSICAL && event.getClickedBlock().getType() == Material.STONE_PRESSURE_PLATE) {
@@ -221,21 +207,8 @@ public class DescentListener implements Listener {
 
 				event.getPlayer().getWorld().playSound(event.getPlayer().getLocation(), Sound.BLOCK_CHEST_LOCKED, 1.0f, 0.5f);
 				
-				event.getPlayer().setWalkSpeed(0);
+				DamageSystem.stunPlayer(event.getPlayer(), 40);
 				
-				PotionEffect jump = new PotionEffect(PotionEffectType.JUMP, 40, 128, false, false, false);
-				
-				event.getPlayer().addPotionEffect(jump);
-				
-				event.getPlayer().setVelocity(new Vector());
-				
-				new BukkitRunnable() {
-		        	public void run() {
-		        		
-						event.getPlayer().setWalkSpeed(ChampList.playerChamp.get(event.getPlayer()).moveSpeed);
-						
-		        	}
-				}.runTaskLater(Main.getPlugin(Main.class), 40);
 			}
 			//PICK CHAMP SIGN EVENT
 			if(event.getAction() == Action.RIGHT_CLICK_BLOCK) {
@@ -313,6 +286,7 @@ public class DescentListener implements Listener {
 		ChampCooldowns.axeLeapCooldown.put(event.getPlayer(), (long)0);
 		ChampCooldowns.gunShootCooldown.put(event.getPlayer(), (long)0);
 		ChampCooldowns.gunHealCooldown.put(event.getPlayer(), (long)0);
+		ChampCooldowns.bowPotCooldown.put(event.getPlayer(), (long)0);
 		
 		PlayerTeams.addToTeam(event.getPlayer(), "spec");
 		
@@ -329,6 +303,7 @@ public class DescentListener implements Listener {
 		ChampCooldowns.axeLeapCooldown.remove(event.getPlayer());
 		ChampCooldowns.gunShootCooldown.remove(event.getPlayer());
 		ChampCooldowns.gunHealCooldown.remove(event.getPlayer());
+		ChampCooldowns.bowPotCooldown.remove(event.getPlayer());
 		
 		if(ChampCooldowns.knifeTrapLocation.containsKey(event.getPlayer()))
 			event.getPlayer().getWorld().getBlockAt(ChampCooldowns.knifeTrapLocation.get(event.getPlayer())).setType(Material.AIR);
@@ -420,13 +395,13 @@ public class DescentListener implements Listener {
 					event.getItem().remove();
 				
 					if(event.getItem().getCustomName().equals("bot"))
-						ControlPointGamemode.healthPackSpawning(pl.getWorld(), 0.5, 1.5, 76.5);
+						ControlPointGamemode.healthPackSpawning(pl.getWorld(), 0.5, 21, 76.5);
 					if(event.getItem().getCustomName().equals("top"))
-						ControlPointGamemode.healthPackSpawning(pl.getWorld(), 0.5, 9.5, 124.5);
+						ControlPointGamemode.healthPackSpawning(pl.getWorld(), 0.5, 29, 124.5);
 					if(event.getItem().getCustomName().equals("blue"))
-						ControlPointGamemode.healthPackSpawning(pl.getWorld(), 31.5, 4.5, 104.5);
+						ControlPointGamemode.healthPackSpawning(pl.getWorld(), 31.5, 24, 104.5);
 					if(event.getItem().getCustomName().equals("red"))
-						ControlPointGamemode.healthPackSpawning(pl.getWorld(), -30.5, 4.5, 104.5);
+						ControlPointGamemode.healthPackSpawning(pl.getWorld(), -30.5, 24, 104.5);
 				}
 			}
 		}
@@ -464,33 +439,38 @@ public class DescentListener implements Listener {
 	}
 	@EventHandler
 	public static void potionSplashEvent(PotionSplashEvent event) {
-		for(Entity ent : event.getAffectedEntities()) {
-			if(ent instanceof Player) {
+		
+		if(ChampList.playerChamp.get(Bukkit.getPlayerExact(event.getPotion().getCustomName())) == ChampList.bow) {
+			for(Entity ent : event.getAffectedEntities()) {
+				if(ent instanceof Player) {
 				
-				Player pl = (Player)ent;
-				double x = pl.getLocation().getX() - event.getPotion().getLocation().getX();
-				double y = pl.getLocation().getX() - event.getPotion().getLocation().getX();
-				double z = pl.getLocation().getX() - event.getPotion().getLocation().getX();
-				Vector pushBack = new Vector();
+					Player pl = (Player)ent;
 				
-				if(x > 0) {
-					pushBack.setX(0.2*(4.125 - Math.abs(x)));
-				} else if(x < 0){
-					pushBack.setX(0.2*(Math.abs(x) - 4.125));
+					double x = pl.getLocation().getX() - event.getPotion().getLocation().getX();
+					double z = pl.getLocation().getZ() - event.getPotion().getLocation().getZ();
+				
+					final double r = 4.125;
+					final double m = 3.0;
+				
+					Vector pushBack = new Vector();
+
+					pushBack.setX(m*(x/r));
+					pushBack.setZ(m*(z/r));
+					pushBack.setY(1.25*((r - Math.abs(x))/r)*((r - Math.abs(z))/r));
+
+					pl.setVelocity(pushBack);
+				
 				}
-				if(y > 0) {
-					pushBack.setY(0.4*(2.125 - Math.abs(y)));
-				} else if(y < 0){
-					pushBack.setY(0.4*(Math.abs(y) - 2.125));
-				}
-				if(z > 0) {
-					pushBack.setZ(0.2*(4.125 - Math.abs(z)));
-				} else if(z < 0){
-					pushBack.setZ(0.2*(Math.abs(z) - 4.125));
-				}
+			}
+		} else if(ChampList.playerChamp.get(Bukkit.getPlayerExact(event.getPotion().getCustomName())) == ChampList.gun) {
+			for(Entity ent : event.getAffectedEntities()) {
+				if(ent instanceof Player) {
 				
-				pl.setVelocity(pushBack);
+					Player pl = (Player)ent;
 				
+					DamageSystem.stunPlayer(pl, 20);
+					
+				}
 			}
 		}
 	}

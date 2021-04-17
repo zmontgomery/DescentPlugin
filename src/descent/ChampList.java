@@ -61,7 +61,7 @@ public class ChampList {
 	final static String gunName = "Deputy";
 	final static int gunMaxHealth = 200;
 	final static float gunMoveSpeed = 0.25f;
-	final static int gunBaseDamage = 49;
+	final static int gunBaseDamage = 64;
 	
 	public final static double gunShootCooldown = 0.7;
 	public final static double gunHealCooldown = 10.0;
@@ -74,9 +74,9 @@ public class ChampList {
 	final static String bowName = "Archer";
 	final static int bowMaxHealth = 150;
 	final static float bowMoveSpeed = 0.25f;
-	final static int bowBaseDamage = 90;
+	final static int bowBaseDamage = 185;
 
-	public final static double bowShootCooldown = 0.7;
+	public final static double bowPotCooldown = 8.0;
 
 	final static ItemStack[] bowItems = new ItemStack[]{new ItemStack(Material.BOW)};
 	final static ItemStack[] bowArmor = new ItemStack[]{null, null, null, new ItemStack(Material.CHAINMAIL_HELMET)};

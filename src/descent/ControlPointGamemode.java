@@ -35,10 +35,10 @@ public class ControlPointGamemode {
 	
 	public static void startControl(Player pl) {
 		
-		healthPackSpawning(pl.getWorld(), 0.5, 1.5, 76.5);
-		healthPackSpawning(pl.getWorld(), 0.5, 9.5, 124.5);
-		healthPackSpawning(pl.getWorld(), 31.5, 4.5, 104.5);
-		healthPackSpawning(pl.getWorld(), -30.5, 4.5, 104.5);
+		healthPackSpawning(pl.getWorld(), 0.5, 21, 76.5);
+		healthPackSpawning(pl.getWorld(), 0.5, 29, 124.5);
+		healthPackSpawning(pl.getWorld(), 31.5, 24, 104.5);
+		healthPackSpawning(pl.getWorld(), -30.5, 24, 104.5);
 		
     	Bukkit.getScheduler().scheduleSyncRepeatingTask(Main.getPlugin(Main.class), new Runnable() {
     		@Override

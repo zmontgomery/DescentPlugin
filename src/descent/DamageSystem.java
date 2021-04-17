@@ -7,8 +7,12 @@ import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
+import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scoreboard.Scoreboard;
 import org.bukkit.scoreboard.ScoreboardManager;
+import org.bukkit.util.Vector;
 
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.ChatMessageType;
@@ -208,5 +212,23 @@ public class DamageSystem {
 				}
 		    }
 		}, 180L);
+	}
+	public static void stunPlayer(Player stunned, int time) {
+		
+		stunned.setWalkSpeed(0);
+		
+		PotionEffect jump = new PotionEffect(PotionEffectType.JUMP, time, 128, false, false, false);
+		
+		stunned.addPotionEffect(jump);
+		
+		stunned.setVelocity(new Vector());
+		
+		new BukkitRunnable() {
+        	public void run() {
+        		
+        		stunned.setWalkSpeed(ChampList.playerChamp.get(stunned).moveSpeed);
+				
+        	}
+		}.runTaskLater(Main.getPlugin(Main.class), time);
 	}
 }
