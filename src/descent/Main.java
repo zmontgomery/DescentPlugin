@@ -1,9 +1,6 @@
-package descentmodel;
+package descent;
 
-import org.bukkit.Bukkit;
-import org.bukkit.Material;
 import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public class Main extends JavaPlugin {
@@ -86,10 +83,6 @@ public class Main extends JavaPlugin {
     	
     	PlayerTeams.unregisterTeams();
     	
-    	for(Player pl : Bukkit.getOnlinePlayers()) {
-			if(ChampCooldowns.knifeTrapLocation.containsKey(pl))
-				pl.getWorld().getBlockAt(ChampCooldowns.knifeTrapLocation.get(pl)).setType(Material.AIR);
-    	}
     }
     
 }
