@@ -1,4 +1,4 @@
-package descentmodel;
+package descent;
 
 import java.util.Collection;
 import org.bukkit.Bukkit;

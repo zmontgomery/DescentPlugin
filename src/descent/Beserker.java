@@ -1,4 +1,4 @@
-package descentmodel;
+package descent;
 
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -31,7 +31,7 @@ public class Beserker extends Champ{
 	}
 
     @Override
-    public void abilityInstant(Champ champ) {
+    public void abilityMelee(Champ champ) {
         if(PLAYER.getInventory().getItemInMainHand().getType() == Material.GOLDEN_AXE) {
 			double velocity = Math.abs(PLAYER.getVelocity().getX()) + Math.abs(PLAYER.getVelocity().getY()) + Math.abs(PLAYER.getVelocity().getZ());
 			PLAYER.sendMessage(velocity + "");
