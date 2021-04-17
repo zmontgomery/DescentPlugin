@@ -104,64 +104,47 @@ public class EventListener implements Listener {
 
 	@EventHandler
 	public static void playerInteractEvent(PlayerInteractEvent event) {
-		if(event.getPlayer().getGameMode() == GameMode.SURVIVAL) {
-			//LEFT CLICK ARROW
-			if(event.getPlayer().getInventory().getItemInMainHand().getType() == Material.WOODEN_SWORD && (event.getAction() == Action.LEFT_CLICK_AIR || event.getAction() == Action.LEFT_CLICK_BLOCK)) {
-			
-				if(System.currentTimeMillis() - ChampCooldowns.knifeSwingCooldown.get(event.getPlayer()) > (1000 * ChampList.knifeSwingCooldown)) {
-				
-					Arrow knife1 = event.getPlayer().getWorld().spawnArrow(new Location(event.getPlayer().getWorld(), event.getPlayer().getLocation().getX(), event.getPlayer().getLocation().getY() + event.getPlayer().getEyeHeight(), event.getPlayer().getLocation().getZ()), event.getPlayer().getLocation().getDirection(), 3, 0);
-					knife1.setCustomName(event.getPlayer().getName());	
-					knife1.setBounce(false);
-					event.getPlayer().playSound(event.getPlayer().getLocation(), Sound.ENTITY_BAT_TAKEOFF, 0.5f, 1f);
-					
-					Bukkit.getScheduler().scheduleSyncDelayedTask(Main.getPlugin(Main.class), new Runnable() {
-					    @Override
-					    public void run() {
-					    	Arrow knife2 = event.getPlayer().getWorld().spawnArrow(new Location(event.getPlayer().getWorld(), event.getPlayer().getLocation().getX(), event.getPlayer().getLocation().getY() + event.getPlayer().getEyeHeight(), event.getPlayer().getLocation().getZ()), event.getPlayer().getLocation().getDirection(), 3, 0);
-					    	knife2.setCustomName(event.getPlayer().getName());
-							knife2.setBounce(false);
-							event.getPlayer().playSound(event.getPlayer().getLocation(), Sound.ENTITY_BAT_TAKEOFF, 0.5f, 1f);
-					    }
-					}, 3L);
+		Player user = event.getPlayer();
 
-					ChampCooldowns.knifeSwingCooldown.replace(event.getPlayer(), System.currentTimeMillis());
-				
-				}
+		if(user.getGameMode() == GameMode.SURVIVAL) {
+			//LEFT CLICK ARROW
+			if(user.getInventory().getItemInMainHand().getType() == Material.WOODEN_SWORD && (event.getAction() == Action.LEFT_CLICK_AIR || event.getAction() == Action.LEFT_CLICK_BLOCK)) {
+				Champ shooter = Champ.getChamp(user);
+				shooter.shoot();
 			}
 		
 			//RIGHT CLICK GOLDEN AXE (LEAP)
-			if(event.getPlayer().getInventory().getItemInMainHand().getType() == Material.GOLDEN_AXE && (event.getAction() == Action.RIGHT_CLICK_AIR || event.getAction() == Action.RIGHT_CLICK_BLOCK)) {
-				if(System.currentTimeMillis() - ChampCooldowns.axeLeapCooldown.get(event.getPlayer()) > (1000 * ChampList.axeLeapCooldown)) {
+			if(user.getInventory().getItemInMainHand().getType() == Material.GOLDEN_AXE && (event.getAction() == Action.RIGHT_CLICK_AIR || event.getAction() == Action.RIGHT_CLICK_BLOCK)) {
+				if(System.currentTimeMillis() - ChampCooldowns.axeLeapCooldown.get(user) > (1000 * ChampList.axeLeapCooldown)) {
 				
-					event.getPlayer().setVelocity(new Vector(event.getPlayer().getLocation().getDirection().getX()*ChampList.axeLeapStrengthHoriz, event.getPlayer().getLocation().getDirection().getY()*ChampList.axeLeapStrengthVert, event.getPlayer().getLocation().getDirection().getZ()*ChampList.axeLeapStrengthHoriz));
-					ChampCooldowns.axeLeapCooldown.replace(event.getPlayer(), System.currentTimeMillis());
+					user.setVelocity(new Vector(user.getLocation().getDirection().getX()*ChampList.axeLeapStrengthHoriz, user.getLocation().getDirection().getY()*ChampList.axeLeapStrengthVert, user.getLocation().getDirection().getZ()*ChampList.axeLeapStrengthHoriz));
+					ChampCooldowns.axeLeapCooldown.replace(user, System.currentTimeMillis());
 				
 				}
 			}
 		
 			//LEFT CLICK NETHERITE HOE (SHOOT)
-			if(event.getPlayer().getInventory().getItemInMainHand().getType() == Material.NETHERITE_HOE && (event.getAction() == Action.LEFT_CLICK_AIR || event.getAction() == Action.LEFT_CLICK_BLOCK)) {
+			if(user.getInventory().getItemInMainHand().getType() == Material.NETHERITE_HOE && (event.getAction() == Action.LEFT_CLICK_AIR || event.getAction() == Action.LEFT_CLICK_BLOCK)) {
 				
-				if(System.currentTimeMillis() - ChampCooldowns.gunShootCooldown.get(event.getPlayer()) > (1000 * ChampList.gunShootCooldown)) {
+				if(System.currentTimeMillis() - ChampCooldowns.gunShootCooldown.get(user) > (1000 * ChampList.gunShootCooldown)) {
 			
-					event.getPlayer().getWorld().playSound(event.getPlayer().getLocation(), Sound.ENTITY_DRAGON_FIREBALL_EXPLODE, 1f, 1f);
+					user.getWorld().playSound(user.getLocation(), Sound.ENTITY_DRAGON_FIREBALL_EXPLODE, 1f, 1f);
 				
-					Ray.playerRayCast(event.getPlayer(), 99, ChampList.gun.baseDamage);
+					Ray.playerRayCast(user, 99, ChampList.gun.baseDamage);
 					
-					ChampCooldowns.gunShootCooldown.replace(event.getPlayer(), System.currentTimeMillis());
+					ChampCooldowns.gunShootCooldown.replace(user, System.currentTimeMillis());
 				
 				}
 			}
 		
 			//RIGHT CLICK NETHERITE HOE (HEAL)
-			if(event.getPlayer().getInventory().getItemInMainHand().getType() == Material.NETHERITE_HOE && (event.getAction() == Action.RIGHT_CLICK_AIR || event.getAction() == Action.RIGHT_CLICK_BLOCK)) {
+			if(user.getInventory().getItemInMainHand().getType() == Material.NETHERITE_HOE && (event.getAction() == Action.RIGHT_CLICK_AIR || event.getAction() == Action.RIGHT_CLICK_BLOCK)) {
 			
-				if(System.currentTimeMillis() - ChampCooldowns.gunHealCooldown.get(event.getPlayer()) > (1000 * ChampList.gunHealCooldown)) {
+				if(System.currentTimeMillis() - ChampCooldowns.gunHealCooldown.get(user) > (1000 * ChampList.gunHealCooldown)) {
 				/*
-					event.getPlayer().playSound(event.getPlayer().getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1f, 1f);
+					user.playSound(user.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1f, 1f);
 				
-					Collection<Entity> entities = event.getPlayer().getWorld().getNearbyEntities(event.getPlayer().getLocation(), 6, 6, 5);
+					Collection<Entity> entities = user.getWorld().getNearbyEntities(user.getLocation(), 6, 6, 5);
 					Entity[] entityArray = entities.toArray(new Entity[entities.size()]);
 				
 					for(int i = 0; i < entityArray.length; i++) {
@@ -171,31 +154,31 @@ public class EventListener implements Listener {
 							Player pl = (Player)entityArray[i];
 						
 							if(b.getEntryTeam(entityArray[i].getName()).getName() != "spec") {
-								if(b.getEntryTeam(pl.getName()).getName() == b.getEntryTeam(event.getPlayer().getName()).getName()) {
+								if(b.getEntryTeam(pl.getName()).getName() == b.getEntryTeam(user.getName()).getName()) {
 							
-									DamageSystem.healPlayer(event.getPlayer(), pl, 60);
-									event.getPlayer().getWorld().spawnParticle(Particle.HEART, pl.getEyeLocation(), 10, 0.5, 1, 0.5, 0);
+									DamageSystem.healPlayer(user, pl, 60);
+									user.getWorld().spawnParticle(Particle.HEART, pl.getEyeLocation(), 10, 0.5, 1, 0.5, 0);
 							
 								}
 							}
 						}
 					}
 				
-					ChampCooldowns.gunHealCooldown.replace(event.getPlayer(), System.currentTimeMillis());
+					ChampCooldowns.gunHealCooldown.replace(user, System.currentTimeMillis());
 				*/
 					
-					ThrownPotion pot = event.getPlayer().launchProjectile(ThrownPotion.class);
-					pot.setVelocity(event.getPlayer().getLocation().getDirection());
-					pot.setCustomName(event.getPlayer().getName());
+					ThrownPotion pot = user.launchProjectile(ThrownPotion.class);
+					pot.setVelocity(user.getLocation().getDirection());
+					pot.setCustomName(user.getName());
 					
-					ChampCooldowns.gunHealCooldown.replace(event.getPlayer(), System.currentTimeMillis());
+					ChampCooldowns.gunHealCooldown.replace(user, System.currentTimeMillis());
 					
 				}
 			
 			}
 			//RIGHT CLICK BLOCK WOODEN SWORD (TRAP)
-			if(event.getPlayer().getInventory().getItemInMainHand().getType() == Material.WOODEN_SWORD && event.getAction() == Action.RIGHT_CLICK_BLOCK) {
-				if(System.currentTimeMillis() - ChampCooldowns.knifeTrapCooldown.get(event.getPlayer()) > (1000 * ChampList.knifeTrapCooldown)) {
+			if(user.getInventory().getItemInMainHand().getType() == Material.WOODEN_SWORD && event.getAction() == Action.RIGHT_CLICK_BLOCK) {
+				if(System.currentTimeMillis() - ChampCooldowns.knifeTrapCooldown.get(user) > (1000 * ChampList.knifeTrapCooldown)) {
 					
 					Location block = event.getClickedBlock().getLocation();
 					Location trap = block;
@@ -205,26 +188,26 @@ public class EventListener implements Listener {
 						
 						trap.getBlock().setType(Material.STONE_PRESSURE_PLATE);
 						
-						if(ChampCooldowns.knifeTrapLocation.containsKey(event.getPlayer()))
-							event.getPlayer().getWorld().getBlockAt(ChampCooldowns.knifeTrapLocation.get(event.getPlayer())).setType(Material.AIR);
+						if(ChampCooldowns.knifeTrapLocation.containsKey(user))
+							user.getWorld().getBlockAt(ChampCooldowns.knifeTrapLocation.get(user)).setType(Material.AIR);
 						else
-							ChampCooldowns.knifeTrapLocation.put(event.getPlayer(), trap);
+							ChampCooldowns.knifeTrapLocation.put(user, trap);
 						
-						ChampCooldowns.knifeTrapLocation.replace(event.getPlayer(), trap);
+						ChampCooldowns.knifeTrapLocation.replace(user, trap);
 						
-						ChampCooldowns.knifeTrapCooldown.replace(event.getPlayer(), System.currentTimeMillis());
+						ChampCooldowns.knifeTrapCooldown.replace(user, System.currentTimeMillis());
 						
 					}
 				}
 			}
 			//LEFT CLICK BOW (DISENGANGE)
-			if(event.getPlayer().getInventory().getItemInMainHand().getType() == Material.BOW && (event.getAction() == Action.LEFT_CLICK_AIR || event.getAction() == Action.LEFT_CLICK_BLOCK)) {
-				if(System.currentTimeMillis() - ChampCooldowns.bowPotCooldown.get(event.getPlayer()) > (1000 * ChampList.bowPotCooldown)) {
-					ThrownPotion pot = event.getPlayer().launchProjectile(ThrownPotion.class);
-					pot.setVelocity(event.getPlayer().getLocation().getDirection());
-					pot.setCustomName(event.getPlayer().getName());
+			if(user.getInventory().getItemInMainHand().getType() == Material.BOW && (event.getAction() == Action.LEFT_CLICK_AIR || event.getAction() == Action.LEFT_CLICK_BLOCK)) {
+				if(System.currentTimeMillis() - ChampCooldowns.bowPotCooldown.get(user) > (1000 * ChampList.bowPotCooldown)) {
+					ThrownPotion pot = user.launchProjectile(ThrownPotion.class);
+					pot.setVelocity(user.getLocation().getDirection());
+					pot.setCustomName(user.getName());
 					
-					ChampCooldowns.bowPotCooldown.replace(event.getPlayer(), System.currentTimeMillis());
+					ChampCooldowns.bowPotCooldown.replace(user, System.currentTimeMillis());
 				}
 			}
 			//HIT PRESSURE PLATE EVENT
@@ -233,9 +216,9 @@ public class EventListener implements Listener {
 				event.setCancelled(true);
 				event.getClickedBlock().setType(Material.AIR);
 
-				event.getPlayer().getWorld().playSound(event.getPlayer().getLocation(), Sound.BLOCK_CHEST_LOCKED, 1.0f, 0.5f);
+				user.getWorld().playSound(user.getLocation(), Sound.BLOCK_CHEST_LOCKED, 1.0f, 0.5f);
 				
-				DamageSystem.stunPlayer(event.getPlayer(), 40);
+				DamageSystem.stunPlayer(user, 40);
 				
 			}
 			//PICK CHAMP SIGN EVENT
@@ -246,9 +229,9 @@ public class EventListener implements Listener {
 					Sign sign = (Sign) event.getClickedBlock().getState();
 					
 					if(sign.getLine(1).equals("[Blue]"))
-						PlayerTeams.addToTeam(event.getPlayer(), "blue");
+						PlayerTeams.addToTeam(user, "blue");
 					if(sign.getLine(1).equals("[Red]"))
-						PlayerTeams.addToTeam(event.getPlayer(), "red");
+						PlayerTeams.addToTeam(user, "red");
 
 				}
 				//BLUE TEAM
@@ -256,17 +239,17 @@ public class EventListener implements Listener {
 					
 					Sign sign = (Sign) event.getClickedBlock().getState();
 					
-					if(b.getEntryTeam(event.getPlayer().getName()).getName() == "blue") {
+					if(b.getEntryTeam(user.getName()).getName() == "blue") {
 						if(sign.getLine(1).equals("[Impaler]"))
-							ChampList.setChamp(event.getPlayer(), ChampList.knife);
+							ChampList.setChamp(user, ChampList.knife);
 						if(sign.getLine(1).equals("[Beserker]"))
-							ChampList.setChamp(event.getPlayer(), ChampList.axe);
+							ChampList.setChamp(user, ChampList.axe);
 						if(sign.getLine(1).equals("[Knight]"))
-							ChampList.setChamp(event.getPlayer(), ChampList.sword);
+							ChampList.setChamp(user, ChampList.sword);
 						if(sign.getLine(1).equals("[Deputy]"))
-							ChampList.setChamp(event.getPlayer(), ChampList.gun);
+							ChampList.setChamp(user, ChampList.gun);
 						if(sign.getLine(1).equals("[Archer]"))
-							ChampList.setChamp(event.getPlayer(), ChampList.bow);
+							ChampList.setChamp(user, ChampList.bow);
 					}
 				}
 				//RED TEAM
@@ -274,17 +257,17 @@ public class EventListener implements Listener {
 					
 					Sign sign = (Sign) event.getClickedBlock().getState();
 					
-					if(b.getEntryTeam(event.getPlayer().getName()).getName() == "red") {
+					if(b.getEntryTeam(user.getName()).getName() == "red") {
 						if(sign.getLine(1).equals("[Impaler]"))
-							ChampList.setChamp(event.getPlayer(), ChampList.knife);
+							ChampList.setChamp(user, ChampList.knife);
 						if(sign.getLine(1).equals("[Beserker]"))
-							ChampList.setChamp(event.getPlayer(), ChampList.axe);
+							ChampList.setChamp(user, ChampList.axe);
 						if(sign.getLine(1).equals("[Knight]"))
-							ChampList.setChamp(event.getPlayer(), ChampList.sword);
+							ChampList.setChamp(user, ChampList.sword);
 						if(sign.getLine(1).equals("[Deputy]"))
-							ChampList.setChamp(event.getPlayer(), ChampList.gun);
+							ChampList.setChamp(user, ChampList.gun);
 						if(sign.getLine(1).equals("[Archer]"))
-							ChampList.setChamp(event.getPlayer(), ChampList.bow);
+							ChampList.setChamp(user, ChampList.bow);
 					}
 				}
 			}
@@ -293,48 +276,48 @@ public class EventListener implements Listener {
 	@EventHandler
 	public static void playerJoinEvent(PlayerJoinEvent event) {
 		
-		ChampList.playerChamp.remove(event.getPlayer());
-		event.getPlayer().getInventory().clear();
-		event.getPlayer().setLevel(0);
-		event.getPlayer().setHealth(20);
-		event.getPlayer().setFoodLevel(5);
-		event.getPlayer().setFlySpeed(0.1f);
-		event.getPlayer().setWalkSpeed(0.2f);
-		event.getPlayer().setGameMode(GameMode.SURVIVAL);
-		event.getPlayer().getAttribute(Attribute.GENERIC_ATTACK_SPEED).setBaseValue(64);
-		event.getPlayer().setAllowFlight(false);
+		ChampList.playerChamp.remove(user);
+		user.getInventory().clear();
+		user.setLevel(0);
+		user.setHealth(20);
+		user.setFoodLevel(5);
+		user.setFlySpeed(0.1f);
+		user.setWalkSpeed(0.2f);
+		user.setGameMode(GameMode.SURVIVAL);
+		user.getAttribute(Attribute.GENERIC_ATTACK_SPEED).setBaseValue(64);
+		user.setAllowFlight(false);
 		
-		for(PotionEffect p : event.getPlayer().getActivePotionEffects())
-			event.getPlayer().removePotionEffect(p.getType());
+		for(PotionEffect p : user.getActivePotionEffects())
+			user.removePotionEffect(p.getType());
 		
-		ChampCooldowns.knifeSwingCooldown.put(event.getPlayer(), (long)0);
-		ChampCooldowns.knifeTrapCooldown.put(event.getPlayer(), (long)0);
-		ChampCooldowns.swordSwingCooldown.put(event.getPlayer(), (long)0);
-		ChampCooldowns.axeSwingCooldown.put(event.getPlayer(), (long)0);
-		ChampCooldowns.axeLeapCooldown.put(event.getPlayer(), (long)0);
-		ChampCooldowns.gunShootCooldown.put(event.getPlayer(), (long)0);
-		ChampCooldowns.gunHealCooldown.put(event.getPlayer(), (long)0);
-		ChampCooldowns.bowPotCooldown.put(event.getPlayer(), (long)0);
+		ChampCooldowns.knifeSwingCooldown.put(user, (long)0);
+		ChampCooldowns.knifeTrapCooldown.put(user, (long)0);
+		ChampCooldowns.swordSwingCooldown.put(user, (long)0);
+		ChampCooldowns.axeSwingCooldown.put(user, (long)0);
+		ChampCooldowns.axeLeapCooldown.put(user, (long)0);
+		ChampCooldowns.gunShootCooldown.put(user, (long)0);
+		ChampCooldowns.gunHealCooldown.put(user, (long)0);
+		ChampCooldowns.bowPotCooldown.put(user, (long)0);
 		
-		PlayerTeams.addToTeam(event.getPlayer(), "spec");
+		PlayerTeams.addToTeam(user, "spec");
 		
-		event.getPlayer().teleport(event.getPlayer().getWorld().getSpawnLocation().add(new Location(event.getPlayer().getWorld(), 0.5, 0, 0.5)));
+		user.teleport(user.getWorld().getSpawnLocation().add(new Location(user.getWorld(), 0.5, 0, 0.5)));
 		
 	}
 	@EventHandler
 	public static void playerQuitEvent(PlayerQuitEvent event) {
 		
-		ChampCooldowns.knifeSwingCooldown.remove(event.getPlayer());
-		ChampCooldowns.knifeTrapCooldown.remove(event.getPlayer());
-		ChampCooldowns.swordSwingCooldown.remove(event.getPlayer());
-		ChampCooldowns.axeSwingCooldown.remove(event.getPlayer());
-		ChampCooldowns.axeLeapCooldown.remove(event.getPlayer());
-		ChampCooldowns.gunShootCooldown.remove(event.getPlayer());
-		ChampCooldowns.gunHealCooldown.remove(event.getPlayer());
-		ChampCooldowns.bowPotCooldown.remove(event.getPlayer());
+		ChampCooldowns.knifeSwingCooldown.remove(user);
+		ChampCooldowns.knifeTrapCooldown.remove(user);
+		ChampCooldowns.swordSwingCooldown.remove(user);
+		ChampCooldowns.axeSwingCooldown.remove(user);
+		ChampCooldowns.axeLeapCooldown.remove(user);
+		ChampCooldowns.gunShootCooldown.remove(user);
+		ChampCooldowns.gunHealCooldown.remove(user);
+		ChampCooldowns.bowPotCooldown.remove(user);
 		
-		if(ChampCooldowns.knifeTrapLocation.containsKey(event.getPlayer()))
-			event.getPlayer().getWorld().getBlockAt(ChampCooldowns.knifeTrapLocation.get(event.getPlayer())).setType(Material.AIR);
+		if(ChampCooldowns.knifeTrapLocation.containsKey(user))
+			user.getWorld().getBlockAt(ChampCooldowns.knifeTrapLocation.get(user)).setType(Material.AIR);
 		
 	}
 	@EventHandler
@@ -348,13 +331,13 @@ public class EventListener implements Listener {
 		Bukkit.getScheduler().scheduleSyncDelayedTask(Main.getPlugin(Main.class), new Runnable() {
 		    @Override
 		    public void run() {
-		        event.getPlayer().setFoodLevel(5);
+		        user.setFoodLevel(5);
 		    }
 		}, 1L);
-		if(b.getEntryTeam(event.getPlayer().getName()).getName().equals("blue")) {
-			event.setRespawnLocation(new Location(event.getPlayer().getWorld(), Main.blueX, Main.blueY, Main.blueZ));
-		} else if (b.getEntryTeam(event.getPlayer().getName()).getName().equals("red")) {
-			event.setRespawnLocation(new Location(event.getPlayer().getWorld(), Main.redX, Main.redY, Main.redZ));
+		if(b.getEntryTeam(user.getName()).getName().equals("blue")) {
+			event.setRespawnLocation(new Location(user.getWorld(), Main.blueX, Main.blueY, Main.blueZ));
+		} else if (b.getEntryTeam(user.getName()).getName().equals("red")) {
+			event.setRespawnLocation(new Location(user.getWorld(), Main.redX, Main.redY, Main.redZ));
 		}
 	}
 	@EventHandler
@@ -365,7 +348,7 @@ public class EventListener implements Listener {
 	}
 	@EventHandler
 	public static void blockBreakEvent(BlockBreakEvent event) {
-		if(event.getPlayer().getGameMode() == GameMode.SURVIVAL && event.getBlock().getType() != Material.STONE_PRESSURE_PLATE) {
+		if(user.getGameMode() == GameMode.SURVIVAL && event.getBlock().getType() != Material.STONE_PRESSURE_PLATE) {
 			event.setCancelled(true);
 		} else {
 			
@@ -379,21 +362,21 @@ public class EventListener implements Listener {
 	@EventHandler
 	public static void playerToggleSneakEvent(PlayerToggleSneakEvent event) {
 		
-		if(ChampList.playerChamp.get(event.getPlayer()) == ChampList.sword && event.getPlayer().getInventory().getItemInOffHand().getType() == Material.SHIELD) {
+		if(ChampList.playerChamp.get(user) == ChampList.sword && user.getInventory().getItemInOffHand().getType() == Material.SHIELD) {
 			new BukkitRunnable() {
             	public void run() {
                 
-            		if(event.getPlayer().isSneaking()) {
+            		if(user.isSneaking()) {
             			
-            			if(ChampCooldowns.swordShieldHealth.get(event.getPlayer()) < ChampList.swordShieldMaxHealth) {
+            			if(ChampCooldowns.swordShieldHealth.get(user) < ChampList.swordShieldMaxHealth) {
             				
-            				ChampCooldowns.swordShieldHealth.replace(event.getPlayer(), ChampCooldowns.swordShieldHealth.get(event.getPlayer()) + 5);
+            				ChampCooldowns.swordShieldHealth.replace(user, ChampCooldowns.swordShieldHealth.get(user) + 5);
             				
-            				if(ChampCooldowns.swordShieldHealth.get(event.getPlayer()) > ChampList.swordShieldMaxHealth) {
-            					ChampCooldowns.swordShieldHealth.replace(event.getPlayer(), ChampList.swordShieldMaxHealth);
+            				if(ChampCooldowns.swordShieldHealth.get(user) > ChampList.swordShieldMaxHealth) {
+            					ChampCooldowns.swordShieldHealth.replace(user, ChampList.swordShieldMaxHealth);
             				}
             				
-            				event.getPlayer().spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText("Shield Health: " + ChampCooldowns.swordShieldHealth.get(event.getPlayer()) + "/" + ChampList.swordShieldMaxHealth, ChatColor.YELLOW));
+            				user.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText("Shield Health: " + ChampCooldowns.swordShieldHealth.get(user) + "/" + ChampList.swordShieldMaxHealth, ChatColor.YELLOW));
             				
             			}
             			

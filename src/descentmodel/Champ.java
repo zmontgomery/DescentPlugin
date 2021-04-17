@@ -3,7 +3,6 @@ package descentmodel;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
-
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
@@ -62,12 +61,15 @@ public abstract class Champ{
     public String getChampName(){
         return this.CHAMP_NAME;
     }
+
     public Player getPlayer() {
         return this.PLAYER;
     }
+
     public float getMoveSpeed() {
         return MOVE_SPEED;
     }
+    
     public void shoot(){
         return;
     }
