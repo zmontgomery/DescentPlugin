@@ -26,7 +26,7 @@ public class Knight extends Champ{
     }
 
     @Override
-    public void abilityMelee(Champ champ) {
+    public void abilityInstant(Champ champ) {
         if(PLAYER.getInventory().getItemInMainHand().getType() == Material.IRON_SWORD) {
 				
 			PLAYER.playSound(champ.getPlayer().getLocation(), Sound.ITEM_SHIELD_BREAK, 1f, 1f);
@@ -34,7 +34,6 @@ public class Knight extends Champ{
 			
 			champ.takeDamage(45);
 		}
-        
     }
     
     @Override

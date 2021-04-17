@@ -2,6 +2,7 @@ package descentmodel;
 
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.Projectile;
 import org.bukkit.inventory.ItemStack;
 
 public class Hunter extends Champ{
@@ -17,7 +18,7 @@ public class Hunter extends Champ{
     }
 
     @Override
-    public void abilityRanged(Champ champ) {
+    public void abilityRanged(Champ champ, Projectile projectile) {
         champ.takeDamage(85);
     }
 }

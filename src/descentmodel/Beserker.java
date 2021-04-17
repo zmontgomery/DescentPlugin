@@ -3,7 +3,9 @@ package descentmodel;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
+import org.bukkit.event.block.Action;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.util.Vector;
 
 public class Beserker extends Champ{
     public static final int MAX_HEALTH = 225;
@@ -21,8 +23,15 @@ public class Beserker extends Champ{
         super(player, CHAMP_NAME, MOVE_SPEED, MAX_HEALTH, ITEMS, CLOTHES, LEFT_HAND);
     }
 
+	@Override
+	public void use(Action click) {
+		if(PLAYER.getInventory().getItemInMainHand().getType() == Material.GOLDEN_AXE && (click == Action.RIGHT_CLICK_AIR || click  == Action.RIGHT_CLICK_BLOCK)) {
+			PLAYER.setVelocity(new Vector(PLAYER.getLocation().getDirection().getX()*HORIZ_LEAP_STRENGTH, PLAYER.getLocation().getDirection().getY()* VERT_LEAP_STRENGTH, PLAYER.getLocation().getDirection().getZ()* HORIZ_LEAP_STRENGTH));
+		}
+	}
+
     @Override
-    public void abilityMelee(Champ champ) {
+    public void abilityInstant(Champ champ) {
         if(PLAYER.getInventory().getItemInMainHand().getType() == Material.GOLDEN_AXE) {
 			double velocity = Math.abs(PLAYER.getVelocity().getX()) + Math.abs(PLAYER.getVelocity().getY()) + Math.abs(PLAYER.getVelocity().getZ());
 			PLAYER.sendMessage(velocity + "");

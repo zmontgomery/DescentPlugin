@@ -4,6 +4,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.Projectile;
+import org.bukkit.event.block.Action;
 import org.bukkit.inventory.ItemStack;
 
 public abstract class Champ{
@@ -69,16 +71,16 @@ public abstract class Champ{
     public float getMoveSpeed() {
         return MOVE_SPEED;
     }
-    
-    public void shoot(){
+
+    public void use(Action click){
         return;
     }
 
-    public void abilityMelee(Champ champ){
+    public void abilityInstant(Champ champ){
         return;
     }
     
-    public void abilityRanged(Champ champ){
+    public void abilityRanged(Champ champ, Projectile projectile){
         return;
     }
 
