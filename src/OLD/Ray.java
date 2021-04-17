@@ -1,4 +1,4 @@
-package descentmodel;
+package descent;
 
 import java.util.Collection;
 
@@ -15,8 +15,8 @@ import org.bukkit.util.Vector;
 
 public class Ray {
 
-	public static void playerRayCast(Player shooter, int distance) {
-		boolean headShot = false;
+	public static void playerRayCast(Player shooter, int distance, int damage) {
+		
 		ScoreboardManager m = Bukkit.getScoreboardManager();
 		Scoreboard b = m.getMainScoreboard();
 		
@@ -50,17 +50,15 @@ public class Ray {
 								if(b.getEntryTeam(shooter.getName()).getName() != b.getEntryTeam(hit.getPlayer().getName()).getName()) {
 									
 									if(Math.abs(hit.getEyeLocation().getY() - bulletLocation.getY()) < 0.24) {
-										headShot = true;
+										damage = damage*2;
 										shooter.playSound(shooter.getLocation(), Sound.ENTITY_ARROW_HIT_PLAYER, 1f, 2f);
 									} else {
 										shooter.playSound(shooter.getLocation(), Sound.ENTITY_ARROW_HIT_PLAYER, 1f, 1f);
 									}
 								
 									hit.playSound(hit.getLocation(), Sound.ENTITY_GENERIC_HURT, 1f, 1f);
-									
-									Champ plattack = Champ.getChamp(shooter);
-									Champ pldefend = Champ.getChamp(hit);
-									plattack.abilityHitscan(pldefend, headShot);
+						
+									DamageSystem.damagePlayer(shooter, hit, damage);
 									
 									return;
 									

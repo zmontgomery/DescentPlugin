@@ -1,4 +1,4 @@
-package descentmodel;
+package descent;
 
 import java.util.Collection;
 import org.bukkit.Bukkit;
@@ -19,6 +19,7 @@ import org.bukkit.scoreboard.Score;
 import org.bukkit.scoreboard.Scoreboard;
 import org.bukkit.scoreboard.ScoreboardManager;
 import org.bukkit.util.Vector;
+
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.TextComponent;

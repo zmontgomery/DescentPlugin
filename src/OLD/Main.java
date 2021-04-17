@@ -1,4 +1,4 @@
-package descentmodel;
+package OLD;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -39,8 +39,9 @@ public class Main extends JavaPlugin {
     @Override
     public void onEnable() {
     	
-    	getServer().getPluginManager().registerEvents(new EventListener(), this);
+    	getServer().getPluginManager().registerEvents(new DescentListener(), this);
     	
+    	getCommand("champion").setExecutor(new CommandChamp());
     	getCommand("setteam").setExecutor(new CommandSetTeam());
     	
     	this.saveDefaultConfig();

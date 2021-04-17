@@ -1,4 +1,4 @@
-package descentmodel;
+package descent;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
