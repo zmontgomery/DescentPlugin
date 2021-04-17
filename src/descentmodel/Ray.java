@@ -15,8 +15,8 @@ import org.bukkit.util.Vector;
 
 public class Ray {
 
-	public static void playerRayCast(Player shooter, int distance, int damage) {
-		
+	public static void playerRayCast(Player shooter, int distance) {
+		boolean headShot = false;
 		ScoreboardManager m = Bukkit.getScoreboardManager();
 		Scoreboard b = m.getMainScoreboard();
 		
@@ -50,7 +50,7 @@ public class Ray {
 								if(b.getEntryTeam(shooter.getName()).getName() != b.getEntryTeam(hit.getPlayer().getName()).getName()) {
 									
 									if(Math.abs(hit.getEyeLocation().getY() - bulletLocation.getY()) < 0.24) {
-										damage = damage*2;
+										headShot = true;
 										shooter.playSound(shooter.getLocation(), Sound.ENTITY_ARROW_HIT_PLAYER, 1f, 2f);
 									} else {
 										shooter.playSound(shooter.getLocation(), Sound.ENTITY_ARROW_HIT_PLAYER, 1f, 1f);
@@ -60,7 +60,7 @@ public class Ray {
 									
 									Champ plattack = Champ.getChamp(shooter);
 									Champ pldefend = Champ.getChamp(hit);
-									plattack.abilityInstant(pldefend);
+									plattack.abilityHitscan(pldefend, headShot);
 									
 									return;
 									

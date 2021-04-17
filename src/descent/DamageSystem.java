@@ -21,7 +21,7 @@ import net.md_5.bungee.api.chat.TextComponent;
 public class DamageSystem {
 	
 	public static void damagePlayerMelee(Player plattack, Player pldefend) {
-		
+		//SWORD MELEE
 		if(plattack.getInventory().getItemInMainHand().getType() == Material.IRON_SWORD) {
 			
 			if(System.currentTimeMillis() - ChampCooldowns.swordSwingCooldown.get(plattack) > (1000 * ChampList.swordSwingCooldown)) {
@@ -37,6 +37,7 @@ public class DamageSystem {
 				
 			}
 		}
+		//BESERK MELEE
 		if(plattack.getInventory().getItemInMainHand().getType() == Material.GOLDEN_AXE) {
 			
 			if(System.currentTimeMillis() - ChampCooldowns.axeSwingCooldown.get(plattack) > (1000 * ChampList.axeSwingCooldown)) {

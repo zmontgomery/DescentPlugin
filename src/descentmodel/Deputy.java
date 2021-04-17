@@ -24,12 +24,16 @@ public class Deputy extends Champ{
     public void use(Action click) {
         if(PLAYER.getInventory().getItemInMainHand().getType() == Material.NETHERITE_HOE && (click == Action.LEFT_CLICK_AIR || click == Action.LEFT_CLICK_BLOCK)) {
             PLAYER.getWorld().playSound(PLAYER.getLocation(), Sound.ENTITY_DRAGON_FIREBALL_EXPLODE, 1f, 1f);
-            Ray.playerRayCast(PLAYER, 99, GUN_DAMAGE);
+            Ray.playerRayCast(PLAYER, 99);
         }
     }
 
     @Override
-    public void abilityInstant(Champ champ) {
-  
+    public void abilityHitscan(Champ champ, boolean headShot) {
+        int totalDamage = GUN_DAMAGE;
+        if(headShot){
+            totalDamage = totalDamage * 2;
+        }
+        champ.takeDamage(totalDamage);
     }
 }

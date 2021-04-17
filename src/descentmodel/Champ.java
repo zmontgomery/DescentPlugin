@@ -76,7 +76,11 @@ public abstract class Champ{
         return;
     }
 
-    public void abilityInstant(Champ champ){
+    public void abilityMelee(Champ champ){
+        return;
+    }
+
+    public void abilityHitscan(Champ champ, boolean headShot){
         return;
     }
     

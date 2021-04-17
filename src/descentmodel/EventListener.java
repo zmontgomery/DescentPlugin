@@ -52,7 +52,7 @@ public class EventListener implements Listener {
 			plattack = Champ.getChamp((Player)event.getDamager());
 			pldefend = Champ.getChamp((Player)event.getEntity());
 			if(b.getEntryTeam(pldefend.getName()).getName() != "spec")
-				plattack.abilityInstant(pldefend);
+				plattack.abilityMelee(pldefend);
 		}
 		//RANGED DAMAGE
 		if(event.getDamager() instanceof Projectile && event.getEntity() instanceof Player) {
