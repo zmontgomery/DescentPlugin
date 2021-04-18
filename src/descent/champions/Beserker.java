@@ -1,4 +1,4 @@
-package descent;
+package descent.champions;
 
 import org.bukkit.Material;
 import org.bukkit.Sound;

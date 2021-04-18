@@ -1,4 +1,4 @@
-package descent;
+package descent.champions;
 
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -10,10 +10,10 @@ public class Knight extends Champ{
     public static final String CHAMP_NAME = "Knight";
     public static final int MAX_SHIELD_HEALTH = 300;
     public static final float MOVE_SPEED = 0.23f;
+    public static final float MELEE_COOLDOWN = 0.4f;
     public static final ItemStack[] ITEMS = new ItemStack[]{new ItemStack(Material.IRON_SWORD)};
 	public static final ItemStack[] CLOTHES = new ItemStack[]{new ItemStack(Material.IRON_BOOTS), new ItemStack(Material.CHAINMAIL_LEGGINGS), new ItemStack(Material.IRON_CHESTPLATE), new ItemStack(Material.IRON_HELMET)};
 	public static final ItemStack LEFT_HAND = new ItemStack(Material.SHIELD);
-    public static final float MELEE_COOLDOWN = 0.4f;
     private int currentShieldHealth;
 
     public Knight(Player player){

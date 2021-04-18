@@ -31,6 +31,10 @@ import org.bukkit.scoreboard.Scoreboard;
 import org.bukkit.scoreboard.ScoreboardManager;
 import org.bukkit.util.Vector;
 
+import descent.champions.Champ;
+import descent.champions.Deputy;
+import descent.champions.Impaler;
+
 public class EventListener implements Listener {
 	
 	public static ScoreboardManager m = Bukkit.getScoreboardManager();

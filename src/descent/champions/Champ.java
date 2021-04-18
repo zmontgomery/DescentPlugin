@@ -1,4 +1,4 @@
-package descent;
+package descent.champions;
 
 import java.util.HashMap;
 import java.util.Map;

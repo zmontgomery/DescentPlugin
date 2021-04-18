@@ -1,10 +1,12 @@
-package descent;
+package descent.champions;
 
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.Action;
 import org.bukkit.inventory.ItemStack;
+
+import descent.Ray;
 
 public class Deputy extends Champ{
     public static final int MAX_HEALTH = 200;
