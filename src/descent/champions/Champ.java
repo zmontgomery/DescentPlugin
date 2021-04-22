@@ -51,6 +51,9 @@ public abstract class Champ{
     public static void clearChamp(Player player){
         Champ.players.remove(player);
     }
+    public int getMaxHealth() {
+    	return this.MAX_HEALTH;
+    }
 
     public int getCurrentHealth(){
         return this.currentHealth;

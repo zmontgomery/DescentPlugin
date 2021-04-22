@@ -13,6 +13,8 @@ import org.bukkit.scoreboard.Scoreboard;
 import org.bukkit.scoreboard.ScoreboardManager;
 import org.bukkit.util.Vector;
 
+import descent.champions.Champ;
+
 public class Ray {
 
 	public static void playerRayCast(Player shooter, int distance) {

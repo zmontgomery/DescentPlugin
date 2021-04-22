@@ -5,6 +5,7 @@ import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.attribute.Attribute;
+import org.bukkit.block.Sign;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -30,10 +31,12 @@ import org.bukkit.potion.PotionEffect;
 import org.bukkit.scoreboard.Scoreboard;
 import org.bukkit.scoreboard.ScoreboardManager;
 import org.bukkit.util.Vector;
-
+import descent.champions.Beserker;
 import descent.champions.Champ;
 import descent.champions.Deputy;
+import descent.champions.Hunter;
 import descent.champions.Impaler;
+import descent.champions.Knight;
 
 public class EventListener implements Listener {
 	
@@ -70,11 +73,28 @@ public class EventListener implements Listener {
 
 	@EventHandler
 	public static void playerInteractEvent(PlayerInteractEvent event) {
+		Player player = event.getPlayer();
 		if(event.getPlayer().getGameMode() == GameMode.SURVIVAL) {
 			Action click = event.getAction();
-			Player player = event.getPlayer();
 			Champ user = Champ.getChamp(player);
-			user.use(click);
+			if(user != null) {
+				user.use(click);
+			}
+		}
+		if(event.getAction() == Action.RIGHT_CLICK_BLOCK) {
+			if(event.getClickedBlock().getType() == Material.CRIMSON_WALL_SIGN) {
+				Sign sign = (Sign) event.getClickedBlock().getState();
+				if(sign.getLine(1).equals("[Impaler]"))
+					new Impaler(player);
+				if(sign.getLine(1).equals("[Beserker]"))
+					new Beserker(player);
+				if(sign.getLine(1).equals("[Knight]"))	
+					new Knight(player);
+				if(sign.getLine(1).equals("[Deputy]"))
+					new Deputy(player);
+				if(sign.getLine(1).equals("[Hunter]"))
+						new Hunter(player);
+			}
 		}
 	}
 
@@ -179,7 +199,7 @@ public class EventListener implements Listener {
 			Player pl = (Player)event.getEntity();
 			if(event.getItem().getItemStack().getType() == Material.DIAMOND) {
 				event.setCancelled(true);
-				if(pl.getLevel() < Champ.getChamp(pl).MAX_HEALTH) {
+				if(pl.getLevel() < Champ.getChamp(pl).getMaxHealth()) {
 					Champ.getChamp(pl).heal(100);
 					event.getItem().remove();
 					if(event.getItem().getCustomName().equals("bot"))
