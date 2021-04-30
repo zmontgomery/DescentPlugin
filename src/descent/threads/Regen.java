@@ -22,7 +22,9 @@ public class Regen implements Runnable {
 			} catch (InterruptedException e) {
 				// squash
 			}
-			champ.heal(3);
+			if(champ != null) {
+				champ.heal(3);
+			}
 		}
 	}
 

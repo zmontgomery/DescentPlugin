@@ -37,6 +37,7 @@ import descent.champions.Impaler;
 import descent.champions.Knight;
 import descent.champions.Ninja;
 import descent.threads.FoodSet;
+import descent.threads.Regen;
 
 public class EventListener implements Listener {
 
@@ -118,8 +119,8 @@ public class EventListener implements Listener {
 
 		Thread foodThread = new Thread(new FoodSet(player));
 		foodThread.start();
-
-		
+		Thread regen = new Thread(new Regen(player));
+		regen.start();
 
 		player.setFlySpeed(0.1f);
 		player.setWalkSpeed(0.2f);

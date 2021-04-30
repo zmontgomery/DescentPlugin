@@ -38,8 +38,6 @@ public abstract class Champ {
 		this.ITEMS = items;
 		this.CLOTHES = clothes;
 		this.LEFT_HAND = leftHand;
-		Thread regen = new Thread(new Regen(PLAYER));
-		regen.start();
 		initialize();
 	}
 
