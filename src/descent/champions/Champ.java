@@ -8,113 +8,117 @@ import org.bukkit.entity.Projectile;
 import org.bukkit.event.block.Action;
 import org.bukkit.inventory.ItemStack;
 
-public abstract class Champ{
+import descent.threads.Regen;
 
-    private static Map<Player, Champ> players = new HashMap<>();
-    public static final Random RNG = new Random();
+public abstract class Champ {
 
-    protected final Player PLAYER;
-    protected final String NAME;
-    protected final String CHAMP_NAME;
-    protected final int MAX_HEALTH;
-    protected final float MOVE_SPEED;
-    protected final ItemStack[] ITEMS;
-	protected final ItemStack[] CLOTHES;
-	protected final ItemStack LEFT_HAND;
-    protected int currentHealth;
-    
-    protected Champ(Player player, String champName, float moveSpeed, int maxHealth, ItemStack[] items, ItemStack[] clothes, ItemStack leftHand){
-        Champ.addChamp(player, this);
-        this.PLAYER = player;
-        this.NAME = player.getName();
-        this.CHAMP_NAME = champName;
-        this.MOVE_SPEED = moveSpeed;
-        this.MAX_HEALTH = maxHealth;
-        this.currentHealth = maxHealth;
-        this.ITEMS = items;
-        this.CLOTHES = clothes;
-        this.LEFT_HAND = leftHand;
-    }
+	private static Map<Player, Champ> players = new HashMap<>();
+	public static final Random RNG = new Random();
 
-    public static void addChamp(Player player, Champ champ){
-        players.put(player, champ);
-    }
-    
-    public static Champ getChamp(Player player){
-        if(players.containsKey(player)){
-            return players.get(player);
-        } else {
-            return null;
-        }
-    }
+	public final Player PLAYER;
+	public final String NAME;
+	public final String CHAMP_NAME;
+	public final double MAX_HEALTH;
+	public final float MOVE_SPEED;
+	public final ItemStack[] ITEMS;
+	public final ItemStack[] CLOTHES;
+	public final ItemStack LEFT_HAND;
+	protected double currentHealth;
 
-    public static void clearChamp(Player player){
-        Champ.players.remove(player);
-    }
-    public int getMaxHealth() {
-    	return this.MAX_HEALTH;
-    }
+	protected Champ(Player player, String champName, float moveSpeed, double maxHealth, ItemStack[] items,
+			ItemStack[] clothes, ItemStack leftHand) {
+		clearChamp(player);
+		addChamp(player, this);
+		this.PLAYER = player;
+		this.NAME = player.getName();
+		this.CHAMP_NAME = champName;
+		this.MOVE_SPEED = moveSpeed;
+		this.MAX_HEALTH = maxHealth;
+		this.currentHealth = maxHealth;
+		this.ITEMS = items;
+		this.CLOTHES = clothes;
+		this.LEFT_HAND = leftHand;
+		Thread regen = new Thread(new Regen(PLAYER));
+		regen.start();
+		initialize();
+	}
 
-    public int getCurrentHealth(){
-        return this.currentHealth;
-    }
+	public static void addChamp(Player player, Champ champ) {
+		players.put(player, champ);
+	}
 
-    public String getName(){
-        return this.NAME;
-    }
+	public static Champ getChamp(Player player) {
+		if (players.containsKey(player)) {
+			return players.get(player);
+		} else {
+			return null;
+		}
+	}
 
-    public String getChampName(){
-        return this.CHAMP_NAME;
-    }
+	public static void clearChamp(Player player) {
+		Champ.players.remove(player);
+	}
 
-    public Player getPlayer() {
-        return this.PLAYER;
-    }
+	public double getCurrentHealth() {
+		return this.currentHealth;
+	}
 
-    public float getMoveSpeed() {
-        return MOVE_SPEED;
-    }
+	public void use(Action click) {
+		return;
+	}
 
-    public void use(Action click){
-        return;
-    }
+	public void abilityMelee(Champ champ) {
+		return;
+	}
 
-    public void abilityMelee(Champ champ){
-        return;
-    }
+	public void abilityHitscan(Champ champ, boolean headShot) {
+		return;
+	}
 
-    public void abilityHitscan(Champ champ, boolean headShot){
-        return;
-    }
-    
-    public void abilityRanged(Champ champ, Projectile projectile){
-        return;
-    }
+	public void abilityRanged(Champ champ, Projectile projectile) {
+		return;
+	}
 
-    public void heal(int amount){
-        this.currentHealth += amount;
-        if(this.currentHealth > this.MAX_HEALTH){
-            this.currentHealth = MAX_HEALTH;
-        }
-        updatePlayerHealth();
-    }
+	public void bow(double force) {
+		return;
+	}
 
-    public void takeDamage(int amount){
-        this.currentHealth -= amount;
-        if(this.currentHealth < 0){
-            this.currentHealth = 0;
-        }
-        updatePlayerHealth();
-    }
+	public void initialize() {
+		currentHealth = MAX_HEALTH;
+		PLAYER.setHealth(20);
+		PLAYER.setFoodLevel(5);
+		PLAYER.setWalkSpeed(MOVE_SPEED);
+		PLAYER.getInventory().clear();
+		PLAYER.getInventory().setContents(ITEMS);
+		PLAYER.getInventory().setArmorContents(CLOTHES);
+		PLAYER.getInventory().setItemInOffHand(LEFT_HAND);
+		return;
+	}
 
-    public void updatePlayerHealth(){
-        double ratio = (double) this.currentHealth / (double) MAX_HEALTH;
-        double converted = ratio * 20;
-        this.PLAYER.setHealth((int)converted);
-    }
+	public void heal(int amount) {
+		if(!PLAYER.isDead()) {
+			this.currentHealth += amount;
+			if (this.currentHealth > this.MAX_HEALTH) {
+				this.currentHealth = MAX_HEALTH;
+			}
+			updatePlayerHealth();
+		}
+	}
 
-    @Override
-    public String toString() {
-        return this.NAME + "(" + this.CHAMP_NAME + ")" + ": HEALTH=" + this.currentHealth;
-    }
+	public void takeDamage(int amount) {
+		this.currentHealth -= amount;
+		if (this.currentHealth < 0) {
+			this.currentHealth = 0;
+		}
+		updatePlayerHealth();
+	}
+
+	public void updatePlayerHealth() {
+		this.PLAYER.setHealth(20 * (this.currentHealth / this.MAX_HEALTH));
+	}
+
+	@Override
+	public String toString() {
+		return this.NAME + "(" + this.CHAMP_NAME + ")" + ": HEALTH=" + this.currentHealth;
+	}
 }
