@@ -11,10 +11,13 @@ public class Beserker extends Champ {
 	public static final double MAX_HEALTH = 225;
 	public static final String CHAMP_NAME = "Beserker";
 	public static final float MOVE_SPEED = 0.26f;
+	public static final double NATURAL_REGEN = 5.0;
 	public static final ItemStack[] ITEMS = new ItemStack[] { new ItemStack(Material.GOLDEN_AXE) };
 	public static final ItemStack[] CLOTHES = new ItemStack[] { new ItemStack(Material.CHAINMAIL_BOOTS), null, null,
 			new ItemStack(Material.CHAINMAIL_HELMET) };
 	public static final ItemStack LEFT_HAND = null;
+	public static final Sound HURT_SOUND = Sound.BLOCK_GILDED_BLACKSTONE_STEP;
+	
 
 	// Damage
 	public static final float VERT_LEAP_STRENGTH = 1.5f;
@@ -29,7 +32,7 @@ public class Beserker extends Champ {
 	private long timeAtLastLeap;
 
 	public Beserker(Player player) {
-		super(player, CHAMP_NAME, MOVE_SPEED, MAX_HEALTH, ITEMS, CLOTHES, LEFT_HAND);
+		super(player, CHAMP_NAME, MOVE_SPEED, NATURAL_REGEN, MAX_HEALTH, ITEMS, CLOTHES, LEFT_HAND, HURT_SOUND);
 		timeAtLastSwing = System.currentTimeMillis() - (int)(1000 * AXE_COOLDOWN);
 		timeAtLastLeap = System.currentTimeMillis() - (int)(1000 * AXE_LEAP_COOLDOWN);
 	}
@@ -60,7 +63,6 @@ public class Beserker extends Champ {
 			} else {
 				PLAYER.playSound(defend.getLocation(), Sound.ITEM_SHIELD_BREAK, 1f, 1f);
 			}
-			defend.playSound(defend.getLocation(), Sound.ENTITY_GENERIC_HURT, 1f, 1f);
 			champ.takeDamage(damage);
 			timeAtLastSwing = System.currentTimeMillis();
 		}

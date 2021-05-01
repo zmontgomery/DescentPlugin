@@ -8,12 +8,14 @@ import org.bukkit.inventory.ItemStack;
 public class Knight extends Champ {
 	public static final double MAX_HEALTH = 300;
 	public static final String CHAMP_NAME = "Knight";
-	public static final float MOVE_SPEED = 0.23f;
+	public static final float MOVE_SPEED = 0.24f;
+	public static final double NATURAL_REGEN = 2.0;
 	public static final ItemStack[] ITEMS = new ItemStack[] { new ItemStack(Material.IRON_SWORD) };
 	public static final ItemStack[] CLOTHES = new ItemStack[] { new ItemStack(Material.IRON_BOOTS),
 			new ItemStack(Material.CHAINMAIL_LEGGINGS), new ItemStack(Material.IRON_CHESTPLATE),
 			new ItemStack(Material.IRON_HELMET) };
 	public static final ItemStack LEFT_HAND = new ItemStack(Material.SHIELD);
+	public static final Sound HURT_SOUND = null;
 
 	public static final short MAX_SHIELD_HEALTH = 300;
 	private short currentShieldHealth;
@@ -25,9 +27,9 @@ public class Knight extends Champ {
 	private long timeAtLastSwing;
 
 	public Knight(Player player) {
-		super(player, CHAMP_NAME, MOVE_SPEED, MAX_HEALTH, ITEMS, CLOTHES, LEFT_HAND);
+		super(player, CHAMP_NAME, MOVE_SPEED, NATURAL_REGEN, MAX_HEALTH, ITEMS, CLOTHES, LEFT_HAND, HURT_SOUND);
 		this.currentShieldHealth = Knight.MAX_SHIELD_HEALTH;
-		timeAtLastSwing = System.currentTimeMillis() - (int)(1000 * MELEE_COOLDOWN);
+		timeAtLastSwing = System.currentTimeMillis() - (int) (1000 * MELEE_COOLDOWN);
 	}
 
 	public int getCurrentShieldHealth() {
@@ -40,14 +42,13 @@ public class Knight extends Champ {
 		if (PLAYER.getInventory().getItemInMainHand().getType() == Material.IRON_SWORD
 				&& (System.currentTimeMillis() - timeAtLastSwing > (1000 * MELEE_COOLDOWN))) {
 			PLAYER.playSound(defend.getLocation(), Sound.ITEM_SHIELD_BREAK, 1f, 1f);
-			PLAYER.playSound(defend.getLocation(), Sound.ENTITY_GENERIC_HURT, 1f, 1f);
 			champ.takeDamage(SWORD_DAMAGE);
 			timeAtLastSwing = System.currentTimeMillis();
 		}
 	}
 
 	@Override
-	public void takeDamage(int amount) {
+	public void takeDamage(double amount) {
 		if (this.currentShieldHealth > 0 && PLAYER.isBlocking()) {
 			this.currentShieldHealth -= amount;
 			if (this.currentShieldHealth < 0) {

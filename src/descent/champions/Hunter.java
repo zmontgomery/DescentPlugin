@@ -1,6 +1,7 @@
 package descent.champions;
 
 import org.bukkit.Material;
+import org.bukkit.Sound;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
@@ -10,16 +11,18 @@ public class Hunter extends Champ {
 	public static final double MAX_HEALTH = 150;
 	public static final String CHAMP_NAME = "Hunter";
 	public static final float MOVE_SPEED = 0.25f;
+	public static final double NATURAL_REGEN = 7.0;
 	public static final ItemStack[] ITEMS = new ItemStack[] { new ItemStack(Material.BOW) };
 	public static final ItemStack[] CLOTHES = new ItemStack[] { null, null, null,
 			new ItemStack(Material.CHAINMAIL_HELMET) };
 	public static final ItemStack LEFT_HAND = new ItemStack(Material.ARROW, 64);
+	public static final Sound HURT_SOUND = null;
 	
 	//Damage
 	public static final int BOW_DAMAGE = 85;
 
 	public Hunter(Player player) {
-		super(player, CHAMP_NAME, MOVE_SPEED, MAX_HEALTH, ITEMS, CLOTHES, LEFT_HAND);
+		super(player, CHAMP_NAME, MOVE_SPEED, NATURAL_REGEN, MAX_HEALTH, ITEMS, CLOTHES, LEFT_HAND, HURT_SOUND);
 	}
 
 	@Override

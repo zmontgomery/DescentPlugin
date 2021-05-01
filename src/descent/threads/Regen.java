@@ -6,12 +6,9 @@ import descent.champions.Champ;
 
 public class Regen implements Runnable {
 	private Player player;
-	private Champ champ;
 
 	public Regen(Player player) {
 		this.player = player;
-		this.champ = Champ.getChamp(player);
-
 	}
 
 	@Override
@@ -22,8 +19,9 @@ public class Regen implements Runnable {
 			} catch (InterruptedException e) {
 				// squash
 			}
+			Champ champ = Champ.getChamp(player);
 			if(champ != null) {
-				champ.heal(3);
+				champ.heal(3.0);
 			}
 		}
 	}

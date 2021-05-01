@@ -15,6 +15,7 @@ public class Avatar extends Champ {
 	public static final double MAX_HEALTH = 400;
 	public static final String CHAMP_NAME = "Avatar";
 	public static final float MOVE_SPEED = 0.4f;
+	public static final double NATURAL_REGEN = 10.0;
 	public static final float SHOOT_COOLDOWN = 0.1f;
 	public static final int GUN_DAMAGE = 64;
 	public static final float AXE_COOLDOWN = 0.75f;
@@ -26,9 +27,10 @@ public class Avatar extends Champ {
 	public static final ItemStack[] CLOTHES = new ItemStack[] { null, new ItemStack(Material.CHAINMAIL_LEGGINGS), null,
 			null };
 	public static final ItemStack LEFT_HAND = new ItemStack(Material.ARROW, 64);
+	public static final Sound HURT_SOUND = Sound.ENTITY_GHAST_SCREAM;
 
 	public Avatar(Player player) {
-		super(player, CHAMP_NAME, MOVE_SPEED, MAX_HEALTH, ITEMS, CLOTHES, LEFT_HAND);
+		super(player, CHAMP_NAME, MOVE_SPEED, NATURAL_REGEN, MAX_HEALTH, ITEMS, CLOTHES, LEFT_HAND, HURT_SOUND);
 	}
 
 	@Override

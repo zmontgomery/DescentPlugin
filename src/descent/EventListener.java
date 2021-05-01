@@ -32,10 +32,12 @@ import descent.champions.Avatar;
 import descent.champions.Beserker;
 import descent.champions.Champ;
 import descent.champions.Deputy;
+import descent.champions.Generic;
 import descent.champions.Hunter;
 import descent.champions.Impaler;
 import descent.champions.Knight;
 import descent.champions.Ninja;
+import descent.champions.ShaneLee;
 import descent.threads.FoodSet;
 import descent.threads.Regen;
 
@@ -95,6 +97,8 @@ public class EventListener implements Listener {
 					new Ninja(player);
 				if (sign.getLine(1).equals("[Avatar]"))
 					new Avatar(player);
+				if (sign.getLine(1).equals("[Shane Lee]"))
+					new ShaneLee(player);
 			}
 		}
 	}
@@ -113,6 +117,7 @@ public class EventListener implements Listener {
 	public static void playerJoinEvent(PlayerJoinEvent event) {
 		Player player = event.getPlayer();
 		Champ.clearChamp(player);
+		new Generic(player);
 		player.getInventory().clear();
 		player.setLevel(0);
 		player.setHealth(20);
