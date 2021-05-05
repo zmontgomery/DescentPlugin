@@ -56,18 +56,18 @@ public class Ray {
 
 	public static void teleportRayCast(Player shooter, int distance) {
 		World w = shooter.getWorld();
-		Location l = new Location(w, shooter.getLocation().getX(),
-				shooter.getLocation().getY(), shooter.getLocation().getZ());
+		Location l = shooter.getEyeLocation();
 		Vector v = shooter.getLocation().getDirection();
 
 		double x = v.getX();
 		double y = v.getY();
 		double z = v.getZ();
-		Location endLocation = shooter.getLocation();
+		
+		Location endLocation = shooter.getEyeLocation();
 
 		for (double i = 0; i < distance; i = i + 0.1) {
 
-			endLocation = new Location(w, l.getX() + (i * x), l.getY() + (i * y), l.getZ() + (i * z));
+			endLocation = new Location(w, l.getX() + (i * x), l.getY() + (i * y), l.getZ() + (i * z), l.getYaw(), l.getPitch());
 
 			if (i > 1) {
 
@@ -78,11 +78,7 @@ public class Ray {
 
 				} else {
 					shooter.teleport(endLocation);
-					//FIX THIS
-					//set player to face same direction they started with
-					shooter.getLocation().setDirection(v);
 					return;
-
 				}
 			}
 		}

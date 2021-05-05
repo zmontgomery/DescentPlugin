@@ -1,12 +1,22 @@
 package descent;
 
+import java.util.LinkedList;
+import java.util.List;
+
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.Particle;
+import org.bukkit.Sound;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.block.Sign;
+import org.bukkit.craftbukkit.v1_16_R3.CraftWorld;
+import org.bukkit.craftbukkit.v1_16_R3.entity.CraftEntity;
+import org.bukkit.craftbukkit.v1_16_R3.entity.CraftPlayer;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
 import org.bukkit.event.EventHandler;
@@ -21,13 +31,22 @@ import org.bukkit.event.entity.ItemDespawnEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.entity.PotionSplashEvent;
 import org.bukkit.event.hanging.HangingBreakByEntityEvent;
+import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.event.player.PlayerToggleSneakEvent;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
+import org.bukkit.potion.PotionType;
+import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
+
+import com.mojang.datafixers.util.Pair;
+
+import descent.champions.Alchemist;
 import descent.champions.Avatar;
 import descent.champions.Beserker;
 import descent.champions.Champ;
@@ -40,6 +59,16 @@ import descent.champions.Ninja;
 import descent.champions.ShaneLee;
 import descent.threads.FoodSet;
 import descent.threads.Regen;
+import net.minecraft.server.v1_16_R3.EntityParrot;
+import net.minecraft.server.v1_16_R3.EntityTypes;
+import net.minecraft.server.v1_16_R3.EnumItemSlot;
+import net.minecraft.server.v1_16_R3.NBTTagCompound;
+import net.minecraft.server.v1_16_R3.PacketPlayOutEntityDestroy;
+import net.minecraft.server.v1_16_R3.PacketPlayOutEntityEquipment;
+import net.minecraft.server.v1_16_R3.PacketPlayOutEntityTeleport;
+import net.minecraft.server.v1_16_R3.PacketPlayOutSpawnEntity;
+import net.minecraft.server.v1_16_R3.PlayerConnection;
+import net.minecraft.server.v1_16_R3.WorldServer;
 
 public class EventListener implements Listener {
 
@@ -99,6 +128,8 @@ public class EventListener implements Listener {
 					new Avatar(player);
 				if (sign.getLine(1).equals("[Shane Lee]"))
 					new ShaneLee(player);
+				if (sign.getLine(1).equals("[Alchemist]"))
+					new Alchemist(player);
 			}
 		}
 	}
@@ -233,26 +264,16 @@ public class EventListener implements Listener {
 	@EventHandler
 	public static void potionSplashEvent(PotionSplashEvent event) {
 
-		if (Champ.getChamp(Bukkit.getPlayerExact(event.getPotion().getCustomName())) instanceof Impaler) {
+		if (Champ.getChamp((Player) event.getPotion().getShooter()) instanceof Alchemist) {
 			for (Entity ent : event.getAffectedEntities()) {
 				if (ent instanceof Player) {
-
+					
 					Player pl = (Player) ent;
-
-					double x = pl.getLocation().getX() - event.getPotion().getLocation().getX();
-					double z = pl.getLocation().getZ() - event.getPotion().getLocation().getZ();
-
-					final double r = 4.125;
-					final double m = 3.0;
-
-					Vector pushBack = new Vector();
-
-					pushBack.setX(m * (x / r));
-					pushBack.setZ(m * (z / r));
-					pushBack.setY(1.25 * ((r - Math.abs(x)) / r) * ((r - Math.abs(z)) / r));
-
-					pl.setVelocity(pushBack);
-
+					
+					Champ c = Champ.getChamp(pl);
+					
+					c.heal(Alchemist.POTION_HEAL);
+					
 				}
 			}
 		} else if (Champ.getChamp(Bukkit.getPlayerExact(event.getPotion().getCustomName())) instanceof Deputy) {
@@ -262,6 +283,85 @@ public class EventListener implements Listener {
 					// DamageSystem.stunPlayer(pl, 20);
 				}
 			}
+		}
+	}
+	@EventHandler
+	public static void playerDropItemEvent(PlayerDropItemEvent event) {
+		if(event.getItemDrop().getItemStack().getType() == Material.GOLDEN_SWORD) {
+			event.setCancelled(true);
+			event.getPlayer().setInvisible(true);
+			event.getPlayer().getWorld()
+			.spawnParticle(Particle.SMOKE_NORMAL, 
+					event.getPlayer().getLocation().getX(), event.getPlayer().getLocation().getY() + 1, event.getPlayer().getLocation().getZ(),
+					75, 0.5, 1, 0.5, 0, null, true);
+			event.getPlayer().getWorld().playSound(event.getPlayer().getLocation(), Sound.ITEM_FIRECHARGE_USE, 100, 1);
+			event.getPlayer().addPotionEffect(new PotionEffect(PotionEffectType.SPEED, 100, 1, true));
+			
+			Main.sendEquipmentInvisiblePacket(event.getPlayer(), true);
+			
+	        new BukkitRunnable() {
+	            
+	            @Override
+	            public void run() {
+	            	event.getPlayer().setInvisible(false);
+	            	Main.sendEquipmentInvisiblePacket(event.getPlayer(), false);
+	            }
+	            
+	        }.runTaskLater(Main.getPlugin(Main.class), 100);
+		}
+		if(event.getItemDrop().getItemStack().getType() == Material.APPLE) {
+			event.setCancelled(true);
+			
+			Entity transformation = event.getPlayer().getWorld().spawnEntity(event.getPlayer().getLocation(), EntityType.PARROT);
+			net.minecraft.server.v1_16_R3.Entity nmsTrans = ((CraftEntity) transformation).getHandle();
+			NBTTagCompound nbt = new NBTTagCompound();
+			nbt.setInt("NoAI", 1);
+			nmsTrans.a_(nbt);
+			
+			Bukkit.getScheduler().scheduleSyncRepeatingTask(Main.getPlugin(Main.class), new Runnable() {
+			    @Override
+			    public void run() {
+			        transformation.teleport(event.getPlayer());
+			    }
+			}, 0L, 1L);
+			
+			event.getPlayer().getWorld()
+			.spawnParticle(Particle.CAMPFIRE_COSY_SMOKE, 
+					event.getPlayer().getLocation().getX(), event.getPlayer().getLocation().getY() + 1, event.getPlayer().getLocation().getZ(),
+					75, 0.5, 1, 0.5, 0, null, true);
+			event.getPlayer().getWorld().playSound(event.getPlayer().getLocation(), Sound.ITEM_FIRECHARGE_USE, 100, 1);
+			
+			event.getPlayer().setInvisible(true);
+			Main.sendEquipmentInvisiblePacket(event.getPlayer(), true);
+		}
+		if(event.getItemDrop().getItemStack().getType() == Material.GOLDEN_APPLE) {
+			event.setCancelled(true);
+			
+			Entity transformation = event.getPlayer().getWorld().spawnEntity(event.getPlayer().getLocation(), EntityType.IRON_GOLEM);
+			LivingEntity t = (LivingEntity) transformation;
+			t.setAI(false);
+			t.setInvulnerable(true);
+
+			Bukkit.getScheduler().scheduleSyncRepeatingTask(Main.getPlugin(Main.class), new Runnable() {
+			    @Override
+			    public void run() {
+			        transformation.teleport(event.getPlayer());
+			    }
+			}, 0L, 1L);
+			
+			PacketPlayOutEntityDestroy packet = new PacketPlayOutEntityDestroy(transformation.getEntityId());
+			
+			PlayerConnection conn = ((CraftPlayer) event.getPlayer()).getHandle().playerConnection;
+			conn.sendPacket(packet);
+
+			event.getPlayer().getWorld()
+			.spawnParticle(Particle.CAMPFIRE_COSY_SMOKE, 
+					event.getPlayer().getLocation().getX(), event.getPlayer().getLocation().getY() + 1, event.getPlayer().getLocation().getZ(),
+					75, 0.5, 1, 0.5, 0, null, true);
+			event.getPlayer().getWorld().playSound(event.getPlayer().getLocation(), Sound.ITEM_FIRECHARGE_USE, 100, 1);
+			
+			event.getPlayer().setInvisible(true);
+			Main.sendEquipmentInvisiblePacket(event.getPlayer(), true);
 		}
 	}
 }

@@ -14,6 +14,8 @@ public class CommandStats implements CommandExecutor {
 	public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
 		Player player = Bukkit.getPlayerExact(sender.getName());
 		player.sendMessage(Champ.getChamp(player).toString());
+		Champ c = Champ.getChamp(player);
+		c.takeDamage(100);
 		return true;
 	}
 }

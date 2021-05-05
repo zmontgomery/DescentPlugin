@@ -1,11 +1,13 @@
 package descent.champions;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.Action;
 import org.bukkit.inventory.ItemStack;
 
+import descent.Main;
 import descent.Ray;
 
 public class Ninja extends Champ {
@@ -26,7 +28,7 @@ public class Ninja extends Champ {
 	public static final float FLASH_COOLDOWN = 1.5f;
 	private long timeAtLastSwing;
 	private long timeAtLastFlash;
-
+	
 	public Ninja(Player player) {
 		super(player, CHAMP_NAME, MOVE_SPEED, NATURAL_REGEN, MAX_HEALTH, ITEMS, CLOTHES, LEFT_HAND, HURT_SOUND);
 		timeAtLastSwing = System.currentTimeMillis() - (int)(1000 * DAGGAR_COOLDOWN);
@@ -37,9 +39,20 @@ public class Ninja extends Champ {
 	public void abilityMelee(Champ champ) {
 		Player defend = champ.PLAYER;
 		if (PLAYER.getInventory().getItemInMainHand().getType() == Material.GOLDEN_SWORD && (System.currentTimeMillis() - timeAtLastSwing > (1000 * DAGGAR_COOLDOWN))) {
-			PLAYER.playSound(defend.getLocation(), Sound.ITEM_SHIELD_BREAK, 1f, 1f);
-			champ.takeDamage(DAGGAR_DAMAGE);
-			timeAtLastSwing = System.currentTimeMillis();
+			Bukkit.broadcastMessage(PLAYER.getLocation().getDirection().getX() + " + " + defend.getLocation().getDirection().getX());
+			if(PLAYER.getLocation().getDirection().getX() == defend.getLocation().getDirection().getX()) {
+				PLAYER.playSound(defend.getLocation(), Sound.ITEM_SHIELD_BREAK, 1f, 1.5f);
+				champ.takeDamage(DAGGAR_DAMAGE*2);
+				timeAtLastSwing = System.currentTimeMillis();
+			} else {
+				PLAYER.playSound(defend.getLocation(), Sound.ITEM_SHIELD_BREAK, 1f, 1f);
+				champ.takeDamage(DAGGAR_DAMAGE);
+				timeAtLastSwing = System.currentTimeMillis();
+			}
+			if(PLAYER.isInvisible()) {
+				PLAYER.setInvisible(false);
+				Main.sendEquipmentInvisiblePacket(PLAYER, false);
+			}
 		}
 	}
 
@@ -49,6 +62,8 @@ public class Ninja extends Champ {
 				&& (click == Action.RIGHT_CLICK_AIR || click == Action.RIGHT_CLICK_BLOCK) && (System.currentTimeMillis() - timeAtLastFlash > (1000 * FLASH_COOLDOWN))) {
 			Ray.teleportRayCast(PLAYER, 10);
 			timeAtLastFlash = System.currentTimeMillis();
+			PLAYER.setInvisible(false);
+			Main.sendEquipmentInvisiblePacket(PLAYER, false);
 		}
 	}
 }

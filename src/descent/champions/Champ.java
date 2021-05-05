@@ -4,11 +4,18 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Sound;
+import org.bukkit.craftbukkit.v1_16_R3.CraftWorld;
+import org.bukkit.craftbukkit.v1_16_R3.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
 import org.bukkit.event.block.Action;
 import org.bukkit.inventory.ItemStack;
+
+import net.minecraft.server.v1_16_R3.PacketPlayOutWorldBorder;
+import net.minecraft.server.v1_16_R3.PlayerConnection;
+import net.minecraft.server.v1_16_R3.WorldBorder;
 
 public abstract class Champ {
 
@@ -106,7 +113,7 @@ public abstract class Champ {
 			updatePlayerHealth();
 		}
 	}
-
+	
 	public void takeDamage(double amount) {
 		this.currentHealth -= amount;
 		if (this.currentHealth < 0) {
@@ -114,6 +121,25 @@ public abstract class Champ {
 		}
 		PLAYER.playSound(PLAYER.getLocation(), HURT_SOUND, 1f, 1f);
 		updatePlayerHealth();
+		WorldBorder wb = new WorldBorder();
+		wb.setCenter(0, 0);
+		wb.setSize(300000);
+		wb.setWarningDistance(600000);
+		wb.world = ((CraftWorld) PLAYER.getWorld()).getHandle();
+		PacketPlayOutWorldBorder packet = new PacketPlayOutWorldBorder(wb, PacketPlayOutWorldBorder.EnumWorldBorderAction.INITIALIZE);
+		PlayerConnection conn = ((CraftPlayer) PLAYER).getHandle().playerConnection;
+		conn.sendPacket(packet);
+		Thread th = new Thread(() -> {
+			try {
+				Thread.sleep(150);
+				wb.setCenter(0, 0);
+				wb.setSize(300000);
+				wb.setWarningDistance(0);
+				wb.world = ((CraftWorld) PLAYER.getWorld()).getHandle();
+				conn.sendPacket(new PacketPlayOutWorldBorder(wb, PacketPlayOutWorldBorder.EnumWorldBorderAction.INITIALIZE));
+			} catch (InterruptedException e) {}
+		});
+		th.start();
 	}
 
 	public void updatePlayerHealth() {
