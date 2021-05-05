@@ -12,6 +12,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
 import org.bukkit.event.block.Action;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.potion.PotionEffect;
 
 import net.minecraft.server.v1_16_R3.PacketPlayOutWorldBorder;
 import net.minecraft.server.v1_16_R3.PlayerConnection;
@@ -140,6 +141,11 @@ public abstract class Champ {
 			} catch (InterruptedException e) {}
 		});
 		th.start();
+	}
+	
+	public void takeEffect(PotionEffect effect) {
+		PLAYER.addPotionEffect(effect);
+		return;
 	}
 
 	public void updatePlayerHealth() {
