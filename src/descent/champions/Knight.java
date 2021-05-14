@@ -29,7 +29,7 @@ public class Knight extends Champ {
 	public Knight(Player player) {
 		super(player, CHAMP_NAME, MOVE_SPEED, NATURAL_REGEN, MAX_HEALTH, ITEMS, CLOTHES, LEFT_HAND, HURT_SOUND);
 		this.currentShieldHealth = Knight.MAX_SHIELD_HEALTH;
-		timeAtLastSwing = System.currentTimeMillis() - (int) (1000 * MELEE_COOLDOWN);
+		timeAtLastSwing = 0;
 	}
 
 	public int getCurrentShieldHealth() {

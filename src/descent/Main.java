@@ -2,17 +2,13 @@ package descent;
 
 import java.util.LinkedList;
 import java.util.List;
-
-import org.bukkit.Material;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.craftbukkit.v1_16_R3.entity.CraftPlayer;
 import org.bukkit.craftbukkit.v1_16_R3.inventory.CraftItemStack;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
-
 import com.mojang.datafixers.util.Pair;
-
 import descent.champions.Champ;
 import descent.commands.CommandSetTeam;
 import descent.commands.CommandStats;
@@ -106,7 +102,7 @@ public class Main extends JavaPlugin {
 	
 	public static void sendEquipmentInvisiblePacket(Player player, boolean isInvisible) {
 		List<Pair<EnumItemSlot, net.minecraft.server.v1_16_R3.ItemStack>> l =
-				new LinkedList<Pair<EnumItemSlot, net.minecraft.server.v1_16_R3.ItemStack>>(){};
+				new LinkedList<Pair<EnumItemSlot, net.minecraft.server.v1_16_R3.ItemStack>>(){private static final long serialVersionUID = 1L;};
 
 		ItemStack boots = Champ.getChamp(player).CLOTHES[0];
 		ItemStack legs = Champ.getChamp(player).CLOTHES[1];	

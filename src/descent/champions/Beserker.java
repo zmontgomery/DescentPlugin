@@ -33,8 +33,8 @@ public class Beserker extends Champ {
 
 	public Beserker(Player player) {
 		super(player, CHAMP_NAME, MOVE_SPEED, NATURAL_REGEN, MAX_HEALTH, ITEMS, CLOTHES, LEFT_HAND, HURT_SOUND);
-		timeAtLastSwing = System.currentTimeMillis() - (int)(1000 * AXE_COOLDOWN);
-		timeAtLastLeap = System.currentTimeMillis() - (int)(1000 * AXE_LEAP_COOLDOWN);
+		timeAtLastSwing = 0;
+		timeAtLastLeap = 0;
 	}
 
 	@Override

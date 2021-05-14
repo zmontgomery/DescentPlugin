@@ -6,7 +6,6 @@ import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.Action;
 import org.bukkit.inventory.ItemStack;
-
 import descent.Main;
 import descent.Ray;
 
@@ -31,8 +30,8 @@ public class Ninja extends Champ {
 	
 	public Ninja(Player player) {
 		super(player, CHAMP_NAME, MOVE_SPEED, NATURAL_REGEN, MAX_HEALTH, ITEMS, CLOTHES, LEFT_HAND, HURT_SOUND);
-		timeAtLastSwing = System.currentTimeMillis() - (int)(1000 * DAGGAR_COOLDOWN);
-		timeAtLastFlash = System.currentTimeMillis() - (int)(1000 * FLASH_COOLDOWN);
+		timeAtLastSwing = 0;
+		timeAtLastFlash = 0;
 	}
 
 	@Override

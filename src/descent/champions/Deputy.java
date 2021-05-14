@@ -27,7 +27,7 @@ public class Deputy extends Champ {
 
 	public Deputy(Player player) {
 		super(player, CHAMP_NAME, MOVE_SPEED, NATURAL_REGEN, MAX_HEALTH, ITEMS, CLOTHES, LEFT_HAND, HURT_SOUND);
-		timeAtLastShot = System.currentTimeMillis() - (int)(1000 * SHOOT_COOLDOWN);
+		timeAtLastShot = 0;
 	}
 
 	@Override

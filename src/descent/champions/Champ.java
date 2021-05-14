@@ -3,8 +3,6 @@ package descent.champions;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
-
-import org.bukkit.Bukkit;
 import org.bukkit.Sound;
 import org.bukkit.craftbukkit.v1_16_R3.CraftWorld;
 import org.bukkit.craftbukkit.v1_16_R3.entity.CraftPlayer;
@@ -146,6 +144,10 @@ public abstract class Champ {
 	public void takeEffect(PotionEffect effect) {
 		PLAYER.addPotionEffect(effect);
 		return;
+	}
+	
+	public void kill() {
+		this.takeDamage(this.MAX_HEALTH + 5);
 	}
 
 	public void updatePlayerHealth() {

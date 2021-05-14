@@ -1,8 +1,5 @@
 package descent;
 
-import java.util.LinkedList;
-import java.util.List;
-
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
@@ -11,7 +8,6 @@ import org.bukkit.Particle;
 import org.bukkit.Sound;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.block.Sign;
-import org.bukkit.craftbukkit.v1_16_R3.CraftWorld;
 import org.bukkit.craftbukkit.v1_16_R3.entity.CraftEntity;
 import org.bukkit.craftbukkit.v1_16_R3.entity.CraftPlayer;
 import org.bukkit.entity.Entity;
@@ -37,17 +33,10 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.event.player.PlayerToggleSneakEvent;
-import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
-import org.bukkit.potion.PotionType;
 import org.bukkit.scheduler.BukkitRunnable;
-import org.bukkit.util.Vector;
-
-import com.mojang.datafixers.util.Pair;
-
 import descent.champions.Alchemist;
-import descent.champions.Avatar;
 import descent.champions.Beserker;
 import descent.champions.Champ;
 import descent.champions.Deputy;
@@ -59,16 +48,9 @@ import descent.champions.Ninja;
 import descent.champions.ShaneLee;
 import descent.threads.FoodSet;
 import descent.threads.Regen;
-import net.minecraft.server.v1_16_R3.EntityParrot;
-import net.minecraft.server.v1_16_R3.EntityTypes;
-import net.minecraft.server.v1_16_R3.EnumItemSlot;
 import net.minecraft.server.v1_16_R3.NBTTagCompound;
 import net.minecraft.server.v1_16_R3.PacketPlayOutEntityDestroy;
-import net.minecraft.server.v1_16_R3.PacketPlayOutEntityEquipment;
-import net.minecraft.server.v1_16_R3.PacketPlayOutEntityTeleport;
-import net.minecraft.server.v1_16_R3.PacketPlayOutSpawnEntity;
 import net.minecraft.server.v1_16_R3.PlayerConnection;
-import net.minecraft.server.v1_16_R3.WorldServer;
 
 public class EventListener implements Listener {
 
@@ -124,8 +106,6 @@ public class EventListener implements Listener {
 					new Hunter(player);
 				if (sign.getLine(1).equals("[Ninja]"))
 					new Ninja(player);
-				if (sign.getLine(1).equals("[Avatar]"))
-					new Avatar(player);
 				if (sign.getLine(1).equals("[Shane Lee]"))
 					new ShaneLee(player);
 				if (sign.getLine(1).equals("[Alchemist]"))

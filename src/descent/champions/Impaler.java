@@ -31,7 +31,7 @@ public class Impaler extends Champ {
 
 	public Impaler(Player player) {
 		super(player, CHAMP_NAME, MOVE_SPEED, NATURAL_REGEN, MAX_HEALTH, ITEMS, CLOTHES, LEFT_HAND, HURT_SOUND);
-		timeAtLastThrow = System.currentTimeMillis() - (int)(1000 * KNIFE_THROW_COOLDOWN);
+		timeAtLastThrow = 0;
 	}
 
 	@Override
