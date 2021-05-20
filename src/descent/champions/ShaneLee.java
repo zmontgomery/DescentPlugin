@@ -303,7 +303,7 @@ public class ShaneLee extends Champ {
 		}
 	}
 	
-	public void regenEnergy(short energy) {
+	public void regenEnergy(int energy) {
 		this.energy += energy;
 	}
 

@@ -23,7 +23,7 @@ public class LeeEnergyRegen implements Runnable {
 			}
 			ShaneLee champ = (ShaneLee)Champ.getChamp(player);
 			if(champ != null) {
-				champ.regenEnergy((short) 20);
+				champ.regenEnergy(20);
 			}
 		}
 	}
