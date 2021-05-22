@@ -90,11 +90,15 @@ public abstract class Champ {
 	public void bow(double force) {
 		return;
 	}
+	public void detectElim() {
+		return;
+	}
 
 	public void initialize() {
 		currentHealth = MAX_HEALTH;
 		PLAYER.setHealth(20);
 		PLAYER.setFoodLevel(5);
+		PLAYER.setLevel(0);
 		PLAYER.setWalkSpeed(MOVE_SPEED);
 		PLAYER.getInventory().clear();
 		PLAYER.getInventory().setContents(ITEMS);
@@ -113,10 +117,12 @@ public abstract class Champ {
 		}
 	}
 	
-	public void takeDamage(double amount) {
+	public boolean takeDamage(double amount) {
+		boolean killed = false;
 		this.currentHealth -= amount;
 		if (this.currentHealth < 0) {
 			this.currentHealth = 0;
+			killed = true;
 		}
 		PLAYER.playSound(PLAYER.getLocation(), HURT_SOUND, 1f, 1f);
 		updatePlayerHealth();
@@ -139,6 +145,7 @@ public abstract class Champ {
 			} catch (InterruptedException e) {}
 		});
 		th.start();
+		return killed;
 	}
 	
 	public void takeEffect(PotionEffect effect) {

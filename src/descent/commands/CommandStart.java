@@ -11,13 +11,13 @@ import descent.ControlPointGamemode;
 import descent.Main;
 import descent.PlayerTeams;
 
-public class CommandSetTeam implements CommandExecutor {
+public class CommandStart implements CommandExecutor {
 
 	public static boolean gameStatus = false;
 
 	@Override
 	public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-		if (label.equalsIgnoreCase("setteam")) {
+		if (label.equalsIgnoreCase("start")) {
 			if (args.length == 0) {
 
 				Bukkit.getPlayerExact(sender.getName()).sendMessage("Syntax: /setteam <team>");

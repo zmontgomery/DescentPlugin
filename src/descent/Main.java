@@ -10,7 +10,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
 import com.mojang.datafixers.util.Pair;
 import descent.champions.Champ;
-import descent.commands.CommandSetTeam;
+import descent.commands.CommandStart;
 import descent.commands.CommandStats;
 import net.minecraft.server.v1_16_R3.EnumItemSlot;
 import net.minecraft.server.v1_16_R3.PacketPlayOutEntityEquipment;
@@ -51,7 +51,7 @@ public class Main extends JavaPlugin {
 
 		getServer().getPluginManager().registerEvents(new EventListener(), this);
 
-		getCommand("setteam").setExecutor(new CommandSetTeam());
+		getCommand("setteam").setExecutor(new CommandStart());
 		getCommand("stats").setExecutor(new CommandStats());
 
 		this.saveDefaultConfig();

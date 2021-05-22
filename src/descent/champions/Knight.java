@@ -5,6 +5,9 @@ import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
+import descent.threads.KnightShieldRegen;
+import descent.threads.Stampede;
+
 public class Knight extends Champ {
 	public static final double MAX_HEALTH = 300;
 	public static final String CHAMP_NAME = "Knight";
@@ -17,19 +20,26 @@ public class Knight extends Champ {
 	public static final ItemStack LEFT_HAND = new ItemStack(Material.SHIELD);
 	public static final Sound HURT_SOUND = null;
 
-	public static final short MAX_SHIELD_HEALTH = 300;
-	private short currentShieldHealth;
+	public static final short MAX_SHIELD_HEALTH = 200;
 
 	// Damage
 	public static final int SWORD_DAMAGE = 45;
 	// Cool downs
 	public static final float MELEE_COOLDOWN = 0.4f;
+	public static final float SHIELD_COOLDOWN = 5.0f;
+
 	private long timeAtLastSwing;
+
+	private short currentShieldHealth;
 
 	public Knight(Player player) {
 		super(player, CHAMP_NAME, MOVE_SPEED, NATURAL_REGEN, MAX_HEALTH, ITEMS, CLOTHES, LEFT_HAND, HURT_SOUND);
-		this.currentShieldHealth = Knight.MAX_SHIELD_HEALTH;
+		Thread regen = new Thread(new KnightShieldRegen(player, this));
+		regen.start();
+		Thread stampede = new Thread(new Stampede(player, this));
+		stampede.start();
 		timeAtLastSwing = 0;
+		initialize();
 	}
 
 	public int getCurrentShieldHealth() {
@@ -48,33 +58,56 @@ public class Knight extends Champ {
 	}
 
 	@Override
-	public void takeDamage(double amount) {
+	public boolean takeDamage(double amount) {
+		boolean killed = false;
 		if (this.currentShieldHealth > 0 && PLAYER.isBlocking()) {
 			this.currentShieldHealth -= amount;
 			if (this.currentShieldHealth < 0) {
 				this.currentShieldHealth = 0;
+				PLAYER.getInventory().setItemInOffHand(null);
+				Thread timer = new Thread(() -> {
+					try {
+						Thread.sleep((long) (SHIELD_COOLDOWN * 1000));
+					} catch (InterruptedException e) {
+						// squash
+					}
+					if(Champ.getChamp(PLAYER) instanceof Knight) {
+						PLAYER.getInventory().setItemInOffHand(Knight.LEFT_HAND);
+					}
+				});
+				timer.start();
 			}
+			updateShield();
 		} else {
 			this.currentHealth -= amount;
 			if (this.currentHealth < 0) {
 				this.currentHealth = 0;
+				killed = true;
 			}
 			updatePlayerHealth();
 		}
+		return killed;
+	}
 
+	public void regenShield(int amount) {
+		if(!PLAYER.isBlocking()) {
+			currentShieldHealth += amount;
+			if (currentShieldHealth > Knight.MAX_SHIELD_HEALTH) {
+				currentShieldHealth = Knight.MAX_SHIELD_HEALTH;
+			}
+			updateShield();
+		}
+		return;
+	}
+	
+	public void updateShield() {
+		PLAYER.setLevel((int) currentShieldHealth);
 	}
 
 	@Override
 	public void initialize() {
-		currentHealth = MAX_HEALTH;
-		currentShieldHealth = MAX_SHIELD_HEALTH;
-		PLAYER.setHealth(20);
-		PLAYER.setFoodLevel(5);
-		PLAYER.setWalkSpeed(MOVE_SPEED);
-		PLAYER.getInventory().clear();
-		PLAYER.getInventory().setContents(ITEMS);
-		PLAYER.getInventory().setArmorContents(CLOTHES);
-		PLAYER.getInventory().setItemInOffHand(LEFT_HAND);
+		super.initialize();
+		regenShield(Knight.MAX_SHIELD_HEALTH);
 		return;
 	}
 

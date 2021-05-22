@@ -3,8 +3,10 @@ package descent.champions;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
+import org.bukkit.World;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -14,8 +16,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.Vector;
-
-import descent.Ray;
+import descent.threads.LeeEnergyRegen;
 
 public class ShaneLee extends Champ {
 	public static final double MAX_HEALTH = 275;
@@ -29,33 +30,37 @@ public class ShaneLee extends Champ {
 			new ItemStack(Material.GOLDEN_CHESTPLATE), null };
 	public static final ItemStack LEFT_HAND = null;
 	public static final Sound HURT_SOUND = Sound.BLOCK_NETHERITE_BLOCK_BREAK;
-	public static final short MAX_ENERGY = 100;
+
+	public static final short MAX_ENERGY = 200;
 
 	// Damage
-	public static final double PUNCH_DAMAGE = 53;
+	public static final double PUNCH_DAMAGE = 43;
 	public static final double SONIC_HIT_DAMAGE = 45;
-	public static final double SONIC_KICK_DAMAGE = 70;
+	public static final double SONIC_KICK_DAMAGE = 50;
 	public static final double SAFE_HEAL_AMOUNT = 20;
 	public static final double SLAM_DAMAGE = 40;
-	public static final double ROUNDHOUSE_DAMAGE = 100;
+	public static final double ROUNDHOUSE_DAMAGE = 80;
 	// Cool downs
-	public static final float PUNCH_COOLDOWN = 1.2f;
-	public static final float SONIC_WAVE_COOLDOWN = 6.0f;
-	public static final float SAFE_COOLDOWN = 4.0f;
-	public static final float SLAM_COOLDOWN = 6.0f;
+	public static final float PUNCH_COOLDOWN = 1.1f;
+	public static final float SONIC_WAVE_COOLDOWN = 7.0f;
+	public static final float SAFE_COOLDOWN = 5.0f;
+	public static final float SLAM_COOLDOWN = 7.0f;
 	public static final float ROUNDHOUSE_COOLDOWN = 20.0f;
 	public static final long LIFE_STEAL_DURATION = 5;
-	public static final long LIFE_STEAL_RUNOUT = 5;
-	public static final long SLAM_RUNOUT = 4;
-	public static final long SONIC_RUNOUT = 5;
+	public static final long LIFE_STEAL_RUNOUT = 4;
+	public static final long SLAM_RUNOUT = 3;
+	public static final long SONIC_RUNOUT = 4;
 	// Energy usage
-	public static final short SONIC_WAVE_ENERGY = 20;
-	public static final short SONIC_KICK_ENERGY = 20;
-	public static final short SAFE_ENERGY = 20;
-	public static final short LIFESTEAL_ENERGY = 20;
-	public static final short SLAM_ENERGY = 20;
-	public static final short SLOW_ENERGY = 20;
-	public static final short ROUNDHOUSE_ENERGY = 20;
+	public static final short SONIC_WAVE_ENERGY = 25;
+	public static final short SONIC_KICK_ENERGY = 45;
+	public static final short SAFE_ENERGY = 25;
+	public static final short LIFESTEAL_ENERGY = 45;
+	public static final short SLAM_ENERGY = 55;
+	public static final short SLOW_ENERGY = 45;
+	public static final short ROUNDHOUSE_ENERGY = 70;
+	public static final short ENERGY_ON_KILL = 100;
+	
+	public static final short ROUNDHOUSE_VELOCITY = 4;
 
 	private long timeAtLastPunch;
 	private long timeAtLastSonicWave;
@@ -67,6 +72,9 @@ public class ShaneLee extends Champ {
 	private float lifeSteal;
 	private Champ sonicMark;
 	private List<Champ> slamMarks;
+	private Thread sonicTimer;
+	private Thread safeTimer;
+	private Thread slamTimer;
 
 	public ShaneLee(Player player) {
 		super(player, CHAMP_NAME, MOVE_SPEED, NATURAL_REGEN, MAX_HEALTH, ITEMS, CLOTHES, LEFT_HAND, HURT_SOUND);
@@ -80,6 +88,10 @@ public class ShaneLee extends Champ {
 		this.sonicMark = null;
 		this.lifeSteal = 0.0f;
 		this.slamMarks = new ArrayList<>();
+		this.safeTimer = null;
+		this.slamTimer = null;
+		Thread regen = new Thread(new LeeEnergyRegen(player, this));
+		regen.start();
 		Thread timer = new Thread(() -> {
 			try {
 				Thread.sleep(LIFE_STEAL_RUNOUT * 1000);
@@ -92,6 +104,7 @@ public class ShaneLee extends Champ {
 			}
 		});
 		timer.start();
+		initialize();
 	}
 
 	@Override
@@ -100,22 +113,30 @@ public class ShaneLee extends Champ {
 
 		if (PLAYER.getInventory().getItemInMainHand().getType() == Material.AIR
 				&& (System.currentTimeMillis() - timeAtLastPunch > (1000 * PUNCH_COOLDOWN))) {
-			PLAYER.playSound(defend.getLocation(), Sound.BLOCK_ANCIENT_DEBRIS_BREAK, 1f, 1f);
-			champ.takeDamage(PUNCH_DAMAGE);
+			boolean killed = champ.takeDamage(PUNCH_DAMAGE);
+			if (killed) {
+				regenEnergy(ENERGY_ON_KILL);
+			}
+			PLAYER.playSound(defend.getLocation(), Sound.BLOCK_NETHERITE_BLOCK_BREAK, 1f, 1f);
 			this.heal(PUNCH_DAMAGE * lifeSteal);
+			this.regenEnergy(10);
 			timeAtLastPunch = System.currentTimeMillis();
 
 		} else if (PLAYER.getInventory().getItemInMainHand().getType() == Material.NETHERITE_AXE
-				&& (System.currentTimeMillis() - timeAtLastRoundhouse > (1000 * ROUNDHOUSE_COOLDOWN))) {
-
-			PLAYER.playSound(defend.getLocation(), Sound.ENTITY_DRAGON_FIREBALL_EXPLODE, 1f, 1f);
-			this.energy -= ROUNDHOUSE_ENERGY;
-			champ.takeDamage(ROUNDHOUSE_DAMAGE);
+				&& (System.currentTimeMillis() - timeAtLastRoundhouse > (1000 * ROUNDHOUSE_COOLDOWN))
+				&& energy >= ROUNDHOUSE_ENERGY) {
 			this.heal(ROUNDHOUSE_DAMAGE * lifeSteal);
-			champ.PLAYER.setVelocity(new Vector(PLAYER.getLocation().getDirection().getX() * 5,
-					PLAYER.getLocation().getDirection().getY() * 5 + 1,
-					PLAYER.getLocation().getDirection().getZ() * 5));
+			champ.PLAYER.setVelocity(new Vector(PLAYER.getLocation().getDirection().getX() * ROUNDHOUSE_VELOCITY,
+					PLAYER.getLocation().getDirection().getY() * ROUNDHOUSE_VELOCITY + 1,
+					PLAYER.getLocation().getDirection().getZ() * ROUNDHOUSE_VELOCITY));
 			timeAtLastRoundhouse = System.currentTimeMillis();
+			PLAYER.playSound(defend.getLocation(), Sound.ENTITY_DRAGON_FIREBALL_EXPLODE, 1f, 1f);
+			useEnergy(ROUNDHOUSE_ENERGY);
+			boolean killed = champ.takeDamage(ROUNDHOUSE_DAMAGE);
+			if (killed) {
+				regenEnergy(ENERGY_ON_KILL);
+			}
+			
 		}
 	}
 
@@ -123,9 +144,10 @@ public class ShaneLee extends Champ {
 	public void use(Action click) {
 		if (PLAYER.getInventory().getItemInMainHand().getType() == Material.FEATHER
 				&& (click == Action.RIGHT_CLICK_AIR || click == Action.RIGHT_CLICK_BLOCK)
-				&& (System.currentTimeMillis() - timeAtLastSonicWave > (1000 * SONIC_WAVE_COOLDOWN))) {
+				&& (System.currentTimeMillis() - timeAtLastSonicWave > (1000 * SONIC_WAVE_COOLDOWN))
+				&& energy >= SONIC_WAVE_ENERGY) {
 
-			this.energy -= SONIC_WAVE_ENERGY;
+			useEnergy(SONIC_WAVE_ENERGY);
 			Arrow arrow = PLAYER.getWorld().spawnArrow(PLAYER.getEyeLocation(), PLAYER.getLocation().getDirection(), 2,
 					0);
 			arrow.setShooter(PLAYER);
@@ -139,61 +161,66 @@ public class ShaneLee extends Champ {
 				try {
 					Thread.sleep(SONIC_RUNOUT * 1000);
 				} catch (InterruptedException e) {
-					// squash
+					return;
 				}
 				if (PLAYER.getInventory().getItem(1).getType() == Material.WHITE_DYE) {
 					PLAYER.getInventory().setItem(1, new ItemStack(Material.FEATHER));
-					sonicMark = null;
-					timeAtLastSafe = System.currentTimeMillis();
+					this.sonicMark = null;
+					timeAtLastSonicWave = System.currentTimeMillis();
 				}
 			});
+			sonicTimer = timer;
 			timer.start();
 
 			timeAtLastSonicWave = System.currentTimeMillis();
-			
-			
+
 		} else if (PLAYER.getInventory().getItemInMainHand().getType() == Material.WHITE_DYE
-				&& (click == Action.RIGHT_CLICK_AIR || click == Action.RIGHT_CLICK_BLOCK)) {
+				&& (click == Action.RIGHT_CLICK_AIR || click == Action.RIGHT_CLICK_BLOCK)
+				&& energy >= SONIC_KICK_ENERGY) {
+			sonicTimer.interrupt();
 			PLAYER.getInventory().setItem(1, new ItemStack(Material.FEATHER));
-			this.energy -= SONIC_KICK_ENERGY;
-			sonicMark.takeDamage(SONIC_KICK_DAMAGE);
+			useEnergy(SONIC_KICK_ENERGY);
+			boolean killed = sonicMark.takeDamage(SONIC_KICK_DAMAGE);
+			if (killed) {
+				regenEnergy(ENERGY_ON_KILL);
+			}
 			this.heal(SONIC_KICK_DAMAGE * lifeSteal);
 			PLAYER.teleport(sonicMark.PLAYER);
-			sonicMark = null;
+			this.sonicMark = null;
 			timeAtLastSonicWave = System.currentTimeMillis();
-			
-			
+
 		} else if (PLAYER.getInventory().getItemInMainHand().getType() == Material.SLIME_BALL
 				&& (click == Action.RIGHT_CLICK_AIR || click == Action.RIGHT_CLICK_BLOCK)
-				&& (System.currentTimeMillis() - timeAtLastSafe > (1000 * SAFE_COOLDOWN))) {
-			this.energy -= SAFE_ENERGY;
+				&& (System.currentTimeMillis() - timeAtLastSafe > (1000 * SAFE_COOLDOWN)) && energy >= SAFE_ENERGY) {
+			useEnergy(SAFE_ENERGY);
 			this.heal(SAFE_HEAL_AMOUNT);
-			PLAYER.getInventory().setItem(2, new ItemStack(Material.MAGMA_CREAM));
 			Thread timer = new Thread(() -> {
 				try {
-					Thread.sleep(LIFE_STEAL_RUNOUT * 1000);
+					Thread.sleep(ShaneLee.LIFE_STEAL_RUNOUT * 1000);
 				} catch (InterruptedException e) {
-					// squash
+					return;
 				}
 				if (PLAYER.getInventory().getItem(2).getType() == Material.MAGMA_CREAM) {
 					PLAYER.getInventory().setItem(2, new ItemStack(Material.SLIME_BALL));
-					timeAtLastSafe = System.currentTimeMillis();
+					timeAtLastSafe = System.currentTimeMillis() - (long) (1000 * SAFE_COOLDOWN);
 				}
 			});
+			safeTimer = timer;
 			timer.start();
 			timeAtLastSafe = System.currentTimeMillis();
-			
-			
+			PLAYER.getInventory().setItem(2, new ItemStack(Material.MAGMA_CREAM));
+
 		} else if (PLAYER.getInventory().getItemInMainHand().getType() == Material.SLIME_BALL
 				&& (click == Action.LEFT_CLICK_AIR || click == Action.LEFT_CLICK_BLOCK)
 				&& (System.currentTimeMillis() - timeAtLastSafe > (1000 * SAFE_COOLDOWN))) {
-			Ray.safeRayCast(PLAYER, 10);
-			
-			
+			safeRayCast(PLAYER, 10);
+
 		} else if (PLAYER.getInventory().getItemInMainHand().getType() == Material.MAGMA_CREAM
-				&& (click == Action.RIGHT_CLICK_AIR || click == Action.RIGHT_CLICK_BLOCK)) {
+				&& (click == Action.RIGHT_CLICK_AIR || click == Action.RIGHT_CLICK_BLOCK)
+				&& energy >= LIFESTEAL_ENERGY) {
+			safeTimer.interrupt();
 			lifeSteal = 0.5f;
-			this.energy -= LIFESTEAL_ENERGY;
+			useEnergy(LIFESTEAL_ENERGY);
 			Thread timer = new Thread(() -> {
 				try {
 					Thread.sleep(LIFE_STEAL_DURATION * 1000);
@@ -205,11 +232,10 @@ public class ShaneLee extends Champ {
 			timer.start();
 			PLAYER.getInventory().setItem(2, new ItemStack(Material.SLIME_BALL));
 			timeAtLastSafe = System.currentTimeMillis();
-			
-			
+
 		} else if (PLAYER.getInventory().getItemInMainHand().getType() == Material.GOLDEN_HORSE_ARMOR
 				&& (click == Action.RIGHT_CLICK_AIR || click == Action.RIGHT_CLICK_BLOCK)
-				&& (System.currentTimeMillis() - timeAtLastSlam > (1000 * SLAM_COOLDOWN))) {
+				&& (System.currentTimeMillis() - timeAtLastSlam > (1000 * SLAM_COOLDOWN)) && energy >= SLAM_ENERGY) {
 			Collection<Entity> entities = PLAYER.getWorld().getNearbyEntities(PLAYER.getLocation(), 6, 6, 6);
 			for (Entity e : entities) {
 				if (e instanceof Player) {
@@ -217,12 +243,15 @@ public class ShaneLee extends Champ {
 					if (p != PLAYER) {
 						Champ c = Champ.getChamp(p);
 						slamMarks.add(c);
-						c.takeDamage(SLAM_DAMAGE);
+						boolean killed = c.takeDamage(SLAM_DAMAGE);
+						if (killed) {
+							regenEnergy(ENERGY_ON_KILL);
+						}
 						this.heal(SLAM_DAMAGE * lifeSteal);
 					}
 				}
 			}
-			this.energy -= SLAM_ENERGY;
+			useEnergy(SLAM_ENERGY);
 			PLAYER.playSound(PLAYER.getLocation(), Sound.ENTITY_DRAGON_FIREBALL_EXPLODE, 1f, 1f);
 			if (slamMarks.size() < 1) {
 				timeAtLastSlam = System.currentTimeMillis();
@@ -233,23 +262,24 @@ public class ShaneLee extends Champ {
 				try {
 					Thread.sleep(SLAM_RUNOUT * 1000);
 				} catch (InterruptedException e) {
-					// squash
+					return;
 				}
 				if (PLAYER.getInventory().getItem(3).getType() == Material.LEATHER_HORSE_ARMOR) {
 					PLAYER.getInventory().setItem(3, new ItemStack(Material.GOLDEN_HORSE_ARMOR));
 					timeAtLastSlam = System.currentTimeMillis();
 				}
 			});
+			slamTimer = timer;
 			timer.start();
 			timeAtLastSlam = System.currentTimeMillis();
-			
-			
+
 		} else if (PLAYER.getInventory().getItemInMainHand().getType() == Material.LEATHER_HORSE_ARMOR
-				&& (click == Action.RIGHT_CLICK_AIR || click == Action.RIGHT_CLICK_BLOCK)) {
+				&& (click == Action.RIGHT_CLICK_AIR || click == Action.RIGHT_CLICK_BLOCK) && energy >= SLOW_ENERGY) {
 			for (Champ c : slamMarks) {
 				c.takeEffect(new PotionEffect(PotionEffectType.SLOW, 100, 4));
 			}
-			this.energy -= SLOW_ENERGY;
+			slamTimer.interrupt();
+			useEnergy(SLOW_ENERGY);
 			slamMarks.clear();
 			PLAYER.getInventory().setItem(3, new ItemStack(Material.GOLDEN_HORSE_ARMOR));
 			timeAtLastSlam = System.currentTimeMillis();
@@ -264,7 +294,10 @@ public class ShaneLee extends Champ {
 				PLAYER.getInventory().setItem(1, new ItemStack(Material.WHITE_DYE));
 				this.sonicMark = champ;
 				arrow.remove();
-				champ.takeDamage(SONIC_HIT_DAMAGE);
+				boolean killed = champ.takeDamage(SONIC_HIT_DAMAGE);
+				if (killed) {
+					regenEnergy(ENERGY_ON_KILL);
+				}
 				Thread timer = new Thread(() -> {
 					try {
 						Thread.sleep(SLAM_RUNOUT * 1000);
@@ -279,32 +312,94 @@ public class ShaneLee extends Champ {
 				timer.start();
 				timeAtLastSonicWave = System.currentTimeMillis();
 			}
-			
-			
+
 		} else if (projectile == null) {
-			this.energy -= SAFE_ENERGY;
-			PLAYER.teleport(champ.PLAYER);
-			champ.heal(SAFE_HEAL_AMOUNT);
-			this.heal(SAFE_HEAL_AMOUNT);
-			PLAYER.getInventory().setItem(2, new ItemStack(Material.MAGMA_CREAM));
-			Thread timer = new Thread(() -> {
-				try {
-					Thread.sleep(LIFE_STEAL_RUNOUT * 1000);
-				} catch (InterruptedException e) {
-					// squash
-				}
-				if (PLAYER.getInventory().getItem(2).getType() == Material.MAGMA_CREAM) {
-					PLAYER.getInventory().setItem(2, new ItemStack(Material.SLIME_BALL));
-					timeAtLastSafe = System.currentTimeMillis();
-				}
-			});
-			timer.start();
-			timeAtLastSafe = System.currentTimeMillis();
+			if (energy >= SAFE_ENERGY) {
+				useEnergy(SAFE_ENERGY);
+				PLAYER.teleport(champ.PLAYER);
+				champ.heal(SAFE_HEAL_AMOUNT);
+				this.heal(SAFE_HEAL_AMOUNT);
+				PLAYER.getInventory().setItem(2, new ItemStack(Material.MAGMA_CREAM));
+				Thread timer = new Thread(() -> {
+					try {
+						Thread.sleep(ShaneLee.LIFE_STEAL_RUNOUT * 1000);
+					} catch (InterruptedException e) {
+						return;
+					}
+					if (PLAYER.getInventory().getItem(2).getType() == Material.MAGMA_CREAM) {
+						PLAYER.getInventory().setItem(2, new ItemStack(Material.SLIME_BALL));
+						timeAtLastSafe = System.currentTimeMillis() + (long) (1000 * SAFE_COOLDOWN);
+					}
+				});
+				safeTimer = timer;
+				timer.start();
+				timeAtLastSafe = System.currentTimeMillis();
+			}
 		}
 	}
-	
+
 	public void regenEnergy(int energy) {
 		this.energy += energy;
+		if (this.energy > ShaneLee.MAX_ENERGY) {
+			this.energy = ShaneLee.MAX_ENERGY;
+		}
+		updateEnergy();
+	}
+
+	public void useEnergy(int energy) {
+		this.energy -= energy;
+		updateEnergy();
+	}
+
+	public void updateEnergy() {
+		PLAYER.setLevel((int) energy);
+	}
+
+	@Override
+	public void initialize() {
+		super.initialize();
+		regenEnergy(ShaneLee.MAX_ENERGY);
+		return;
+	}
+
+	private static void safeRayCast(Player shooter, int distance) {
+
+		World w = shooter.getWorld();
+		Location l = new Location(w, shooter.getLocation().getX(),
+				shooter.getLocation().getY() + shooter.getEyeHeight(), shooter.getLocation().getZ());
+		Vector v = shooter.getLocation().getDirection();
+
+		double x = v.getX();
+		double y = v.getY();
+		double z = v.getZ();
+
+		for (double i = 0; i < distance; i = i + 0.1) {
+
+			Location bulletLocation = new Location(w, l.getX() + (i * x), l.getY() + (i * y), l.getZ() + (i * z));
+
+			Collection<Entity> entities = w.getNearbyEntities(bulletLocation, 0.05, 0.05, 0.05);
+
+			if (i > 1) {
+
+				if (shooter.getWorld().getBlockAt(bulletLocation).getType().isSolid() == false) {
+					for (Entity ent : entities) {
+						if (ent instanceof Player) {
+							Player hit = (Player) ent;
+							shooter.playSound(shooter.getLocation(), Sound.ENTITY_ARROW_HIT_PLAYER, 1f, 1f);
+							Champ plattack = Champ.getChamp(shooter);
+							Champ pldefend = Champ.getChamp(hit);
+							plattack.abilityRanged(pldefend, null);
+							return;
+						}
+					}
+
+				} else {
+
+					return;
+
+				}
+			}
+		}
 	}
 
 	@Override

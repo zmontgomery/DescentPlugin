@@ -22,7 +22,7 @@ public class Beserker extends Champ {
 	// Damage
 	public static final float VERT_LEAP_STRENGTH = 1.5f;
 	public static final float HORIZ_LEAP_STRENGTH = 1.5f;
-	public static final short VELOCITY_DAMAGE = 25;
+	public static final short VELOCITY_MULTIPLIER = 15;
 	public static final short AXE_DAMAGE = 65;
 
 	// Cool downs
@@ -57,12 +57,10 @@ public class Beserker extends Champ {
 			double velocity = Math.abs(PLAYER.getVelocity().getX()) + Math.abs(PLAYER.getVelocity().getY())
 					+ Math.abs(PLAYER.getVelocity().getZ());
 			int damage = AXE_DAMAGE;
+			damage += (velocity * VELOCITY_MULTIPLIER);
 			if (velocity > 1) {
-				damage += VELOCITY_DAMAGE;
 				PLAYER.playSound(defend.getLocation(), Sound.BLOCK_ANVIL_LAND, 1f, 0.5f);
-			} else {
-				PLAYER.playSound(defend.getLocation(), Sound.ITEM_SHIELD_BREAK, 1f, 1f);
-			}
+			} 
 			champ.takeDamage(damage);
 			timeAtLastSwing = System.currentTimeMillis();
 		}
