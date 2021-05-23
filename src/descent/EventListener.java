@@ -27,12 +27,14 @@ import org.bukkit.event.entity.ItemDespawnEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.entity.PotionSplashEvent;
 import org.bukkit.event.hanging.HangingBreakByEntityEvent;
+import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.event.player.PlayerToggleSneakEvent;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -367,4 +369,42 @@ public class EventListener implements Listener {
 			Main.sendEquipmentInvisiblePacket(event.getPlayer(), true);
 		}
 	}
+    @EventHandler
+    public void inventoryClickEvent(InventoryClickEvent event) {
+    	event.setCancelled(true);
+    	Material item = event.getCurrentItem().getType();
+    	Player player = (Player) event.getWhoClicked();
+    	if(item == Material.WOODEN_SWORD) {
+    		new Impaler(player);
+    		player.closeInventory();
+    	}
+    	if(item == Material.SHIELD) {
+    		new Knight(player);
+    		player.closeInventory();
+    	}
+    	if(item == Material.GOLDEN_AXE) {
+    		new Beserker(player);
+    		player.closeInventory();
+    	}
+    	if(item == Material.NETHERITE_HOE) {
+    		new Deputy(player);
+    		player.closeInventory();
+    	}
+    	if(item == Material.BOW) {
+    		new Hunter(player);
+    		player.closeInventory();
+    	}
+    	if(item == Material.GOLDEN_SWORD) {
+    		new Ninja(player);
+    		player.closeInventory();
+    	}
+    	if(item == Material.POTION) {
+    		new Alchemist(player);
+    		player.closeInventory();
+    	}
+    	if(item == Material.GOLDEN_CHESTPLATE) {
+    		new ShaneLee(player);
+    		player.closeInventory();
+    	}
+    }
 }

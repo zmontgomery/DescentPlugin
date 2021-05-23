@@ -3,12 +3,16 @@ package descent.champions;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
+
+import org.bukkit.Bukkit;
+import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.craftbukkit.v1_16_R3.CraftWorld;
 import org.bukkit.craftbukkit.v1_16_R3.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
 import org.bukkit.event.block.Action;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 
@@ -68,7 +72,18 @@ public abstract class Champ {
 	}
 	
 	public void champSelect() {
-		// PLAYER.doSomethinglol();
+		Inventory championSelect = Bukkit.createInventory(PLAYER, 9, "Champion Selection");
+		
+		championSelect.addItem(new ItemStack(Material.WOODEN_SWORD));
+		championSelect.addItem(new ItemStack(Material.SHIELD));
+		championSelect.addItem(new ItemStack(Material.GOLDEN_AXE));
+		championSelect.addItem(new ItemStack(Material.NETHERITE_HOE));
+		championSelect.addItem(new ItemStack(Material.BOW));
+		championSelect.addItem(new ItemStack(Material.GOLDEN_SWORD));
+		championSelect.addItem(new ItemStack(Material.POTION));
+		championSelect.addItem(new ItemStack(Material.GOLDEN_CHESTPLATE));
+		
+		PLAYER.openInventory(championSelect);
 	}
 	
 	public void teamSelect() {
