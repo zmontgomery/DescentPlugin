@@ -1,5 +1,6 @@
 package descent.champions;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
@@ -17,12 +18,12 @@ public class Deputy extends Champ {
 	public static final ItemStack[] CLOTHES = new ItemStack[] { null, new ItemStack(Material.CHAINMAIL_LEGGINGS), null,
 			null };
 	public static final ItemStack LEFT_HAND = null;
-	public static final Sound HURT_SOUND = null;
+	public static final Sound HURT_SOUND = Sound.ENTITY_ARMOR_STAND_BREAK;
 
 	// Damage
-	public static final int GUN_DAMAGE = 54;
+	public static final int GUN_DAMAGE = 44;
 	// Cool downs
-	public static final float SHOOT_COOLDOWN = 0.7f;
+	public static final float SHOOT_COOLDOWN = 0.6f;
 	private long timeAtLastShot;
 
 	public Deputy(Player player) {
@@ -35,7 +36,9 @@ public class Deputy extends Champ {
 		if (PLAYER.getInventory().getItemInMainHand().getType() == Material.NETHERITE_HOE
 				&& (click == Action.LEFT_CLICK_AIR || click == Action.LEFT_CLICK_BLOCK)
 				&& (System.currentTimeMillis() - timeAtLastShot > (1000 * SHOOT_COOLDOWN))) {
-			PLAYER.getWorld().playSound(PLAYER.getLocation(), Sound.ENTITY_DRAGON_FIREBALL_EXPLODE, 1f, 1f);
+			for(Player player : Bukkit.getOnlinePlayers()) {
+				player.getWorld().playSound(PLAYER.getLocation(), Sound.ENTITY_DRAGON_FIREBALL_EXPLODE, 1f, 1.5f);
+			}
 			Ray.playerDamageRayCast(PLAYER, 99);
 			timeAtLastShot = System.currentTimeMillis();
 		}

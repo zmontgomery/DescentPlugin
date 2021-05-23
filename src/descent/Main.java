@@ -9,6 +9,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
 import com.mojang.datafixers.util.Pair;
 import descent.champions.Champ;
+import descent.commands.Die;
 import descent.commands.SetChamp;
 import descent.commands.SetGame;
 import descent.commands.SetTeam;
@@ -35,6 +36,7 @@ public class Main extends JavaPlugin {
 		getCommand("setgame").setExecutor(new SetGame());
 		getCommand("setchamp").setExecutor(new SetChamp());
 		getCommand("setteam").setExecutor(new SetTeam());
+		getCommand("die").setExecutor(new Die());
 
 	}
 

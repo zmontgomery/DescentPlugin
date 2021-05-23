@@ -13,13 +13,13 @@ import org.bukkit.inventory.meta.PotionMeta;
 public class Alchemist extends Champ {
 	public static final double MAX_HEALTH = 175;
 	public static final String CHAMP_NAME = "Alchemist";
-	public static final float MOVE_SPEED = 0.25f;
+	public static final float MOVE_SPEED = 0.26f;
 	public static final double NATURAL_REGEN = 8.0;
 	public static final ItemStack[] ITEMS = new ItemStack[] { new ItemStack(Material.GLASS_BOTTLE) };
 	public static final ItemStack[] CLOTHES = new ItemStack[] { new ItemStack(Material.GOLDEN_BOOTS), null,
 			null, null };
 	public static final ItemStack LEFT_HAND = null;
-	public static final Sound HURT_SOUND = Sound.BLOCK_NETHERITE_BLOCK_BREAK;
+	public static final Sound HURT_SOUND = Sound.BLOCK_GRASS_BREAK;
 
 	// Damage
 	public static final int POTION_HEAL = 45;

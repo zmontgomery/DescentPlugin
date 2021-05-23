@@ -3,7 +3,6 @@ package descent.champions;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
-
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -15,8 +14,6 @@ import org.bukkit.event.block.Action;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
-
-import descent.Main;
 import net.minecraft.server.v1_16_R3.PacketPlayOutWorldBorder;
 import net.minecraft.server.v1_16_R3.PlayerConnection;
 import net.minecraft.server.v1_16_R3.WorldBorder;
@@ -73,7 +70,7 @@ public abstract class Champ {
 	}
 	
 	public void champSelect() {
-		Inventory championSelect = Bukkit.createInventory(PLAYER, 9, "Champion Selection");
+		Inventory championSelect = Bukkit.createInventory(PLAYER, 18, "Champion Selection");
 		
 		championSelect.addItem(new ItemStack(Material.WOODEN_SWORD));
 		championSelect.addItem(new ItemStack(Material.SHIELD));
@@ -83,6 +80,7 @@ public abstract class Champ {
 		championSelect.addItem(new ItemStack(Material.GOLDEN_SWORD));
 		championSelect.addItem(new ItemStack(Material.POTION));
 		championSelect.addItem(new ItemStack(Material.GOLDEN_CHESTPLATE));
+		championSelect.addItem(new ItemStack(Material.BLAZE_POWDER));
 		
 		PLAYER.openInventory(championSelect);
 	}
@@ -114,9 +112,6 @@ public abstract class Champ {
 	public void bow(double force) {
 		return;
 	}
-	public void detectElim() {
-		return;
-	}
 
 	public void initialize() {
 		currentHealth = MAX_HEALTH;
@@ -126,9 +121,8 @@ public abstract class Champ {
 		PLAYER.setWalkSpeed(MOVE_SPEED);
 		PLAYER.getInventory().clear();
 		PLAYER.getInventory().setContents(ITEMS);
-		PLAYER.getInventory().setArmorContents(CLOTHES);
 		PLAYER.getInventory().setItemInOffHand(LEFT_HAND);
-		Main.gamemode.respawn(PLAYER);
+		PLAYER.getInventory().setArmorContents(CLOTHES);
 		return;
 	}
 
@@ -149,7 +143,9 @@ public abstract class Champ {
 			this.currentHealth = 0;
 			killed = true;
 		}
-		PLAYER.playSound(PLAYER.getLocation(), HURT_SOUND, 1f, 1f);
+		for(Player player : Bukkit.getOnlinePlayers()) {
+			player.playSound(PLAYER.getLocation(), HURT_SOUND, 1f, 0.6f);
+		}
 		updatePlayerHealth();
 		WorldBorder wb = new WorldBorder();
 		wb.setCenter(0, 0);

@@ -26,8 +26,8 @@ public class Default implements Gamemode{
 	}
 	
 	@Override
-	public void respawn(Player player) {
-		return;
+	public Location respawnLocation(Player player) {
+		return null;
 	}
 
 }

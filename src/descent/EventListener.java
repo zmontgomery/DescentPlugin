@@ -31,10 +31,10 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.event.player.PlayerToggleSneakEvent;
-import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -46,6 +46,7 @@ import descent.champions.Generic;
 import descent.champions.Hunter;
 import descent.champions.Impaler;
 import descent.champions.Knight;
+import descent.champions.Linguine;
 import descent.champions.Ninja;
 import descent.champions.ShaneLee;
 import descent.threads.FoodSet;
@@ -129,7 +130,7 @@ public class EventListener implements Listener {
 				if (sign.getLine(1).equals("[Alchemist]"))
 					new Alchemist(player);
 				if (sign.getLine(1).equals("[Linguine]"))
-					new Alchemist(player);
+					new Linguine(player);
 			}
 		}
 		Champ user = Champ.getChamp(player);
@@ -205,6 +206,7 @@ public class EventListener implements Listener {
 		synchronized (player) {
 			player.notifyAll();
 		}
+		event.setRespawnLocation(Main.gamemode.respawnLocation(player));
 	}
 
 	@EventHandler
@@ -363,9 +365,15 @@ public class EventListener implements Listener {
 	}
     @EventHandler
     public void inventoryClickEvent(InventoryClickEvent event) {
+    	Player player = (Player) event.getWhoClicked();
+    	if(player.getGameMode() == GameMode.CREATIVE) {
+    		return;
+    	}
     	event.setCancelled(true);
     	Material item = event.getCurrentItem().getType();
-    	Player player = (Player) event.getWhoClicked();
+    	if(item == null) {
+    		return;
+    	}
     	if(item == Material.WOODEN_SWORD) {
     		new Impaler(player);
     		player.closeInventory();
@@ -398,5 +406,29 @@ public class EventListener implements Listener {
     		new ShaneLee(player);
     		player.closeInventory();
     	}
+    	if(item == Material.BLAZE_POWDER) {
+    		new Linguine(player);
+    		player.closeInventory();
+    	}
+    }
+    
+    @EventHandler
+    public void playerMoveEvent(PlayerMoveEvent event) {
+    	Player player = event.getPlayer();
+    	Champ champ = Champ.getChamp(player);
+    	if (((int) event.getFrom().getX() != (int) event.getTo().getX() || (int) event.getFrom().getZ() != (int) event.getTo().getZ()) && champ instanceof Knight) { 
+    		Knight knight = (Knight)champ;
+    		knight.stampede();
+ 
+//    		Thread stampRunout = new Thread(() -> {
+//    			try {
+//					Thread.sleep((long)(Knight.STAMPEDE_RUNOUT * 1000));
+//				} catch (InterruptedException e) {
+//					// squash
+//				}
+//    			player.setWalkSpeed(Knight.MOVE_SPEED);
+//    		});
+//    		stampRunout.start();
+        }
     }
 }

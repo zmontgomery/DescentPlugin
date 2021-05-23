@@ -1,5 +1,6 @@
 package descent.champions;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
@@ -10,7 +11,7 @@ import org.bukkit.util.Vector;
 public class Beserker extends Champ {
 	public static final double MAX_HEALTH = 225;
 	public static final String CHAMP_NAME = "Beserker";
-	public static final float MOVE_SPEED = 0.26f;
+	public static final float MOVE_SPEED = 0.27f;
 	public static final double NATURAL_REGEN = 5.0;
 	public static final ItemStack[] ITEMS = new ItemStack[] { new ItemStack(Material.GOLDEN_AXE) };
 	public static final ItemStack[] CLOTHES = new ItemStack[] { new ItemStack(Material.CHAINMAIL_BOOTS), null, null,
@@ -20,13 +21,13 @@ public class Beserker extends Champ {
 	
 
 	// Damage
-	public static final float VERT_LEAP_STRENGTH = 1.5f;
+	public static final float VERT_LEAP_STRENGTH = 1.6f;
 	public static final float HORIZ_LEAP_STRENGTH = 1.5f;
-	public static final short VELOCITY_MULTIPLIER = 15;
-	public static final short AXE_DAMAGE = 65;
+	public static final short VELOCITY_MULTIPLIER = 20;
+	public static final short AXE_DAMAGE = 55;
 
 	// Cool downs
-	public static final float AXE_COOLDOWN = 0.75f;
+	public static final float AXE_COOLDOWN = 0.80f;
 	public static final float AXE_LEAP_COOLDOWN = 4.0f;
 	private long timeAtLastSwing;
 	private long timeAtLastLeap;
@@ -59,7 +60,9 @@ public class Beserker extends Champ {
 			int damage = AXE_DAMAGE;
 			damage += (velocity * VELOCITY_MULTIPLIER);
 			if (velocity > 1) {
-				PLAYER.playSound(defend.getLocation(), Sound.BLOCK_ANVIL_LAND, 1f, 0.5f);
+				for(Player player : Bukkit.getOnlinePlayers()) {
+					player.playSound(defend.getLocation(), Sound.BLOCK_ANVIL_LAND, 1f, 0.5f);
+				}
 			} 
 			champ.takeDamage(damage);
 			timeAtLastSwing = System.currentTimeMillis();

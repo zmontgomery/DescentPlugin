@@ -54,13 +54,13 @@ public class KingOfTheHill implements Gamemode{
 	}
 
 	@Override
-	public void respawn(Player player) {
+	public Location respawnLocation(Player player) {
 		Champ champ = Champ.getChamp(player);
 		if(champ instanceof Generic) {
 			champ.champSelect();
 		}
 		int rand = rng.nextInt(spawnPoints.size());
-		player.teleport(spawnPoints.get(rand));
+		return spawnPoints.get(rand);
 	}
 	
 }

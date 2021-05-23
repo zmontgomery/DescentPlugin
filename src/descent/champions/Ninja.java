@@ -12,7 +12,7 @@ import descent.Ray;
 public class Ninja extends Champ {
 	public static final double MAX_HEALTH = 175;
 	public static final String CHAMP_NAME = "Ninja";
-	public static final float MOVE_SPEED = 0.28f;
+	public static final float MOVE_SPEED = 0.29f;
 	public static final double NATURAL_REGEN = 7.0;
 	public static final ItemStack[] ITEMS = new ItemStack[] { new ItemStack(Material.GOLDEN_SWORD) };
 	public static final ItemStack[] CLOTHES = new ItemStack[] { null, null, null,
@@ -40,11 +40,9 @@ public class Ninja extends Champ {
 		if (PLAYER.getInventory().getItemInMainHand().getType() == Material.GOLDEN_SWORD && (System.currentTimeMillis() - timeAtLastSwing > (1000 * DAGGAR_COOLDOWN))) {
 			Bukkit.broadcastMessage(PLAYER.getLocation().getDirection().getX() + " + " + defend.getLocation().getDirection().getX());
 			if(PLAYER.getLocation().getDirection().getX() == defend.getLocation().getDirection().getX()) {
-				PLAYER.playSound(defend.getLocation(), Sound.ITEM_SHIELD_BREAK, 1f, 1.5f);
 				champ.takeDamage(DAGGAR_DAMAGE*2);
 				timeAtLastSwing = System.currentTimeMillis();
 			} else {
-				PLAYER.playSound(defend.getLocation(), Sound.ITEM_SHIELD_BREAK, 1f, 1f);
 				champ.takeDamage(DAGGAR_DAMAGE);
 				timeAtLastSwing = System.currentTimeMillis();
 			}

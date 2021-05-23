@@ -3,6 +3,7 @@ package descent.threads;
 import org.bukkit.entity.Player;
 
 import descent.champions.Champ;
+import descent.champions.Generic;
 import descent.champions.ShaneLee;
 
 public class LeeEnergyRegen implements Runnable {
@@ -17,7 +18,7 @@ public class LeeEnergyRegen implements Runnable {
 
 	@Override
 	public void run() {
-		while (Champ.getChamp(player) != null && Champ.getChamp(player) == this.champ) {
+		while (Champ.getChamp(player) != null && !(Champ.getChamp(player) instanceof Generic) && Champ.getChamp(player) == this.champ) {
 			try {
 				Thread.sleep(100);
 			} catch (InterruptedException e) {

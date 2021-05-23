@@ -10,13 +10,13 @@ import org.bukkit.inventory.ItemStack;
 public class Hunter extends Champ {
 	public static final double MAX_HEALTH = 150;
 	public static final String CHAMP_NAME = "Hunter";
-	public static final float MOVE_SPEED = 0.25f;
+	public static final float MOVE_SPEED = 0.26f;
 	public static final double NATURAL_REGEN = 7.0;
 	public static final ItemStack[] ITEMS = new ItemStack[] { new ItemStack(Material.BOW) };
 	public static final ItemStack[] CLOTHES = new ItemStack[] { null, null, null,
 			new ItemStack(Material.CHAINMAIL_HELMET) };
 	public static final ItemStack LEFT_HAND = new ItemStack(Material.ARROW, 64);
-	public static final Sound HURT_SOUND = null;
+	public static final Sound HURT_SOUND = Sound.ITEM_CROSSBOW_SHOOT;
 	
 	//Damage
 	public static final int BOW_DAMAGE = 85;

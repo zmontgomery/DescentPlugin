@@ -16,7 +16,7 @@ public class FoodSet implements Runnable {
 				synchronized (player) {
 					player.wait();
 				}
-				Thread.sleep(1000);
+				Thread.sleep(350);
 			} catch (InterruptedException e) {
 				// squash
 			}

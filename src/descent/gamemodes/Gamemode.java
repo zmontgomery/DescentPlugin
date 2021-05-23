@@ -8,5 +8,5 @@ import org.bukkit.entity.Player;
 public interface Gamemode {
 	void start();
 	List<Location> getSpawnPoints();
-	void respawn(Player player);
+	Location respawnLocation(Player player);
 }

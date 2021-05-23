@@ -9,7 +9,7 @@ public class Linguine extends Champ{
 	
 	public static final double MAX_HEALTH = 175;
 	public static final String CHAMP_NAME = "Linguine";
-	public static final float MOVE_SPEED = 0.28f;
+	public static final float MOVE_SPEED = 0.29f;
 	public static final double NATURAL_REGEN = 5.0;
 	public static final ItemStack[] ITEMS = new ItemStack[] { new ItemStack(Material.BLAZE_POWDER) };
 	public static final ItemStack[] CLOTHES = new ItemStack[] { new ItemStack(Material.CHAINMAIL_BOOTS), null, null,

@@ -3,6 +3,8 @@ package descent.champions;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -21,13 +23,12 @@ import descent.threads.LeeEnergyRegen;
 import net.minecraft.server.v1_16_R3.MobEffect;
 import net.minecraft.server.v1_16_R3.MobEffectList;
 import net.minecraft.server.v1_16_R3.PacketPlayOutEntityEffect;
-import net.minecraft.server.v1_16_R3.PacketPlayOutEntityEquipment;
 import net.minecraft.server.v1_16_R3.PlayerConnection;
 
 public class ShaneLee extends Champ {
 	public static final double MAX_HEALTH = 275;
 	public static final String CHAMP_NAME = "Shane Lee";
-	public static final float MOVE_SPEED = 0.24f;
+	public static final float MOVE_SPEED = 0.25f;
 	public static final double NATURAL_REGEN = 8.0;
 	public static final ItemStack[] ITEMS = new ItemStack[] { null, new ItemStack(Material.FEATHER),
 			new ItemStack(Material.SLIME_BALL), new ItemStack(Material.GOLDEN_HORSE_ARMOR),
@@ -40,10 +41,10 @@ public class ShaneLee extends Champ {
 	public static final short MAX_ENERGY = 200;
 
 	// Damage
-	public static final double PUNCH_DAMAGE = 43;
+	public static final double PUNCH_DAMAGE = 44;
 	public static final double SONIC_HIT_DAMAGE = 45;
 	public static final double SONIC_KICK_DAMAGE = 50;
-	public static final double SAFE_HEAL_AMOUNT = 20;
+	public static final double SAFE_HEAL_AMOUNT = 25;
 	public static final double SLAM_DAMAGE = 40;
 	public static final double ROUNDHOUSE_DAMAGE = 80;
 	// Cool downs
@@ -67,6 +68,7 @@ public class ShaneLee extends Champ {
 	public static final short ENERGY_ON_KILL = 100;
 	
 	public static final short ROUNDHOUSE_VELOCITY = 4;
+	public static final float LIFESTEAL_AMOUNT = 0.6f;
 
 	private long timeAtLastPunch;
 	private long timeAtLastSonicWave;
@@ -123,7 +125,6 @@ public class ShaneLee extends Champ {
 			if (killed) {
 				regenEnergy(ENERGY_ON_KILL);
 			}
-			PLAYER.playSound(defend.getLocation(), Sound.BLOCK_NETHERITE_BLOCK_BREAK, 1f, 1f);
 			this.heal(PUNCH_DAMAGE * lifeSteal);
 			this.regenEnergy(10);
 			timeAtLastPunch = System.currentTimeMillis();
@@ -136,7 +137,9 @@ public class ShaneLee extends Champ {
 					PLAYER.getLocation().getDirection().getY() * ROUNDHOUSE_VELOCITY + 1,
 					PLAYER.getLocation().getDirection().getZ() * ROUNDHOUSE_VELOCITY));
 			timeAtLastRoundhouse = System.currentTimeMillis();
-			PLAYER.playSound(defend.getLocation(), Sound.ENTITY_DRAGON_FIREBALL_EXPLODE, 1f, 1f);
+			for(Player player : Bukkit.getOnlinePlayers()) {
+				player.playSound(defend.getLocation(), Sound.ENTITY_DRAGON_FIREBALL_EXPLODE, 2f, 0.5f);
+			}
 			useEnergy(ROUNDHOUSE_ENERGY);
 			boolean killed = champ.takeDamage(ROUNDHOUSE_DAMAGE);
 			if (killed) {
@@ -225,7 +228,7 @@ public class ShaneLee extends Champ {
 				&& (click == Action.RIGHT_CLICK_AIR || click == Action.RIGHT_CLICK_BLOCK)
 				&& energy >= LIFESTEAL_ENERGY) {
 			safeTimer.interrupt();
-			lifeSteal = 0.5f;
+			lifeSteal = LIFESTEAL_AMOUNT;
 			useEnergy(LIFESTEAL_ENERGY);
 			Thread timer = new Thread(() -> {
 				try {
@@ -258,7 +261,10 @@ public class ShaneLee extends Champ {
 				}
 			}
 			useEnergy(SLAM_ENERGY);
-			PLAYER.playSound(PLAYER.getLocation(), Sound.ENTITY_DRAGON_FIREBALL_EXPLODE, 1f, 1f);
+			
+			for(Player player : Bukkit.getOnlinePlayers()) {
+				player.playSound(PLAYER.getLocation(), Sound.ENTITY_DRAGON_FIREBALL_EXPLODE, 1f, 1f);
+			}
 			if (slamMarks.size() < 1) {
 				timeAtLastSlam = System.currentTimeMillis();
 				return;

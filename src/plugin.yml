@@ -8,5 +8,6 @@ commands:
  setgame:
  setteam:
  setchamp:
+ die:
   
    
