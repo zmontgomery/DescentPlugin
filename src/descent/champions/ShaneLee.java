@@ -312,13 +312,13 @@ public class ShaneLee extends Champ {
 				}
 				Thread timer = new Thread(() -> {
 					try {
-						Thread.sleep(SLAM_RUNOUT * 1000);
+						Thread.sleep(SONIC_RUNOUT * 1000);
 					} catch (InterruptedException e) {
 						// squash
 					}
 					if (PLAYER.getInventory().getItem(1).getType() == Material.WHITE_DYE) {
 						PLAYER.getInventory().setItem(1, new ItemStack(Material.FEATHER));
-						timeAtLastSlam = System.currentTimeMillis();
+						timeAtLastSonicWave = System.currentTimeMillis();
 					}
 				});
 				timer.start();

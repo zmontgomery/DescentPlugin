@@ -2,7 +2,6 @@ package descent;
 
 import java.util.LinkedList;
 import java.util.List;
-import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.craftbukkit.v1_16_R3.entity.CraftPlayer;
 import org.bukkit.craftbukkit.v1_16_R3.inventory.CraftItemStack;
 import org.bukkit.entity.Player;
@@ -10,7 +9,9 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
 import com.mojang.datafixers.util.Pair;
 import descent.champions.Champ;
+import descent.commands.SetChamp;
 import descent.commands.SetGame;
+import descent.commands.SetTeam;
 import descent.commands.Start;
 import descent.commands.Stats;
 import descent.gamemodes.Default;
@@ -23,34 +24,6 @@ public class Main extends JavaPlugin {
 	
 	public static Gamemode gamemode;
 
-	public static int controlX;
-	public static int controlY;
-	public static int controlZ;
-
-	public static int blueX;
-	public static int blueY;
-	public static int blueZ;
-
-	public static int redX;
-	public static int redY;
-	public static int redZ;
-
-	public static int blueDoorX1;
-	public static int blueDoorY1;
-	public static int blueDoorZ1;
-
-	public static int blueDoorX2;
-	public static int blueDoorY2;
-	public static int blueDoorZ2;
-
-	public static int redDoorX1;
-	public static int redDoorY1;
-	public static int redDoorZ1;
-
-	public static int redDoorX2;
-	public static int redDoorY2;
-	public static int redDoorZ2;
-
 	@Override
 	public void onEnable() {
 		gamemode = new Default();
@@ -60,50 +33,14 @@ public class Main extends JavaPlugin {
 		getCommand("start").setExecutor(new Start());
 		getCommand("stats").setExecutor(new Stats());
 		getCommand("setgame").setExecutor(new SetGame());
-
-		this.saveDefaultConfig();
-
-		FileConfiguration config = this.getConfig();
-		controlX = config.getInt("descentconfig.controlpoint.x");
-		controlY = config.getInt("descentconfig.controlpoint.y");
-		controlZ = config.getInt("descentconfig.controlpoint.z");
-
-		blueX = config.getInt("descentconfig.blue.x");
-		blueY = config.getInt("descentconfig.blue.y");
-		blueZ = config.getInt("descentconfig.blue.z");
-
-		redX = config.getInt("descentconfig.red.x");
-		redY = config.getInt("descentconfig.red.y");
-		redZ = config.getInt("descentconfig.red.z");
-
-		blueDoorX1 = config.getInt("descentconfig.bluedoor.x1");
-		blueDoorY1 = config.getInt("descentconfig.bluedoor.y1");
-		blueDoorZ1 = config.getInt("descentconfig.bluedoor.z1");
-
-		blueDoorX2 = config.getInt("descentconfig.bluedoor.x2");
-		blueDoorY2 = config.getInt("descentconfig.bluedoor.y2");
-		blueDoorZ2 = config.getInt("descentconfig.bluedoor.z2");
-
-		redDoorX1 = config.getInt("descentconfig.reddoor.x1");
-		redDoorY1 = config.getInt("descentconfig.reddoor.y1");
-		redDoorZ1 = config.getInt("descentconfig.reddoor.z1");
-
-		redDoorX2 = config.getInt("descentconfig.reddoor.x2");
-		redDoorY2 = config.getInt("descentconfig.reddoor.y2");
-		redDoorZ2 = config.getInt("descentconfig.reddoor.z2");
-
-		PlayerTeams.closeSpawnDoors();
-
-		PlayerTeams.registerTeams();
+		getCommand("setchamp").setExecutor(new SetChamp());
+		getCommand("setteam").setExecutor(new SetTeam());
 
 	}
 
 	@Override
 	public void onDisable() {
 
-		PlayerTeams.closeSpawnDoors();
-
-		PlayerTeams.unregisterTeams();
 
 	}
 	

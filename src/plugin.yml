@@ -6,5 +6,7 @@ commands:
  start:
  stats:
  setgame:
+ setteam:
+ setchamp:
   
    

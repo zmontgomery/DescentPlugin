@@ -185,7 +185,6 @@ public class EventListener implements Listener {
 		player.setAllowFlight(false);
 		for (PotionEffect p : player.getActivePotionEffects())
 			player.removePotionEffect(p.getType());
-		PlayerTeams.addToTeam(player, "spec");
 		player.teleport(player.getWorld().getSpawnLocation().add(new Location(player.getWorld(), 0.5, 0, 0.5)));
 	}
 
@@ -244,14 +243,7 @@ public class EventListener implements Listener {
 				if (pl.getLevel() < Champ.getChamp(pl).MAX_HEALTH) {
 					Champ.getChamp(pl).heal(100);
 					event.getItem().remove();
-					if (event.getItem().getCustomName().equals("bot"))
-						ControlPointGamemode.healthPackSpawning(pl.getWorld(), 0.5, 21, 76.5);
-					if (event.getItem().getCustomName().equals("top"))
-						ControlPointGamemode.healthPackSpawning(pl.getWorld(), 0.5, 29, 124.5);
-					if (event.getItem().getCustomName().equals("blue"))
-						ControlPointGamemode.healthPackSpawning(pl.getWorld(), 31.5, 24, 104.5);
-					if (event.getItem().getCustomName().equals("red"))
-						ControlPointGamemode.healthPackSpawning(pl.getWorld(), -30.5, 24, 104.5);
+					
 				}
 			}
 		}
