@@ -34,20 +34,20 @@ public class Deathmatch implements Gamemode {
 		spawnPoints.add(new Location(world, 4, 28, 82));
 
 		for (Player player : Bukkit.getOnlinePlayers()) {
-			Champ champ = Champ.getChamp(player);
-			champ.champSelect();
 			int rand = rng.nextInt(spawnPoints.size());
 			player.teleport(spawnPoints.get(rand));
+			Champ champ = Champ.getChamp(player);
+			champ.champSelect();
 		}
 	}
 	
 	public void respawn(Player player) {
+		int rand = rng.nextInt(spawnPoints.size());
+		player.teleport(spawnPoints.get(rand));
 		Champ champ = Champ.getChamp(player);
 		if(champ instanceof Generic) {
 			champ.champSelect();
 		}
-		int rand = rng.nextInt(spawnPoints.size());
-		player.teleport(spawnPoints.get(rand));
 	}
 
 	public List<Location> getSpawnPoints() {

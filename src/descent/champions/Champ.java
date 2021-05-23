@@ -16,6 +16,7 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 
+import descent.Main;
 import net.minecraft.server.v1_16_R3.PacketPlayOutWorldBorder;
 import net.minecraft.server.v1_16_R3.PlayerConnection;
 import net.minecraft.server.v1_16_R3.WorldBorder;
@@ -127,6 +128,7 @@ public abstract class Champ {
 		PLAYER.getInventory().setContents(ITEMS);
 		PLAYER.getInventory().setArmorContents(CLOTHES);
 		PLAYER.getInventory().setItemInOffHand(LEFT_HAND);
+		Main.gamemode.respawn(PLAYER);
 		return;
 	}
 
