@@ -8,7 +8,7 @@ import org.bukkit.entity.Player;
 
 import descent.champions.Champ;
 
-public class CommandStats implements CommandExecutor {
+public class Stats implements CommandExecutor {
 
 	@Override
 	public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {

@@ -86,11 +86,6 @@ public class EventListener implements Listener {
 	@EventHandler
 	public static void playerInteractEvent(PlayerInteractEvent event) {
 		Player player = event.getPlayer();
-		Champ user = Champ.getChamp(player);
-		Action click = event.getAction();
-		if (player.getGameMode() == GameMode.SURVIVAL && user != null) {
-			user.use(click);
-		}
 		if (event.getAction() == Action.RIGHT_CLICK_BLOCK) {
 			if (event.getClickedBlock().getType() == Material.CRIMSON_WALL_SIGN) {
 				Sign sign = (Sign) event.getClickedBlock().getState();
@@ -110,7 +105,35 @@ public class EventListener implements Listener {
 					new ShaneLee(player);
 				if (sign.getLine(1).equals("[Alchemist]"))
 					new Alchemist(player);
+				if (sign.getLine(1).equals("[Linguine]"))
+					new Alchemist(player);
+				return;
+			} else if (event.getClickedBlock().getType() == Material.WARPED_WALL_SIGN) {
+				Sign sign = (Sign) event.getClickedBlock().getState();
+				if (sign.getLine(1).equals("[Impaler]"))
+					new Impaler(player);
+				if (sign.getLine(1).equals("[Beserker]"))
+					new Beserker(player);
+				if (sign.getLine(1).equals("[Knight]"))
+					new Knight(player);
+				if (sign.getLine(1).equals("[Deputy]"))
+					new Deputy(player);
+				if (sign.getLine(1).equals("[Hunter]"))
+					new Hunter(player);
+				if (sign.getLine(1).equals("[Ninja]"))
+					new Ninja(player);
+				if (sign.getLine(1).equals("[Shane Lee]"))
+					new ShaneLee(player);
+				if (sign.getLine(1).equals("[Alchemist]"))
+					new Alchemist(player);
+				if (sign.getLine(1).equals("[Linguine]"))
+					new Alchemist(player);
 			}
+		}
+		Champ user = Champ.getChamp(player);
+		Action click = event.getAction();
+		if (player.getGameMode() == GameMode.SURVIVAL && user != null) {
+			user.use(click);
 		}
 	}
 

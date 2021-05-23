@@ -66,6 +66,14 @@ public abstract class Champ {
 	public static void clearChamp(Player player) {
 		Champ.players.remove(player);
 	}
+	
+	public void champSelect() {
+		// PLAYER.doSomethinglol();
+	}
+	
+	public void teamSelect() {
+		// PLAYER.alsodoSomethinglol();
+	}
 
 	public double getCurrentHealth() {
 		return this.currentHealth;

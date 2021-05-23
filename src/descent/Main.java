@@ -10,13 +10,18 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
 import com.mojang.datafixers.util.Pair;
 import descent.champions.Champ;
-import descent.commands.CommandStart;
-import descent.commands.CommandStats;
+import descent.commands.SetGame;
+import descent.commands.Start;
+import descent.commands.Stats;
+import descent.gamemodes.Default;
+import descent.gamemodes.Gamemode;
 import net.minecraft.server.v1_16_R3.EnumItemSlot;
 import net.minecraft.server.v1_16_R3.PacketPlayOutEntityEquipment;
 import net.minecraft.server.v1_16_R3.PlayerConnection;
 
 public class Main extends JavaPlugin {
+	
+	public static Gamemode gamemode;
 
 	public static int controlX;
 	public static int controlY;
@@ -48,11 +53,13 @@ public class Main extends JavaPlugin {
 
 	@Override
 	public void onEnable() {
+		gamemode = new Default();
 
 		getServer().getPluginManager().registerEvents(new EventListener(), this);
 
-		getCommand("setteam").setExecutor(new CommandStart());
-		getCommand("stats").setExecutor(new CommandStats());
+		getCommand("start").setExecutor(new Start());
+		getCommand("stats").setExecutor(new Stats());
+		getCommand("setgame").setExecutor(new SetGame());
 
 		this.saveDefaultConfig();
 
