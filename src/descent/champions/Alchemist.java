@@ -1,5 +1,6 @@
 package descent.champions;
 
+import org.bukkit.Color;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.entity.EntityType;
@@ -7,6 +8,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.entity.ThrownPotion;
 import org.bukkit.event.block.Action;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.PotionMeta;
 
 public class Alchemist extends Champ {
 	public static final double MAX_HEALTH = 175;
@@ -39,6 +41,15 @@ public class Alchemist extends Champ {
 				&& (System.currentTimeMillis() - timeAtLastPotion > (1000 * POTION_COOLDOWN))) {
 			
 			ThrownPotion tp = (ThrownPotion) PLAYER.getWorld().spawnEntity(PLAYER.getEyeLocation(), EntityType.SPLASH_POTION);
+			
+			ItemStack potionItem = new ItemStack(Material.POTION);
+			PotionMeta potionMeta = (PotionMeta) potionItem.getItemMeta(); 
+			
+			potionMeta.setColor(Color.RED);
+			
+			potionItem.setItemMeta(potionMeta);
+			
+			tp.setItem(potionItem);
 			tp.setBounce(true);
 			tp.setShooter(PLAYER);
 			tp.setCustomName("HEAL");

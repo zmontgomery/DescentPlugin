@@ -7,6 +7,7 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.World;
+import org.bukkit.craftbukkit.v1_16_R3.entity.CraftPlayer;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -17,6 +18,11 @@ import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.Vector;
 import descent.threads.LeeEnergyRegen;
+import net.minecraft.server.v1_16_R3.MobEffect;
+import net.minecraft.server.v1_16_R3.MobEffectList;
+import net.minecraft.server.v1_16_R3.PacketPlayOutEntityEffect;
+import net.minecraft.server.v1_16_R3.PacketPlayOutEntityEquipment;
+import net.minecraft.server.v1_16_R3.PlayerConnection;
 
 public class ShaneLee extends Champ {
 	public static final double MAX_HEALTH = 275;
@@ -291,6 +297,12 @@ public class ShaneLee extends Champ {
 		if (projectile instanceof Arrow) {
 			Arrow arrow = (Arrow) projectile;
 			if (arrow.getCustomName().equals("MARK")) {
+				
+				PacketPlayOutEntityEffect packet = new PacketPlayOutEntityEffect(champ.PLAYER.getEntityId(), new MobEffect(new MobEffect(MobEffectList.fromId(24), 10, 0)));
+				
+				PlayerConnection conn = ((CraftPlayer) PLAYER).getHandle().playerConnection;
+				conn.sendPacket(packet);
+				
 				PLAYER.getInventory().setItem(1, new ItemStack(Material.WHITE_DYE));
 				this.sonicMark = champ;
 				arrow.remove();
