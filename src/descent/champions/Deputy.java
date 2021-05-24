@@ -72,7 +72,9 @@ public class Deputy extends Champ {
 		if (headShot) {
 			totalDamage = totalDamage * 2;
 		}
-		champ.takeDamage(totalDamage);
+		if(champ != this) {
+			champ.takeDamage(totalDamage);
+		}
 	}
 
 }
