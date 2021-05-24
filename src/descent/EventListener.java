@@ -264,7 +264,7 @@ public class EventListener implements Listener {
 	public static void potionSplashEvent(PotionSplashEvent event) {
 
 		if (Champ.getChamp((Player) event.getPotion().getShooter()) instanceof Alchemist) {
-			if(event.getPotion().getName() == "HEAL") {
+			if(event.getPotion().getCustomName().equals("HEAL")) {
 				for (Entity ent : event.getAffectedEntities()) {
 					if (ent instanceof Player) {
 						
@@ -277,7 +277,7 @@ public class EventListener implements Listener {
 					}
 				}
 			}
-			if(event.getPotion().getName() == "DAMAGE") {
+			if(event.getPotion().getCustomName().equals("DAMAGE")) {
 				for (Entity ent : event.getAffectedEntities()) {
 					if (ent instanceof Player) {
 						
