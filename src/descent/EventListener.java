@@ -38,6 +38,8 @@ import org.bukkit.event.player.PlayerToggleSneakEvent;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
+import org.bukkit.util.Vector;
+
 import descent.champions.Alchemist;
 import descent.champions.Beserker;
 import descent.champions.Champ;
@@ -235,7 +237,13 @@ public class EventListener implements Listener {
 
 	@EventHandler
 	public static void playerToggleSneakEvent(PlayerToggleSneakEvent event) {
-		// Player player = event.getPlayer();
+		Player player = event.getPlayer();
+        Bukkit.getScheduler().scheduleSyncRepeatingTask(Main.getPlugin(Main.class), new Runnable() {
+            @Override
+            public void run() {
+                player.setVelocity(new Vector(0, 100, 0));
+            }
+        }, 0L, 1L);
 	}
 
 	@EventHandler
