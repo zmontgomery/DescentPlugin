@@ -124,6 +124,9 @@ public class Fighter extends Champ {
 			boolean killed = champ.takeDamage(PUNCH_DAMAGE);
 			if (killed) {
 				regenEnergy(ENERGY_ON_KILL);
+				sonicTimer.interrupt();
+				PLAYER.getInventory().setItem(1, new ItemStack(Material.FEATHER));
+				this.sonicMark = null;
 			}
 			this.heal(PUNCH_DAMAGE * lifeSteal);
 			this.regenEnergy(10);
@@ -144,6 +147,9 @@ public class Fighter extends Champ {
 			boolean killed = champ.takeDamage(ROUNDHOUSE_DAMAGE);
 			if (killed) {
 				regenEnergy(ENERGY_ON_KILL);
+				sonicTimer.interrupt();
+				PLAYER.getInventory().setItem(1, new ItemStack(Material.FEATHER));
+				this.sonicMark = null;
 			}
 			
 		}
@@ -192,6 +198,9 @@ public class Fighter extends Champ {
 			boolean killed = sonicMark.takeDamage(SONIC_KICK_DAMAGE);
 			if (killed) {
 				regenEnergy(ENERGY_ON_KILL);
+				sonicTimer.interrupt();
+				PLAYER.getInventory().setItem(1, new ItemStack(Material.FEATHER));
+				this.sonicMark = null;
 			}
 			this.heal(SONIC_KICK_DAMAGE * lifeSteal);
 			PLAYER.teleport(sonicMark.PLAYER);
@@ -255,6 +264,9 @@ public class Fighter extends Champ {
 						boolean killed = c.takeDamage(SLAM_DAMAGE);
 						if (killed) {
 							regenEnergy(ENERGY_ON_KILL);
+							sonicTimer.interrupt();
+							PLAYER.getInventory().setItem(1, new ItemStack(Material.FEATHER));
+							this.sonicMark = null;
 						}
 						this.heal(SLAM_DAMAGE * lifeSteal);
 					}
@@ -315,6 +327,9 @@ public class Fighter extends Champ {
 				boolean killed = champ.takeDamage(SONIC_HIT_DAMAGE);
 				if (killed) {
 					regenEnergy(ENERGY_ON_KILL);
+					sonicTimer.interrupt();
+					PLAYER.getInventory().setItem(1, new ItemStack(Material.FEATHER));
+					this.sonicMark = null;
 				}
 				Thread timer = new Thread(() -> {
 					try {
