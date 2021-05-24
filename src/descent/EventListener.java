@@ -241,7 +241,9 @@ public class EventListener implements Listener {
         Bukkit.getScheduler().scheduleSyncRepeatingTask(Main.getPlugin(Main.class), new Runnable() {
             @Override
             public void run() {
-                player.setVelocity(new Vector(0, 100, 0));
+            	while(player.isSneaking()) {
+            		player.setVelocity(new Vector(player.getVelocity().getX(), 5, player.getVelocity().getZ()));
+            	}
             }
         }, 0L, 1L);
 	}
