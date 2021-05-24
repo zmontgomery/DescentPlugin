@@ -6,6 +6,8 @@ import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.Action;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.util.Vector;
+
 import descent.Main;
 import descent.Ray;
 
@@ -32,6 +34,15 @@ public class Ninja extends Champ {
 		super(player, CHAMP_NAME, MOVE_SPEED, NATURAL_REGEN, MAX_HEALTH, ITEMS, CLOTHES, LEFT_HAND, HURT_SOUND);
 		timeAtLastSwing = 0;
 		timeAtLastFlash = 0;
+	
+        Bukkit.getScheduler().scheduleSyncRepeatingTask(Main.getPlugin(Main.class), new Runnable() {
+            @Override
+            public void run() {
+            	if(player.isSneaking()) {
+            		player.setVelocity(new Vector(player.getVelocity().getX(), 5, player.getVelocity().getZ()));
+            	}
+            }
+        }, 0L, 1L);
 	}
 
 	@Override

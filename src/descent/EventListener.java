@@ -155,6 +155,7 @@ public class EventListener implements Listener {
 	@EventHandler
 	public static void playerJoinEvent(PlayerJoinEvent event) {
 		Player player = event.getPlayer();
+		
 		Champ.clearChamp(player);
 		new Generic(player);
 		player.getInventory().clear();
@@ -237,15 +238,7 @@ public class EventListener implements Listener {
 
 	@EventHandler
 	public static void playerToggleSneakEvent(PlayerToggleSneakEvent event) {
-		Player player = event.getPlayer();
-        Bukkit.getScheduler().scheduleSyncRepeatingTask(Main.getPlugin(Main.class), new Runnable() {
-            @Override
-            public void run() {
-            	while(player.isSneaking()) {
-            		player.setVelocity(new Vector(player.getVelocity().getX(), 5, player.getVelocity().getZ()));
-            	}
-            }
-        }, 0L, 1L);
+
 	}
 
 	@EventHandler
