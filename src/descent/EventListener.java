@@ -104,7 +104,7 @@ public class EventListener implements Listener {
 					new Hunter(player);
 				if (sign.getLine(1).equals("[Ninja]"))
 					new Ninja(player);
-				if (sign.getLine(1).equals("[Figher]"))
+				if (sign.getLine(1).equals("[Fighter]"))
 					new Fighter(player);
 				if (sign.getLine(1).equals("[Alchemist]"))
 					new Alchemist(player);
@@ -125,11 +125,11 @@ public class EventListener implements Listener {
 					new Hunter(player);
 				if (sign.getLine(1).equals("[Ninja]"))
 					new Ninja(player);
-				if (sign.getLine(1).equals("[Shane Lee]"))
+				if (sign.getLine(1).equals("[Fighter]"))
 					new Fighter(player);
 				if (sign.getLine(1).equals("[Alchemist]"))
 					new Alchemist(player);
-				if (sign.getLine(1).equals("[Linguine]"))
+				if (sign.getLine(1).equals("[Pyromancer]"))
 					new Pyromancer(player);
 			}
 		}
