@@ -38,18 +38,13 @@ public class Ninja extends Champ {
 	public void abilityMelee(Champ champ) {
 		Player defend = champ.PLAYER;
 		if (PLAYER.getInventory().getItemInMainHand().getType() == Material.GOLDEN_SWORD && (System.currentTimeMillis() - timeAtLastSwing > (1000 * DAGGAR_COOLDOWN))) {
-			Bukkit.broadcastMessage(PLAYER.getLocation().getDirection().getX() + " + " + defend.getLocation().getDirection().getX());
-			if(PLAYER.getLocation().getDirection().getX() == defend.getLocation().getDirection().getX()) {
-				champ.takeDamage(DAGGAR_DAMAGE*2);
-				timeAtLastSwing = System.currentTimeMillis();
-			} else {
-				champ.takeDamage(DAGGAR_DAMAGE);
-				timeAtLastSwing = System.currentTimeMillis();
-			}
+			champ.takeDamage(DAGGAR_DAMAGE);
+			timeAtLastSwing = System.currentTimeMillis();
 			if(PLAYER.isInvisible()) {
 				PLAYER.setInvisible(false);
 				Main.sendEquipmentInvisiblePacket(PLAYER, false);
 			}
+			PLAYER.playSound(PLAYER.getLocation(), Sound.ENTITY_PLAYER_ATTACK_SWEEP, 100, 1.5f);
 		}
 	}
 
@@ -57,10 +52,21 @@ public class Ninja extends Champ {
 	public void use(Action click) {
 		if (PLAYER.getInventory().getItemInMainHand().getType() == Material.GOLDEN_SWORD
 				&& (click == Action.RIGHT_CLICK_AIR || click == Action.RIGHT_CLICK_BLOCK) && (System.currentTimeMillis() - timeAtLastFlash > (1000 * FLASH_COOLDOWN))) {
-			Ray.teleportRayCast(PLAYER, 10);
+			Ray.teleportRayCast(PLAYER, 16);
 			timeAtLastFlash = System.currentTimeMillis();
 			PLAYER.setInvisible(false);
 			Main.sendEquipmentInvisiblePacket(PLAYER, false);
+			PLAYER.getWorld().playSound(PLAYER.getLocation(), Sound.ENTITY_FIREWORK_ROCKET_BLAST, 100, 1.5f);
 		}
+	}
+	@Override
+	public boolean takeDamage(double amount) {
+		boolean killed = false;
+		killed = super.takeDamage(amount);
+		if(PLAYER.isInvisible()) {
+			PLAYER.setInvisible(false);
+			Main.sendEquipmentInvisiblePacket(PLAYER, false);
+		}
+		return killed;
 	}
 }

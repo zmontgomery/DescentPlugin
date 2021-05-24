@@ -298,7 +298,7 @@ public class EventListener implements Listener {
 			event.setCancelled(true);
 			event.getPlayer().setInvisible(true);
 			event.getPlayer().getWorld()
-			.spawnParticle(Particle.SMOKE_NORMAL, 
+			.spawnParticle(Particle.CAMPFIRE_COSY_SMOKE, 
 					event.getPlayer().getLocation().getX(), event.getPlayer().getLocation().getY() + 1, event.getPlayer().getLocation().getZ(),
 					75, 0.5, 1, 0.5, 0, null, true);
 			event.getPlayer().getWorld().playSound(event.getPlayer().getLocation(), Sound.ITEM_FIRECHARGE_USE, 100, 1);
@@ -316,6 +316,7 @@ public class EventListener implements Listener {
 	            
 	        }.runTaskLater(Main.getPlugin(Main.class), 100);
 		}
+		/*
 		if(event.getItemDrop().getItemStack().getType() == Material.APPLE) {
 			event.setCancelled(true);
 			
@@ -370,6 +371,7 @@ public class EventListener implements Listener {
 			event.getPlayer().setInvisible(true);
 			Main.sendEquipmentInvisiblePacket(event.getPlayer(), true);
 		}
+		*/
 	}
     @EventHandler
     public void inventoryClickEvent(InventoryClickEvent event) {
