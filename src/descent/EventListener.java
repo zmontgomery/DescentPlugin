@@ -46,9 +46,9 @@ import descent.champions.Generic;
 import descent.champions.Hunter;
 import descent.champions.Impaler;
 import descent.champions.Knight;
-import descent.champions.Linguine;
+import descent.champions.Pyromancer;
 import descent.champions.Ninja;
-import descent.champions.ShaneLee;
+import descent.champions.Fighter;
 import descent.threads.FoodSet;
 import descent.threads.Regen;
 import net.minecraft.server.v1_16_R3.NBTTagCompound;
@@ -104,12 +104,12 @@ public class EventListener implements Listener {
 					new Hunter(player);
 				if (sign.getLine(1).equals("[Ninja]"))
 					new Ninja(player);
-				if (sign.getLine(1).equals("[Shane Lee]"))
-					new ShaneLee(player);
+				if (sign.getLine(1).equals("[Figher]"))
+					new Fighter(player);
 				if (sign.getLine(1).equals("[Alchemist]"))
 					new Alchemist(player);
-				if (sign.getLine(1).equals("[Linguine]"))
-					new Alchemist(player);
+				if (sign.getLine(1).equals("[Pyromancer]"))
+					new Pyromancer(player);
 				return;
 			} else if (event.getClickedBlock().getType() == Material.WARPED_WALL_SIGN) {
 				Sign sign = (Sign) event.getClickedBlock().getState();
@@ -126,11 +126,11 @@ public class EventListener implements Listener {
 				if (sign.getLine(1).equals("[Ninja]"))
 					new Ninja(player);
 				if (sign.getLine(1).equals("[Shane Lee]"))
-					new ShaneLee(player);
+					new Fighter(player);
 				if (sign.getLine(1).equals("[Alchemist]"))
 					new Alchemist(player);
 				if (sign.getLine(1).equals("[Linguine]"))
-					new Linguine(player);
+					new Pyromancer(player);
 			}
 		}
 		Champ user = Champ.getChamp(player);
@@ -403,11 +403,11 @@ public class EventListener implements Listener {
     		player.closeInventory();
     	}
     	if(item == Material.GOLDEN_CHESTPLATE) {
-    		new ShaneLee(player);
+    		new Fighter(player);
     		player.closeInventory();
     	}
     	if(item == Material.BLAZE_POWDER) {
-    		new Linguine(player);
+    		new Pyromancer(player);
     		player.closeInventory();
     	}
     }

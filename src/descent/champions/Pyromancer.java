@@ -5,7 +5,7 @@ import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
-public class Linguine extends Champ{
+public class Pyromancer extends Champ{
 	
 	public static final double MAX_HEALTH = 175;
 	public static final String CHAMP_NAME = "Linguine";
@@ -17,7 +17,7 @@ public class Linguine extends Champ{
 	public static final ItemStack LEFT_HAND = null;
 	public static final Sound HURT_SOUND = Sound.BLOCK_GILDED_BLACKSTONE_STEP;
 	
-	public Linguine(Player player) {
+	public Pyromancer(Player player) {
 		super(player, CHAMP_NAME, MOVE_SPEED, NATURAL_REGEN, MAX_HEALTH, ITEMS, CLOTHES, LEFT_HAND, HURT_SOUND);
 	}
 	

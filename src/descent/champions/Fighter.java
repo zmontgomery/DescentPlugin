@@ -25,9 +25,9 @@ import net.minecraft.server.v1_16_R3.MobEffectList;
 import net.minecraft.server.v1_16_R3.PacketPlayOutEntityEffect;
 import net.minecraft.server.v1_16_R3.PlayerConnection;
 
-public class ShaneLee extends Champ {
+public class Fighter extends Champ {
 	public static final double MAX_HEALTH = 275;
-	public static final String CHAMP_NAME = "Shane Lee";
+	public static final String CHAMP_NAME = "Fighter";
 	public static final float MOVE_SPEED = 0.25f;
 	public static final double NATURAL_REGEN = 8.0;
 	public static final ItemStack[] ITEMS = new ItemStack[] { null, new ItemStack(Material.FEATHER),
@@ -84,7 +84,7 @@ public class ShaneLee extends Champ {
 	private Thread safeTimer;
 	private Thread slamTimer;
 
-	public ShaneLee(Player player) {
+	public Fighter(Player player) {
 		super(player, CHAMP_NAME, MOVE_SPEED, NATURAL_REGEN, MAX_HEALTH, ITEMS, CLOTHES, LEFT_HAND, HURT_SOUND);
 		timeAtLastPunch = 0;
 		timeAtLastSonicWave = 0;
@@ -205,7 +205,7 @@ public class ShaneLee extends Champ {
 			this.heal(SAFE_HEAL_AMOUNT);
 			Thread timer = new Thread(() -> {
 				try {
-					Thread.sleep(ShaneLee.LIFE_STEAL_RUNOUT * 1000);
+					Thread.sleep(Fighter.LIFE_STEAL_RUNOUT * 1000);
 				} catch (InterruptedException e) {
 					return;
 				}
@@ -340,7 +340,7 @@ public class ShaneLee extends Champ {
 				PLAYER.getInventory().setItem(2, new ItemStack(Material.MAGMA_CREAM));
 				Thread timer = new Thread(() -> {
 					try {
-						Thread.sleep(ShaneLee.LIFE_STEAL_RUNOUT * 1000);
+						Thread.sleep(Fighter.LIFE_STEAL_RUNOUT * 1000);
 					} catch (InterruptedException e) {
 						return;
 					}
@@ -358,8 +358,8 @@ public class ShaneLee extends Champ {
 
 	public void regenEnergy(int energy) {
 		this.energy += energy;
-		if (this.energy > ShaneLee.MAX_ENERGY) {
-			this.energy = ShaneLee.MAX_ENERGY;
+		if (this.energy > Fighter.MAX_ENERGY) {
+			this.energy = Fighter.MAX_ENERGY;
 		}
 		updateEnergy();
 	}
@@ -376,7 +376,7 @@ public class ShaneLee extends Champ {
 	@Override
 	public void initialize() {
 		super.initialize();
-		regenEnergy(ShaneLee.MAX_ENERGY);
+		regenEnergy(Fighter.MAX_ENERGY);
 		return;
 	}
 

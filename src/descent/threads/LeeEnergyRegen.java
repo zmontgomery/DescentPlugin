@@ -4,7 +4,7 @@ import org.bukkit.entity.Player;
 
 import descent.champions.Champ;
 import descent.champions.Generic;
-import descent.champions.ShaneLee;
+import descent.champions.Fighter;
 
 public class LeeEnergyRegen implements Runnable {
 	private Player player;
@@ -24,7 +24,7 @@ public class LeeEnergyRegen implements Runnable {
 			} catch (InterruptedException e) {
 				// squash
 			}
-			ShaneLee champ = (ShaneLee) Champ.getChamp(player);
+			Fighter champ = (Fighter) Champ.getChamp(player);
 			if (champ != null) {
 				champ.regenEnergy(1);
 			}
