@@ -42,7 +42,7 @@ public class Alchemist extends Champ {
 			
 			ThrownPotion tp = (ThrownPotion) PLAYER.getWorld().spawnEntity(PLAYER.getEyeLocation(), EntityType.SPLASH_POTION);
 			
-			ItemStack potionItem = new ItemStack(Material.POTION);
+			ItemStack potionItem = new ItemStack(Material.SPLASH_POTION);
 			PotionMeta potionMeta = (PotionMeta) potionItem.getItemMeta(); 
 			
 			potionMeta.setColor(Color.RED);
@@ -53,6 +53,28 @@ public class Alchemist extends Champ {
 			tp.setBounce(true);
 			tp.setShooter(PLAYER);
 			tp.setCustomName("HEAL");
+			
+			tp.setVelocity(PLAYER.getLocation().getDirection());
+			
+			timeAtLastPotion = System.currentTimeMillis();
+		}
+		if (PLAYER.getInventory().getItemInMainHand().getType() == Material.GLASS_BOTTLE
+				&& (click == Action.LEFT_CLICK_AIR || click == Action.LEFT_CLICK_BLOCK)
+				&& (System.currentTimeMillis() - timeAtLastPotion > (1000 * POTION_COOLDOWN))) {
+			
+			ThrownPotion tp = (ThrownPotion) PLAYER.getWorld().spawnEntity(PLAYER.getEyeLocation(), EntityType.SPLASH_POTION);
+			
+			ItemStack potionItem = new ItemStack(Material.SPLASH_POTION);
+			PotionMeta potionMeta = (PotionMeta) potionItem.getItemMeta(); 
+			
+			potionMeta.setColor(Color.BLACK);
+			
+			potionItem.setItemMeta(potionMeta);
+			
+			tp.setItem(potionItem);
+			tp.setBounce(true);
+			tp.setShooter(PLAYER);
+			tp.setCustomName("DAMAGE");
 			
 			tp.setVelocity(PLAYER.getLocation().getDirection());
 			

@@ -264,22 +264,30 @@ public class EventListener implements Listener {
 	public static void potionSplashEvent(PotionSplashEvent event) {
 
 		if (Champ.getChamp((Player) event.getPotion().getShooter()) instanceof Alchemist) {
-			for (Entity ent : event.getAffectedEntities()) {
-				if (ent instanceof Player) {
-					
-					Player pl = (Player) ent;
-					
-					Champ c = Champ.getChamp(pl);
-					
-					c.heal(Alchemist.POTION_HEAL);
-					
+			if(event.getPotion().getName() == "HEAL") {
+				for (Entity ent : event.getAffectedEntities()) {
+					if (ent instanceof Player) {
+						
+						Player pl = (Player) ent;
+						
+						Champ c = Champ.getChamp(pl);
+						
+						c.heal(Alchemist.POTION_HEAL);
+						
+					}
 				}
 			}
-		} else if (Champ.getChamp(Bukkit.getPlayerExact(event.getPotion().getCustomName())) instanceof Deputy) {
-			for (Entity ent : event.getAffectedEntities()) {
-				if (ent instanceof Player) {
-					// Player pl = (Player)ent;
-					// DamageSystem.stunPlayer(pl, 20);
+			if(event.getPotion().getName() == "DAMAGE") {
+				for (Entity ent : event.getAffectedEntities()) {
+					if (ent instanceof Player) {
+						
+						Player pl = (Player) ent;
+						
+						Champ c = Champ.getChamp(pl);
+						
+						c.takeDamage(Alchemist.POTION_HEAL);
+						
+					}
 				}
 			}
 		}
