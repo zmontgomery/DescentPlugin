@@ -37,6 +37,7 @@ public class Ray {
 							1, 0, 0, 0, 0);
 
 				} else {
+					endLocation = new Location(w, endLocation.getX(), endLocation.getY() - 1, endLocation.getZ());
 					shooter.teleport(endLocation);
 					return;
 				}
