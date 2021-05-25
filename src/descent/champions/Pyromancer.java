@@ -2,6 +2,7 @@ package descent.champions;
 
 import java.util.Collection;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Particle;
@@ -18,7 +19,7 @@ import descent.Main;
 
 public class Pyromancer extends Champ {
 
-	private class FireRay extends BukkitRunnable {
+	private class FireRay {
 
 		Location startLocation;
 		Vector dir;
@@ -36,60 +37,66 @@ public class Pyromancer extends Champ {
 			this(startLocation, dir, distance, 0);
 		}
 		
-		
-
-		@Override
-		public void run() {
+		public void shootFireRay() {
+			
 			// STATIC
 			World world = PLAYER.getWorld();
 
 			double x = dir.getX();
 			double y = dir.getY();
 			double z = dir.getZ();
-
+			
 			double grav = 0;
-
+			
 			Location bulletStartLocation = new Location(world, startLocation.getX(), startLocation.getY(),
 					startLocation.getZ());
 			Location bulletLocation;
+			
+	    	int i = 0;
+			
+			Bukkit.getScheduler().scheduleSyncRepeatingTask(Main.getPlugin(Main.class), new Runnable() {
+			    @Override
+			    public void run() {
 
-			for (double i = 0; i < distance; i += 0.5) {
-				bulletLocation = new Location(world, bulletStartLocation.getX() + (i * x),
-						bulletStartLocation.getY() + (i * y) - grav, bulletStartLocation.getZ() + (i * z));
-				grav = 0.026 * (i * i);
-				Collection<Entity> entities = world.getNearbyEntities(bulletLocation, 0.6, 0.6, 0.6);
+			    	i++;
+			    	
+					bulletLocation = new Location(world, bulletStartLocation.getX() + (i * x),
+							bulletStartLocation.getY() + (i * y) - grav, bulletStartLocation.getZ() + (i * z));
+					
+					grav = 0.026 * (i * i);
+					Collection<Entity> entities = world.getNearbyEntities(bulletLocation, 0.6, 0.6, 0.6);
 
-				if (PLAYER.getWorld().getBlockAt(bulletLocation).getType().isSolid() == false) {
-					world.spawnParticle(Particle.FLAME, bulletLocation, 1, 0.08, 0.08, 0.08, 0.02);
-					for (Entity ent : entities) {
-						if (ent instanceof Player) {
-							Player hit = (Player) ent;
-							if (hit != PLAYER) {
-								Champ pldefend = Champ.getChamp(hit);
-								abilityHitscan(pldefend, false);
-								return;
+					if (PLAYER.getWorld().getBlockAt(bulletLocation).getType().isSolid() == false) {
+						world.spawnParticle(Particle.FLAME, bulletLocation, 1, 0.08, 0.08, 0.08, 0.02);
+						for (Entity ent : entities) {
+							if (ent instanceof Player) {
+								Player hit = (Player) ent;
+								if (hit != PLAYER) {
+									Champ pldefend = Champ.getChamp(hit);
+									abilityHitscan(pldefend, false);
+									return;
+								}
 							}
 						}
-					}
-					wallsHit = 0;
+						wallsHit = 0;
 
-				} else {
-					wallsHit++;
-					if(wallsHit > 4) {
+					} else {
+						wallsHit++;
+						if(wallsHit > 4) {
+							return;
+						}
+						Vector newDir = new Vector();
+						newDir.setX(dir.getX());
+						newDir.setZ(dir.getZ());
+						newDir.setY(0.3);
+						Location next = new Location(world, bulletLocation.getX(), bulletLocation.getY() + 0.3,
+								bulletLocation.getZ());
+						FireRay ray = new FireRay(next, newDir, distance - i, wallsHit);
+						ray.shootFireRay();
 						return;
 					}
-					Vector newDir = new Vector();
-					newDir.setX(dir.getX());
-					newDir.setZ(dir.getZ());
-					newDir.setY(0.3);
-					Location next = new Location(world, bulletLocation.getX(), bulletLocation.getY() + 0.3,
-							bulletLocation.getZ());
-					BukkitRunnable ray = new FireRay(next, newDir, distance - i, wallsHit);
-					ray.runTaskLater(Main.getPlugin(Main.class), 1);
-					return;
-				}
-			}
-			return;
+			    }
+			}, 0L, 1L);
 		}
 
 	}
@@ -127,8 +134,8 @@ public class Pyromancer extends Champ {
 					PLAYER.getLocation().getY() + PLAYER.getEyeHeight(), PLAYER.getLocation().getZ());
 			Vector dir = new Vector(PLAYER.getLocation().getDirection().getX(), PLAYER.getLocation().getDirection().getY() + 0.15, PLAYER.getLocation().getDirection().getZ());
 			
-			BukkitRunnable ray = new FireRay(startLocation, dir, 150);
-			ray.runTaskLater(Main.getPlugin(Main.class), 1);
+			FireRay ray = new FireRay(startLocation, dir, 150);
+			ray.shootFireRay();
 			PLAYER.playSound(PLAYER.getLocation(), FIRE_SOUND, 3.0f, 1.5f);
 			timeAtLastFire = System.currentTimeMillis();
 		}
