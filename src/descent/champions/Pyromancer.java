@@ -53,7 +53,7 @@ public class Pyromancer extends Champ {
 					startLocation.getZ());
 			Location bulletLocation;
 
-			for (double i = 0; i < distance; i += 0.1) {
+			for (double i = 0; i < distance; i += 0.5) {
 				bulletLocation = new Location(world, bulletStartLocation.getX() + (i * x),
 						bulletStartLocation.getY() + (i * y) - grav, bulletStartLocation.getZ() + (i * z));
 				grav = 0.026 * (i * i);
@@ -87,11 +87,6 @@ public class Pyromancer extends Champ {
 					BukkitRunnable ray = new FireRay(next, newDir, distance - i, wallsHit);
 					ray.runTaskLater(Main.getPlugin(Main.class), 1);
 					return;
-				}
-				try {
-					Thread.sleep(2);
-				} catch (InterruptedException e) {
-					// squash
 				}
 			}
 			return;
