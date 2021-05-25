@@ -41,12 +41,12 @@ public class Fighter extends Champ {
 	public static final short MAX_ENERGY = 200;
 
 	// Damage
-	public static final double PUNCH_DAMAGE = 44;
-	public static final double SONIC_HIT_DAMAGE = 45;
-	public static final double SONIC_KICK_DAMAGE = 50;
-	public static final double SAFE_HEAL_AMOUNT = 25;
-	public static final double SLAM_DAMAGE = 40;
-	public static final double ROUNDHOUSE_DAMAGE = 80;
+	public static final double PUNCH_DAMAGE = 43;
+	public static final double SONIC_HIT_DAMAGE = 40;
+	public static final double SONIC_KICK_DAMAGE = 45;
+	public static final double SAFE_HEAL_AMOUNT = 20;
+	public static final double SLAM_DAMAGE = 35;
+	public static final double ROUNDHOUSE_DAMAGE = 70;
 	// Cool downs
 	public static final float PUNCH_COOLDOWN = 1.1f;
 	public static final float SONIC_WAVE_COOLDOWN = 7.0f;
@@ -58,17 +58,19 @@ public class Fighter extends Champ {
 	public static final long SLAM_RUNOUT = 3;
 	public static final long SONIC_RUNOUT = 4;
 	// Energy usage
-	public static final short SONIC_WAVE_ENERGY = 25;
-	public static final short SONIC_KICK_ENERGY = 45;
-	public static final short SAFE_ENERGY = 25;
-	public static final short LIFESTEAL_ENERGY = 45;
-	public static final short SLAM_ENERGY = 55;
-	public static final short SLOW_ENERGY = 45;
-	public static final short ROUNDHOUSE_ENERGY = 70;
-	public static final short ENERGY_ON_KILL = 100;
+	public static final short SONIC_WAVE_ENERGY = 30;
+	public static final short SONIC_KICK_ENERGY = 50;
+	public static final short SAFE_ENERGY = 30;
+	public static final short LIFESTEAL_ENERGY = 50;
+	public static final short SLAM_ENERGY = 60;
+	public static final short SLOW_ENERGY = 65;
+	public static final short ROUNDHOUSE_ENERGY = 75;
+	public static final short ENERGY_ON_KILL = 50;
 	
-	public static final short ROUNDHOUSE_VELOCITY = 4;
-	public static final float LIFESTEAL_AMOUNT = 0.6f;
+	public static final short ROUNDHOUSE_VELOCITY = 3;
+	public static final float SLOW_TIME = 3.0f;
+	public static final float LIFESTEAL_AMOUNT = 0.4f;
+	public static final int SAFE_DISTANCE = 10;
 
 	private long timeAtLastPunch;
 	private long timeAtLastSonicWave;
@@ -100,18 +102,6 @@ public class Fighter extends Champ {
 		this.slamTimer = null;
 		Thread regen = new Thread(new LeeEnergyRegen(player, this));
 		regen.start();
-		Thread timer = new Thread(() -> {
-			try {
-				Thread.sleep(LIFE_STEAL_RUNOUT * 1000);
-			} catch (InterruptedException e) {
-				// squash
-			}
-			if (PLAYER.getInventory().getItem(2).getType() == Material.MAGMA_CREAM) {
-				PLAYER.getInventory().setItem(2, new ItemStack(Material.SLIME_BALL));
-				timeAtLastSafe = System.currentTimeMillis();
-			}
-		});
-		timer.start();
 		initialize();
 	}
 
@@ -122,11 +112,9 @@ public class Fighter extends Champ {
 		if (PLAYER.getInventory().getItemInMainHand().getType() == Material.AIR
 				&& (System.currentTimeMillis() - timeAtLastPunch > (1000 * PUNCH_COOLDOWN))) {
 			boolean killed = champ.takeDamage(PUNCH_DAMAGE);
+			onHit();
 			if (killed) {
-				regenEnergy(ENERGY_ON_KILL);
-				sonicTimer.interrupt();
-				PLAYER.getInventory().setItem(1, new ItemStack(Material.FEATHER));
-				this.sonicMark = null;
+				onKill(champ);
 			}
 			this.heal(PUNCH_DAMAGE * lifeSteal);
 			this.regenEnergy(10);
@@ -145,11 +133,9 @@ public class Fighter extends Champ {
 			}
 			useEnergy(ROUNDHOUSE_ENERGY);
 			boolean killed = champ.takeDamage(ROUNDHOUSE_DAMAGE);
+			onHit();
 			if (killed) {
-				regenEnergy(ENERGY_ON_KILL);
-				sonicTimer.interrupt();
-				PLAYER.getInventory().setItem(1, new ItemStack(Material.FEATHER));
-				this.sonicMark = null;
+				onKill(champ);
 			}
 			
 		}
@@ -196,14 +182,12 @@ public class Fighter extends Champ {
 			PLAYER.getInventory().setItem(1, new ItemStack(Material.FEATHER));
 			useEnergy(SONIC_KICK_ENERGY);
 			boolean killed = sonicMark.takeDamage(SONIC_KICK_DAMAGE);
-			if (killed) {
-				regenEnergy(ENERGY_ON_KILL);
-				sonicTimer.interrupt();
-				PLAYER.getInventory().setItem(1, new ItemStack(Material.FEATHER));
-				this.sonicMark = null;
-			}
+			onHit();
 			this.heal(SONIC_KICK_DAMAGE * lifeSteal);
 			PLAYER.teleport(sonicMark.PLAYER);
+			if (killed) {
+				onKill(sonicMark);
+			}
 			this.sonicMark = null;
 			timeAtLastSonicWave = System.currentTimeMillis();
 
@@ -231,7 +215,7 @@ public class Fighter extends Champ {
 		} else if (PLAYER.getInventory().getItemInMainHand().getType() == Material.SLIME_BALL
 				&& (click == Action.LEFT_CLICK_AIR || click == Action.LEFT_CLICK_BLOCK)
 				&& (System.currentTimeMillis() - timeAtLastSafe > (1000 * SAFE_COOLDOWN))) {
-			safeRayCast(PLAYER, 10);
+			safeRayCast();
 
 		} else if (PLAYER.getInventory().getItemInMainHand().getType() == Material.MAGMA_CREAM
 				&& (click == Action.RIGHT_CLICK_AIR || click == Action.RIGHT_CLICK_BLOCK)
@@ -262,11 +246,9 @@ public class Fighter extends Champ {
 						Champ c = Champ.getChamp(p);
 						slamMarks.add(c);
 						boolean killed = c.takeDamage(SLAM_DAMAGE);
+						onHit();
 						if (killed) {
-							regenEnergy(ENERGY_ON_KILL);
-							sonicTimer.interrupt();
-							PLAYER.getInventory().setItem(1, new ItemStack(Material.FEATHER));
-							this.sonicMark = null;
+							onKill(c);
 						}
 						this.heal(SLAM_DAMAGE * lifeSteal);
 					}
@@ -300,7 +282,7 @@ public class Fighter extends Champ {
 		} else if (PLAYER.getInventory().getItemInMainHand().getType() == Material.LEATHER_HORSE_ARMOR
 				&& (click == Action.RIGHT_CLICK_AIR || click == Action.RIGHT_CLICK_BLOCK) && energy >= SLOW_ENERGY) {
 			for (Champ c : slamMarks) {
-				c.takeEffect(new PotionEffect(PotionEffectType.SLOW, 100, 4));
+				c.takeEffect(new PotionEffect(PotionEffectType.SLOW, (int) (20 * SLOW_TIME), 3));
 			}
 			slamTimer.interrupt();
 			useEnergy(SLOW_ENERGY);
@@ -325,11 +307,9 @@ public class Fighter extends Champ {
 				this.sonicMark = champ;
 				arrow.remove();
 				boolean killed = champ.takeDamage(SONIC_HIT_DAMAGE);
+				onHit();
 				if (killed) {
-					regenEnergy(ENERGY_ON_KILL);
-					sonicTimer.interrupt();
-					PLAYER.getInventory().setItem(1, new ItemStack(Material.FEATHER));
-					this.sonicMark = null;
+					onKill(champ);
 				}
 				Thread timer = new Thread(() -> {
 					try {
@@ -394,19 +374,40 @@ public class Fighter extends Champ {
 		regenEnergy(Fighter.MAX_ENERGY);
 		return;
 	}
+	
+	@Override
+	public void onKill(Champ champ) {
+		super.onKill(champ);
+		regenEnergy(ENERGY_ON_KILL);
+		if(champ == sonicMark) {
+			sonicTimer.interrupt();
+			PLAYER.getInventory().setItem(1, new ItemStack(Material.FEATHER));
+			this.sonicMark = null;
+		}
+		if(slamMarks.contains(champ)) {
+			slamMarks.remove(champ);
+			if(slamMarks.size() == 0) {
+				slamTimer.interrupt();
+				if (PLAYER.getInventory().getItem(3).getType() == Material.LEATHER_HORSE_ARMOR) {
+					PLAYER.getInventory().setItem(3, new ItemStack(Material.GOLDEN_HORSE_ARMOR));
+					timeAtLastSlam = System.currentTimeMillis();
+				}
+			}
+		}		
+	}
 
-	private static void safeRayCast(Player shooter, int distance) {
+	private void safeRayCast() {
 
-		World w = shooter.getWorld();
-		Location l = new Location(w, shooter.getLocation().getX(),
-				shooter.getLocation().getY() + shooter.getEyeHeight(), shooter.getLocation().getZ());
-		Vector v = shooter.getLocation().getDirection();
+		World w = PLAYER.getWorld();
+		Location l = new Location(w, PLAYER.getLocation().getX(),
+				PLAYER.getLocation().getY() + PLAYER.getEyeHeight(), PLAYER.getLocation().getZ());
+		Vector v = PLAYER.getLocation().getDirection();
 
 		double x = v.getX();
 		double y = v.getY();
 		double z = v.getZ();
 
-		for (double i = 0; i < distance; i = i + 0.1) {
+		for (double i = 0; i < SAFE_DISTANCE; i = i + 0.1) {
 
 			Location bulletLocation = new Location(w, l.getX() + (i * x), l.getY() + (i * y), l.getZ() + (i * z));
 
@@ -414,14 +415,13 @@ public class Fighter extends Champ {
 
 			if (i > 1) {
 
-				if (shooter.getWorld().getBlockAt(bulletLocation).getType().isSolid() == false) {
+				if (PLAYER.getWorld().getBlockAt(bulletLocation).getType().isSolid() == false) {
 					for (Entity ent : entities) {
 						if (ent instanceof Player) {
 							Player hit = (Player) ent;
-							shooter.playSound(shooter.getLocation(), Sound.ENTITY_ARROW_HIT_PLAYER, 1f, 1f);
-							Champ plattack = Champ.getChamp(shooter);
+							PLAYER.playSound(PLAYER.getLocation(), Sound.ENTITY_ARROW_HIT_PLAYER, 1f, 1f);
 							Champ pldefend = Champ.getChamp(hit);
-							plattack.abilityRanged(pldefend, null);
+							this.abilityRanged(pldefend, null);
 							return;
 						}
 					}

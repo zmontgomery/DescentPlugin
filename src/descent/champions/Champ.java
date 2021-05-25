@@ -1,5 +1,6 @@
 package descent.champions;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
@@ -8,8 +9,10 @@ import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.craftbukkit.v1_16_R3.CraftWorld;
 import org.bukkit.craftbukkit.v1_16_R3.entity.CraftPlayer;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
+import org.bukkit.entity.ThrownPotion;
 import org.bukkit.event.block.Action;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
@@ -34,6 +37,11 @@ public abstract class Champ {
 	public final ItemStack LEFT_HAND;
 	public final Sound HURT_SOUND;
 	protected double currentHealth;
+	
+	public static final Sound KILL_SOUND = Sound.ENTITY_PLAYER_LEVELUP;
+	public static final Sound HIT_SOUND = Sound.ENTITY_TURTLE_EGG_BREAK;
+	
+	public static final double FIRE_DAMAGE = 20;
 
 	protected Champ(Player player, String champName, float moveSpeed, double naturalRegen, double maxHealth, ItemStack[] items,
 			ItemStack[] clothes, ItemStack leftHand, Sound hurtSound) {
@@ -108,8 +116,25 @@ public abstract class Champ {
 	public void abilityRanged(Champ champ, Projectile projectile) {
 		return;
 	}
+	
+	public void abilityPotion(ThrownPotion potion, Collection<LivingEntity> hits) {
+		return;
+	}
 
 	public void bow(double force) {
+		return;
+	}
+	
+	public void onDrop(Material item) {
+		return;
+	}
+	
+	public void onSneak() {
+		return;
+	}
+	
+	public void ignite(double time) {
+		PLAYER.setFireTicks((int)(PLAYER.getFireTicks() + (time * 20)));
 		return;
 	}
 
@@ -123,6 +148,7 @@ public abstract class Champ {
 		PLAYER.getInventory().setContents(ITEMS);
 		PLAYER.getInventory().setItemInOffHand(LEFT_HAND);
 		PLAYER.getInventory().setArmorContents(CLOTHES);
+		PLAYER.setFireTicks(0);
 		return;
 	}
 
@@ -171,6 +197,16 @@ public abstract class Champ {
 	
 	public void takeEffect(PotionEffect effect) {
 		PLAYER.addPotionEffect(effect);
+		return;
+	}
+	
+	public void onHit() {
+		PLAYER.playSound(PLAYER.getLocation(), HIT_SOUND, 3f, 4.0f);
+		return;
+	}
+	
+	public void onKill(Champ champ) {
+		PLAYER.playSound(PLAYER.getLocation(), KILL_SOUND, 3f, 4.0f);
 		return;
 	}
 	

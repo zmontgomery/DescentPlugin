@@ -7,6 +7,7 @@ import org.bukkit.command.CommandSender;
 import descent.Main;
 import descent.gamemodes.Deathmatch;
 import descent.gamemodes.KingOfTheHill;
+import descent.gamemodes.Testing;
 
 public class SetGame implements CommandExecutor {
 
@@ -19,6 +20,8 @@ public class SetGame implements CommandExecutor {
 				}
 				else if(args[0].equals("koth")) {
 					Main.gamemode = new KingOfTheHill();
+				} else if(args[0].equals("testing")) {
+					Main.gamemode = new Testing();
 				}
 			} 
 		}

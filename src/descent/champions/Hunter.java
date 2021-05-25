@@ -28,6 +28,7 @@ public class Hunter extends Champ {
 	@Override
 	public void abilityRanged(Champ champ, Projectile projectile) {
 		champ.takeDamage(BOW_DAMAGE);
+		onHit();
 	}
 
 	@Override

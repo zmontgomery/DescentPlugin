@@ -65,6 +65,7 @@ public class Beserker extends Champ {
 				}
 			} 
 			champ.takeDamage(damage);
+			onHit();
 			timeAtLastSwing = System.currentTimeMillis();
 		}
 	}

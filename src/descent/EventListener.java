@@ -1,18 +1,10 @@
 package descent;
 
-import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.Particle;
-import org.bukkit.Sound;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.block.Sign;
-import org.bukkit.craftbukkit.v1_16_R3.entity.CraftEntity;
-import org.bukkit.craftbukkit.v1_16_R3.entity.CraftPlayer;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.EntityType;
-import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
 import org.bukkit.event.EventHandler;
@@ -21,6 +13,7 @@ import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.entity.EntityPickupItemEvent;
 import org.bukkit.event.entity.EntityShootBowEvent;
 import org.bukkit.event.entity.ItemDespawnEvent;
@@ -35,11 +28,8 @@ import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.event.player.PlayerToggleSneakEvent;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
-import org.bukkit.potion.PotionEffectType;
-import org.bukkit.scheduler.BukkitRunnable;
-import org.bukkit.util.Vector;
-
 import descent.champions.Alchemist;
 import descent.champions.Beserker;
 import descent.champions.Champ;
@@ -53,9 +43,6 @@ import descent.champions.Ninja;
 import descent.champions.Fighter;
 import descent.threads.FoodSet;
 import descent.threads.Regen;
-import net.minecraft.server.v1_16_R3.NBTTagCompound;
-import net.minecraft.server.v1_16_R3.PacketPlayOutEntityDestroy;
-import net.minecraft.server.v1_16_R3.PlayerConnection;
 
 public class EventListener implements Listener {
 
@@ -214,11 +201,15 @@ public class EventListener implements Listener {
 
 	@EventHandler
 	public static void damageEvent(EntityDamageEvent event) {
-		if (event.getEntity() instanceof Player) {
-			// if(event.getCause() == EntityDamageEvent.DamageCause.PROJECTILE ||
-			// event.getCause() == EntityDamageEvent.DamageCause.FALL) {
+		if(event.getEntity() instanceof Player) {
 			event.setCancelled(true);
-			// }
+			Player player = (Player)event.getEntity();
+			Champ champ = Champ.getChamp(player);
+			if (event.getEntity() instanceof Player) {
+				if(event.getCause() == DamageCause.FIRE_TICK || event.getCause() == DamageCause.FIRE) {
+					champ.takeDamage(Champ.FIRE_DAMAGE);
+				}
+			}
 		}
 	}
 
@@ -238,7 +229,12 @@ public class EventListener implements Listener {
 
 	@EventHandler
 	public static void playerToggleSneakEvent(PlayerToggleSneakEvent event) {
-
+		Player player = event.getPlayer();
+		Champ champ = Champ.getChamp(player);
+		
+		if (player.getGameMode() == GameMode.SURVIVAL && champ != null) {
+			champ.onSneak();
+		}
 	}
 
 	@EventHandler
@@ -265,60 +261,26 @@ public class EventListener implements Listener {
 
 	@EventHandler
 	public static void potionSplashEvent(PotionSplashEvent event) {
-
-		if (Champ.getChamp((Player) event.getPotion().getShooter()) instanceof Alchemist) {
-			if(event.getPotion().getCustomName().equals("HEAL")) {
-				for (Entity ent : event.getAffectedEntities()) {
-					if (ent instanceof Player) {
-						
-						Player pl = (Player) ent;
-						
-						Champ c = Champ.getChamp(pl);
-						
-						c.heal(Alchemist.POTION_HEAL);
-						
-					}
-				}
-			}
-			if(event.getPotion().getCustomName().equals("DAMAGE")) {
-				for (Entity ent : event.getAffectedEntities()) {
-					if (ent instanceof Player) {
-						
-						Player pl = (Player) ent;
-						
-						Champ c = Champ.getChamp(pl);
-						
-						c.takeDamage(Alchemist.POTION_HEAL);
-						
-					}
-				}
-			}
+		Player player = (Player)event.getPotion().getShooter();
+		Champ champ = Champ.getChamp(player);
+		
+		if (player.getGameMode() == GameMode.SURVIVAL && champ != null) {
+			champ.abilityPotion(event.getPotion(), event.getAffectedEntities());
 		}
+		
 	}
 	@EventHandler
 	public static void playerDropItemEvent(PlayerDropItemEvent event) {
-		if(event.getItemDrop().getItemStack().getType() == Material.GOLDEN_SWORD) {
-			event.setCancelled(true);
-			event.getPlayer().setInvisible(true);
-			event.getPlayer().getWorld()
-			.spawnParticle(Particle.CAMPFIRE_COSY_SMOKE, 
-					event.getPlayer().getLocation().getX(), event.getPlayer().getLocation().getY() + 1, event.getPlayer().getLocation().getZ(),
-					75, 0.5, 1, 0.5, 0, null, true);
-			event.getPlayer().getWorld().playSound(event.getPlayer().getLocation(), Sound.ITEM_FIRECHARGE_USE, 100, 1);
-			event.getPlayer().addPotionEffect(new PotionEffect(PotionEffectType.SPEED, 100, 1, true));
-			
-			Main.sendEquipmentInvisiblePacket(event.getPlayer(), true);
-			
-	        new BukkitRunnable() {
-	            
-	            @Override
-	            public void run() {
-	            	event.getPlayer().setInvisible(false);
-	            	Main.sendEquipmentInvisiblePacket(event.getPlayer(), false);
-	            }
-	            
-	        }.runTaskLater(Main.getPlugin(Main.class), 100);
+		event.setCancelled(true);
+		
+		Player player = event.getPlayer();
+		Champ champ = Champ.getChamp(player);
+		
+		if (player.getGameMode() == GameMode.SURVIVAL && champ != null) {
+			champ.onDrop(event.getItemDrop().getItemStack().getType());
 		}
+		
+		
 		/*
 		if(event.getItemDrop().getItemStack().getType() == Material.APPLE) {
 			event.setCancelled(true);
@@ -383,7 +345,11 @@ public class EventListener implements Listener {
     		return;
     	}
     	event.setCancelled(true);
-    	Material item = event.getCurrentItem().getType();
+    	ItemStack i = event.getCurrentItem();
+    	if(i == null) {
+    		return;
+    	}
+    	Material item = i.getType();
     	if(item == null) {
     		return;
     	}
@@ -429,19 +395,11 @@ public class EventListener implements Listener {
     public void playerMoveEvent(PlayerMoveEvent event) {
     	Player player = event.getPlayer();
     	Champ champ = Champ.getChamp(player);
+    	
+    	//stamp
     	if (((int) event.getFrom().getX() != (int) event.getTo().getX() || (int) event.getFrom().getZ() != (int) event.getTo().getZ()) && champ instanceof Knight) { 
     		Knight knight = (Knight)champ;
     		knight.stampede();
- 
-//    		Thread stampRunout = new Thread(() -> {
-//    			try {
-//					Thread.sleep((long)(Knight.STAMPEDE_RUNOUT * 1000));
-//				} catch (InterruptedException e) {
-//					// squash
-//				}
-//    			player.setWalkSpeed(Knight.MOVE_SPEED);
-//    		});
-//    		stampRunout.start();
         }
     }
 }

@@ -17,7 +17,13 @@ public class Knight extends Champ {
 			new ItemStack(Material.CHAINMAIL_LEGGINGS), new ItemStack(Material.IRON_CHESTPLATE),
 			new ItemStack(Material.IRON_HELMET) };
 	public static final ItemStack LEFT_HAND = new ItemStack(Material.SHIELD);
-	public static final Sound HURT_SOUND = Sound.BLOCK_ANVIL_LAND;
+	public static final Sound HURT_SOUND = Sound.BLOCK_LANTERN_BREAK;
+	
+	public static final Sound SWORD_SOUND = Sound.ENTITY_DOLPHIN_SPLASH;
+	public static final Sound SHIELD_HIT_SOUND = Sound.ITEM_SHIELD_BLOCK;
+	public static final Sound SHIELD_BREAK_SOUND = Sound.ITEM_SHIELD_BREAK;
+	public static final Sound SPEED_UP_SOUND = Sound.ENTITY_HORSE_GALLOP;
+	public static final Sound NEW_SHIELD_SOUND = Sound.ITEM_ARMOR_EQUIP_NETHERITE;
 
 	public static final short MAX_SHIELD_HEALTH = 150;
 
@@ -27,9 +33,9 @@ public class Knight extends Champ {
 	public static final float MELEE_COOLDOWN = 0.4f;
 	public static final float SHIELD_COOLDOWN = 4.0f;
 	
-	public static final int DAMAGE_PER_INTERVAL = 10;
-	public static final float STAMPEDE_RUNOUT = 0.32f;
-	public static final float STAMPEDE_INTERVAL = 2.6f;
+	public static final int DAMAGE_PER_INTERVAL = 8;
+	public static final float STAMPEDE_RUNOUT = 0.30f;
+	public static final float STAMPEDE_INTERVAL = 2.5f;
 	public static final int MAX_INTERVALS = 5;
 	public static final float INCREASE_AMOUNT = 0.04f;
 
@@ -61,6 +67,8 @@ public class Knight extends Champ {
 		if (PLAYER.getInventory().getItemInMainHand().getType() == Material.IRON_SWORD
 				&& (System.currentTimeMillis() - timeAtLastSwing > (1000 * MELEE_COOLDOWN))) {
 			champ.takeDamage(SWORD_DAMAGE + (DAMAGE_PER_INTERVAL * currentInterval));
+			onHit();
+			PLAYER.playSound(PLAYER.getLocation(), SWORD_SOUND, 1f, 3f);
 			PLAYER.setWalkSpeed(Knight.MOVE_SPEED);
 			currentInterval = 0;
 			timeAtLastSwing = System.currentTimeMillis();
@@ -73,7 +81,7 @@ public class Knight extends Champ {
 		if (this.currentShieldHealth > 0 && PLAYER.isBlocking()) {
 			this.currentShieldHealth -= amount;
 			for(Player player : Bukkit.getOnlinePlayers()) {
-				player.playSound(player.getLocation(), Sound.ITEM_SHIELD_BLOCK, 1f, 0.6f);
+				player.playSound(player.getLocation(), SHIELD_HIT_SOUND, 1f, 0.6f);
 			}
 			if (this.currentShieldHealth <= 0) {
 				this.currentShieldHealth = 0;
@@ -86,11 +94,12 @@ public class Knight extends Champ {
 					}
 					if(Champ.getChamp(PLAYER) instanceof Knight) {
 						PLAYER.getInventory().setItemInOffHand(Knight.LEFT_HAND);
+						PLAYER.playSound(PLAYER.getLocation(), NEW_SHIELD_SOUND, 1f, 2f);
 					}
 				});
 				timer.start();
 				for(Player player : Bukkit.getOnlinePlayers()) {
-					player.playSound(player.getLocation(), Sound.ITEM_SHIELD_BREAK, 1.5f, 0.6f);
+					player.playSound(player.getLocation(), SHIELD_BREAK_SOUND, 1.5f, 0.6f);
 				}
 			}
 			updateShield();
@@ -133,8 +142,9 @@ public class Knight extends Champ {
 		
 		if(System.currentTimeMillis() - timeAtLastIncrease > (1000 * STAMPEDE_INTERVAL) && currentInterval <= MAX_INTERVALS) {
 			PLAYER.setWalkSpeed(PLAYER.getWalkSpeed() + INCREASE_AMOUNT);
-			timeAtLastIncrease = System.currentTimeMillis();
+			PLAYER.playSound(PLAYER.getLocation(), SPEED_UP_SOUND, 1f, 1.0f * ((float)currentInterval / (float)MAX_INTERVALS));
 			currentInterval++;
+			timeAtLastIncrease = System.currentTimeMillis();
 		}
 		runoutTimer.start();
 		return;

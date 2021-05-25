@@ -24,6 +24,9 @@ public class Impaler extends Champ {
 			new ItemStack(Material.LEATHER_HELMET) };
 	public static final ItemStack LEFT_HAND = null;
 	public static final Sound HURT_SOUND = Sound.ITEM_AXE_STRIP;
+	
+	public static final Sound THROW_SOUND = Sound.ENTITY_BAT_TAKEOFF;
+	public static final Sound WRAITH_SOUND = Sound.ENTITY_ENDERMAN_SCREAM;
 
 	// Cool downs
 	public static final float KNIFE_THROW_COOLDOWN = 0.16f;
@@ -61,7 +64,7 @@ public class Impaler extends Champ {
 			knife1.setPickupStatus(Arrow.PickupStatus.DISALLOWED);
 			knife1.setCustomName(PLAYER.getName());
 			knife1.setBounce(false);
-			PLAYER.playSound(PLAYER.getLocation(), Sound.ENTITY_BAT_TAKEOFF, 0.4f, 0.7f);
+			PLAYER.playSound(PLAYER.getLocation(), THROW_SOUND, 0.4f, 0.8f);
 
 			timeAtLastThrow = System.currentTimeMillis();
 		} else if (PLAYER.getInventory().getItemInMainHand().getType() == Material.BLACK_DYE
@@ -100,6 +103,7 @@ public class Impaler extends Champ {
 				wraith = false;
 			});
 			runout.start();
+			PLAYER.playSound(PLAYER.getLocation(), WRAITH_SOUND, 0.4f, 0.8f);
 			
 			timeAtLastWraith = System.currentTimeMillis();
 		}
@@ -109,6 +113,7 @@ public class Impaler extends Champ {
 	public void abilityRanged(Champ champ, Projectile projectile) {
 		if (projectile instanceof Arrow) {
 			champ.takeDamage(KNIFE_DAMAGE);
+			onHit();
 		}
 	}
 	

@@ -3,14 +3,16 @@ package descent.champions;
 import java.util.Collection;
 
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.Particle;
 import org.bukkit.Sound;
+import org.bukkit.World;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.Action;
 import org.bukkit.inventory.ItemStack;
-
-import descent.Ray;
+import org.bukkit.util.Vector;
 
 public class Deputy extends Champ {
 	public static final double MAX_HEALTH = 200;
@@ -30,6 +32,7 @@ public class Deputy extends Champ {
 	public static final float HEAL_COOLDOWN = 9.0f;
 	
 	public static final int HEAL_AMOUNT = 50;
+	public static final int SHOT_DISTANCE = 100;
 	
 	private long timeAtLastShot;
 	private long timeAtLastHeal;
@@ -48,7 +51,7 @@ public class Deputy extends Champ {
 			for(Player player : Bukkit.getOnlinePlayers()) {
 				player.getWorld().playSound(PLAYER.getLocation(), Sound.ENTITY_DRAGON_FIREBALL_EXPLODE, 1f, 1.5f);
 			}
-			Ray.playerDamageRayCast(PLAYER, 99);
+			shoot();
 			timeAtLastShot = System.currentTimeMillis();
 		} else if(PLAYER.getInventory().getItemInMainHand().getType() == Material.RED_DYE
 				&& (click == Action.RIGHT_CLICK_AIR || click == Action.RIGHT_CLICK_BLOCK)
@@ -74,6 +77,52 @@ public class Deputy extends Champ {
 		}
 		if(champ != this) {
 			champ.takeDamage(totalDamage);
+			onHit();
+		}
+	}
+	
+	private void shoot() {
+		boolean headShot = false;
+
+		World w = PLAYER.getWorld();
+		Location l = new Location(w, PLAYER.getLocation().getX(),
+				PLAYER.getLocation().getY() + PLAYER.getEyeHeight(), PLAYER.getLocation().getZ());
+		Vector v = PLAYER.getLocation().getDirection();
+
+		double x = v.getX();
+		double y = v.getY();
+		double z = v.getZ();
+
+		for (double i = 0; i < SHOT_DISTANCE; i = i + 0.1) {
+
+			Location bulletLocation = new Location(w, l.getX() + (i * x), l.getY() + (i * y), l.getZ() + (i * z));
+
+			Collection<Entity> entities = w.getNearbyEntities(bulletLocation, 0.05, 0.05, 0.05);
+
+			if (i > 1) {
+
+				if (PLAYER.getWorld().getBlockAt(bulletLocation).getType().isSolid() == false) {
+					w.spawnParticle(Particle.CRIT, bulletLocation.getX(), bulletLocation.getY(), bulletLocation.getZ(),
+							1, 0, 0, 0, 0);
+					for (Entity ent : entities) {
+						if (ent instanceof Player) {
+							Player hit = (Player) ent;
+							if (Math.abs(hit.getEyeLocation().getY() - bulletLocation.getY()) < 0.24) {
+								headShot = true;
+								PLAYER.playSound(PLAYER.getLocation(), Sound.ENTITY_ARROW_HIT_PLAYER, 1f, 2f);
+							} 
+							Champ pldefend = Champ.getChamp(hit);
+							this.abilityHitscan(pldefend, headShot);
+							return;
+						}
+					}
+
+				} else {
+
+					return;
+
+				}
+			}
 		}
 	}
 
