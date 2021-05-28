@@ -1,53 +1,87 @@
 package descent.gamemodes;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
-
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
-
+import org.bukkit.scoreboard.DisplaySlot;
+import org.bukkit.scoreboard.Objective;
+import org.bukkit.scoreboard.Scoreboard;
+import org.bukkit.scoreboard.ScoreboardManager;
+import org.bukkit.scoreboard.Team;
 import descent.champions.Champ;
-import descent.champions.Generic;
 
-public class KingOfTheHill implements Gamemode{
+public class KingOfTheHill implements Gamemode {
 
 	private String name;
-	private Random rng;
-	
-	private List<Location> spawnPoints;
-	
+
+	private Location redSpawn;
+	private Location blueSpawn;
+
+	private ScoreboardManager manager;
+	private Scoreboard board;
+	private Team red;
+	private Team blue;
+
+	private final float RESPAWN_TIME = 5.0f;
+
 	@Override
 	public void start() {
+		manager = Bukkit.getScoreboardManager();
+		board = manager.getMainScoreboard();
+		
+		if(board.getTeam("blue") != null)
+			board.getTeam("blue").unregister();
+		if(board.getTeam("red") != null)
+			board.getTeam("red").unregister();
+		if(board.getTeam("spec") != null)
+			board.getTeam("spec").unregister();
+		if(board.getObjective("cp") != null) {
+			board.getObjective("cp").unregister();
+		}
+		
 		name = "King of the Hill";
-		rng = new Random();
 		World world = Bukkit.getWorld("world");
-		spawnPoints = new ArrayList<>();
+		redSpawn = new Location(world, -55.5, 23, 100.5);
+		blueSpawn = new Location(world, 56.5, 23, 100.5);
 		
-		spawnPoints.add(new Location(world, 5, 21, 106));
-		spawnPoints.add(new Location(world, 13, 21, 87));
-		spawnPoints.add(new Location(world, 24, 24, 120));
-		spawnPoints.add(new Location(world, 0, 24, 114));
-		spawnPoints.add(new Location(world, -15, 28, 117));
-		spawnPoints.add(new Location(world, 36, 24, 101));
-		spawnPoints.add(new Location(world, -20, 25, 85));
-		spawnPoints.add(new Location(world, 4, 28, 82));
 		
+		
+		
+		Objective points = board.registerNewObjective("cp", "dummy", "Control Point");
+		points.setDisplaySlot(DisplaySlot.SIDEBAR);
+			
+	    blue = board.registerNewTeam("blue");
+		red = board.registerNewTeam("red");
+//		Team spec = board.registerNewTeam("spec");
+		
+		blue.setColor(ChatColor.BLUE);
+		blue.setAllowFriendlyFire(false);
+		blue.setOption(Team.Option.COLLISION_RULE, Team.OptionStatus.FOR_OTHER_TEAMS);
+		blue.setOption(Team.Option.NAME_TAG_VISIBILITY, Team.OptionStatus.FOR_OTHER_TEAMS);
+		blue.setDisplayName("Blue");
+		blue.setCanSeeFriendlyInvisibles(true);
+		
+		red.setColor(ChatColor.RED);
+		red.setAllowFriendlyFire(false);
+		red.setOption(Team.Option.COLLISION_RULE, Team.OptionStatus.FOR_OTHER_TEAMS);
+		red.setOption(Team.Option.NAME_TAG_VISIBILITY, Team.OptionStatus.FOR_OTHER_TEAMS);
+		red.setDisplayName("Red");
+		red.setCanSeeFriendlyInvisibles(true);
+		
+//		spec.setColor(ChatColor.WHITE);
+//		spec.setAllowFriendlyFire(false);
+//		spec.setNameTagVisibility(NameTagVisibility.NEVER);
+//		spec.setDisplayName("Spectator");
+//		spec.setCanSeeFriendlyInvisibles(true);
 		for(Player player : Bukkit.getOnlinePlayers()) {
 			Champ champ = Champ.getChamp(player);
-			if(!(champ instanceof Generic)) {
-				int rand = rng.nextInt(spawnPoints.size());
-				player.teleport(spawnPoints.get(rand));
-			}
+			champ.teamSelect();
 		}
+
 	}
-	
-	public List<Location> getSpawnPoints(){
-		return spawnPoints;
-	}
-	
+
 	@Override
 	public String toString() {
 		return this.name;
@@ -55,12 +89,35 @@ public class KingOfTheHill implements Gamemode{
 
 	@Override
 	public Location respawnLocation(Player player) {
-		Champ champ = Champ.getChamp(player);
-		if(champ instanceof Generic) {
-			champ.champSelect();
+		Location spawnLoc = null;
+		if(board.getEntryTeam(player.getName()).getName().equals("blue")){
+			spawnLoc = blueSpawn;
+		} else if(board.getEntryTeam(player.getName()).getName().equals("red")){
+			spawnLoc = redSpawn;
+		} else {
+			spawnLoc = redSpawn;
 		}
-		int rand = rng.nextInt(spawnPoints.size());
-		return spawnPoints.get(rand);
+		return spawnLoc;
+	}
+
+	@Override
+	public float getRespawnTime() {
+		return RESPAWN_TIME;
+	}
+
+	@Override
+	public void joinTeam(String team, Player player) {
+		if(team.equals("red")) {
+			red.addEntry(player.getName());
+		} else if(team.equals("blue")) {
+			blue.addEntry(player.getName());
+		}
+		return;
 	}
 	
+	@Override
+	public void stop() {
+		return;
+	}
+
 }

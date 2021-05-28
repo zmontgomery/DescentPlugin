@@ -9,12 +9,12 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
 import com.mojang.datafixers.util.Pair;
 import descent.champions.Champ;
-import descent.commands.Die;
 import descent.commands.SetChamp;
 import descent.commands.SetGame;
 import descent.commands.SetTeam;
 import descent.commands.Start;
 import descent.commands.Stats;
+import descent.commands.StopGame;
 import descent.gamemodes.Default;
 import descent.gamemodes.Gamemode;
 import net.minecraft.server.v1_16_R3.EnumItemSlot;
@@ -36,14 +36,13 @@ public class Main extends JavaPlugin {
 		getCommand("setgame").setExecutor(new SetGame());
 		getCommand("setchamp").setExecutor(new SetChamp());
 		getCommand("setteam").setExecutor(new SetTeam());
-		getCommand("die").setExecutor(new Die());
+		getCommand("stopgame").setExecutor(new StopGame());
 
 	}
 
 	@Override
 	public void onDisable() {
-
-
+		gamemode.stop();
 	}
 	
 	public static void sendEquipmentInvisiblePacket(Player player, boolean isInvisible) {

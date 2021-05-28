@@ -1,5 +1,6 @@
 package descent.champions;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Particle;
@@ -15,7 +16,7 @@ import org.bukkit.util.Vector;
 import descent.Main;
 
 public class Ninja extends Champ {
-	public static final double MAX_HEALTH = 175;
+	public static final double MAX_HEALTH = 150;
 	public static final String CHAMP_NAME = "Ninja";
 	public static final float MOVE_SPEED = 0.29f;
 	public static final double NATURAL_REGEN = 7.0;
@@ -24,7 +25,7 @@ public class Ninja extends Champ {
 			new ItemStack(Material.CHAINMAIL_HELMET) };
 	public static final ItemStack LEFT_HAND = null;
 	public static final Sound HURT_SOUND = Sound.ENTITY_ENDERMAN_HURT;
-	
+
 	public static final Sound STAB_SOUND = Sound.ENTITY_PLAYER_ATTACK_SWEEP;
 	public static final Sound FLASH_SOUND = Sound.ENTITY_FIREWORK_ROCKET_BLAST;
 	public static final Sound CLOAK_SOUND = Sound.ITEM_FIRECHARGE_USE;
@@ -32,11 +33,11 @@ public class Ninja extends Champ {
 	// Damage
 	public static final int DAGGAR_DAMAGE = 23;
 	// Cool downs
-	public static final float DAGGAR_COOLDOWN = 0.15f;
+	public static final float DAGGAR_COOLDOWN = 0.20f;
 	public static final float FLASH_COOLDOWN = 1.5f;
-	public static final float CLOAK_COOLDOWN = 6.0f;
+	public static final float CLOAK_COOLDOWN = 12.0f;
 
-	public static final int FLASH_DISTANCE = 12;
+	public static final double FLASH_DISTANCE = 12;
 
 	private long timeAtLastSwing;
 	private long timeAtLastFlash;
@@ -61,15 +62,22 @@ public class Ninja extends Champ {
 	@Override
 	public void abilityMelee(Champ champ) {
 		if (PLAYER.getInventory().getItemInMainHand().getType() == Material.GOLDEN_SWORD
-				&& (System.currentTimeMillis() - timeAtLastSwing > (1000 * DAGGAR_COOLDOWN))) {
-			champ.takeDamage(DAGGAR_DAMAGE);
+				&& (System.currentTimeMillis() - timeAtLastSwing > (1000 * DAGGAR_COOLDOWN))
+				&& !Champ.BOARD.getEntryTeam(PLAYER.getName()).getName()
+						.equals(Champ.BOARD.getEntryTeam(champ.PLAYER.getName()).getName())) {
+			if (champ.takeDamage(DAGGAR_DAMAGE)) {
+				onKill(champ);
+			}
 			onHit();
 			timeAtLastSwing = System.currentTimeMillis();
 			if (PLAYER.isInvisible()) {
 				PLAYER.setInvisible(false);
 				Main.sendEquipmentInvisiblePacket(PLAYER, false);
 			}
-			PLAYER.playSound(PLAYER.getLocation(), STAB_SOUND, 100, 1.5f);
+			for (Player player : Bukkit.getOnlinePlayers()) {
+				player.playSound(PLAYER.getLocation(), STAB_SOUND, 100, 1.5f);
+			}
+
 		}
 	}
 
@@ -78,10 +86,12 @@ public class Ninja extends Champ {
 		if (PLAYER.getInventory().getItemInMainHand().getType() == Material.GOLDEN_SWORD
 				&& (click == Action.RIGHT_CLICK_AIR || click == Action.RIGHT_CLICK_BLOCK)
 				&& (System.currentTimeMillis() - timeAtLastFlash > (1000 * FLASH_COOLDOWN))) {
-			teleportRayCast();
+			teleportRayCast(FLASH_DISTANCE);
 			PLAYER.setInvisible(false);
 			Main.sendEquipmentInvisiblePacket(PLAYER, false);
-			PLAYER.getWorld().playSound(PLAYER.getLocation(), FLASH_SOUND, 100, 1.5f);
+			for (Player player : Bukkit.getOnlinePlayers()) {
+				player.playSound(PLAYER.getLocation(), FLASH_SOUND, 100, 1.5f);
+			}
 
 			timeAtLastFlash = System.currentTimeMillis();
 		}
@@ -105,7 +115,10 @@ public class Ninja extends Champ {
 			PLAYER.setInvisible(true);
 			PLAYER.getWorld().spawnParticle(Particle.CAMPFIRE_COSY_SMOKE, PLAYER.getLocation().getX(),
 					PLAYER.getLocation().getY() + 1, PLAYER.getLocation().getZ(), 75, 0.5, 1, 0.5, 0, null, true);
-			PLAYER.getWorld().playSound(PLAYER.getLocation(), CLOAK_SOUND, 100, 1);
+			for (Player player : Bukkit.getOnlinePlayers()) {
+				player.playSound(PLAYER.getLocation(), CLOAK_SOUND, 100, 1);
+			}
+
 			PLAYER.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, 100, 1, true));
 
 			Main.sendEquipmentInvisiblePacket(PLAYER, true);
@@ -124,36 +137,43 @@ public class Ninja extends Champ {
 		return;
 	}
 
-	private void teleportRayCast() {
+	private void teleportRayCast(double distance) {
 		World w = PLAYER.getWorld();
-		Location l = PLAYER.getEyeLocation();
+		Location eye = PLAYER.getEyeLocation();
+		Location l = PLAYER.getLocation();
 		Vector v = PLAYER.getLocation().getDirection();
 
 		double x = v.getX();
 		double y = v.getY();
 		double z = v.getZ();
 
-		Location endLocation = PLAYER.getEyeLocation();
-
-		for (double i = 0; i < FLASH_DISTANCE; i = i + 0.1) {
-
+		Location endLocation = l;
+		Location oldEnd = null;
+		int j = 0;
+		for (double i = 0; i < distance; i = i + 0.5) {
+			if(j % 8 == 0) {
+				oldEnd = new Location(w, l.getX() + (i * x), l.getY() + (i * y), l.getZ() + (i * z), l.getYaw(),
+						l.getPitch());
+			}
 			endLocation = new Location(w, l.getX() + (i * x), l.getY() + (i * y), l.getZ() + (i * z), l.getYaw(),
 					l.getPitch());
 
-			if (i > 1) {
+			if (PLAYER.getWorld().getBlockAt(endLocation).getType().isSolid() == false) {
 
-				if (PLAYER.getWorld().getBlockAt(endLocation).getType().isSolid() == false) {
+				w.spawnParticle(Particle.CRIT, eye, 1, 0, 0,
+						0, 0);
 
-					w.spawnParticle(Particle.CRIT, endLocation.getX(), endLocation.getY(), endLocation.getZ(), 1, 0, 0,
-							0, 0);
-
-				} else {
-					endLocation = new Location(w, endLocation.getX(), endLocation.getY() - 1, endLocation.getZ());
-					PLAYER.teleport(endLocation);
-					return;
+			} else {
+				if(oldEnd != null) {
+					PLAYER.teleport(oldEnd);
 				}
+				return;
 			}
+			j++;
+
 		}
+		endLocation = new Location(w, endLocation.getX(), endLocation.getY(), endLocation.getZ(), l.getYaw(),
+				l.getPitch());
 		PLAYER.teleport(endLocation);
 
 	}

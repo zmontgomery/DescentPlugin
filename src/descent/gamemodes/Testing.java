@@ -16,6 +16,8 @@ public class Testing implements Gamemode {
 	private Random rng;
 
 	private List<Location> spawnPoints;
+	
+	private final float RESPAWN_TIME = 0.2f;
 
 	@Override
 	public void start() {
@@ -37,10 +39,6 @@ public class Testing implements Gamemode {
 	
 	public Location respawnLocation(Player player) {
 		int rand = rng.nextInt(spawnPoints.size());
-		Champ champ = Champ.getChamp(player);
-		if(champ instanceof Generic) {
-			champ.champSelect();
-		}
 		return spawnPoints.get(rand);	
 	}
 
@@ -51,6 +49,21 @@ public class Testing implements Gamemode {
 	@Override
 	public String toString() {
 		return this.name;
+	}
+
+	@Override
+	public float getRespawnTime() {
+		return RESPAWN_TIME;
+	}
+
+	@Override
+	public void joinTeam(String team, Player player) {
+		return;
+	}
+	
+	@Override
+	public void stop() {
+		return;
 	}
 
 }

@@ -24,6 +24,8 @@ public class Deputy extends Champ {
 			null };
 	public static final ItemStack LEFT_HAND = null;
 	public static final Sound HURT_SOUND = Sound.ENTITY_ARMOR_STAND_BREAK;
+	
+	public static final Sound HEAL_SOUND = Sound.ENTITY_EXPERIENCE_ORB_PICKUP;
 
 	// Damage
 	public static final int GUN_DAMAGE = 40;
@@ -49,7 +51,7 @@ public class Deputy extends Champ {
 				&& (click == Action.LEFT_CLICK_AIR || click == Action.LEFT_CLICK_BLOCK)
 				&& (System.currentTimeMillis() - timeAtLastShot > (1000 * SHOOT_COOLDOWN))) {
 			for(Player player : Bukkit.getOnlinePlayers()) {
-				player.getWorld().playSound(PLAYER.getLocation(), Sound.ENTITY_DRAGON_FIREBALL_EXPLODE, 1f, 1.5f);
+				player.playSound(PLAYER.getLocation(), Sound.ENTITY_DRAGON_FIREBALL_EXPLODE, 1f, 1.6f);
 			}
 			shoot();
 			timeAtLastShot = System.currentTimeMillis();
@@ -60,10 +62,15 @@ public class Deputy extends Champ {
 			Collection<Entity> entities = PLAYER.getWorld().getNearbyEntities(PLAYER.getLocation(), 6, 6, 6);
 			for (Entity e : entities) {
 				if (e instanceof Player) {
-					Player p = (Player) e;
-					Champ c = Champ.getChamp(p);
-					c.heal(HEAL_AMOUNT);
+					Player player = (Player) e;
+					Champ champ = Champ.getChamp(player);
+					if(Champ.BOARD.getEntryTeam(PLAYER.getName()).getName().equals(Champ.BOARD.getEntryTeam(player.getName()).getName())) {
+						champ.heal(HEAL_AMOUNT);
+					}
 				}
+			}
+			for(Player player : Bukkit.getOnlinePlayers()) {
+				player.playSound(PLAYER.getLocation(), HEAL_SOUND, 1f, 0.6f);
 			}
 			timeAtLastHeal = System.currentTimeMillis();
 		}
@@ -76,7 +83,9 @@ public class Deputy extends Champ {
 			totalDamage = totalDamage * 2;
 		}
 		if(champ != this) {
-			champ.takeDamage(totalDamage);
+			if(champ.takeDamage(totalDamage)) {
+				onKill(champ);
+			}
 			onHit();
 		}
 	}
@@ -107,12 +116,15 @@ public class Deputy extends Champ {
 					for (Entity ent : entities) {
 						if (ent instanceof Player) {
 							Player hit = (Player) ent;
-							if (Math.abs(hit.getEyeLocation().getY() - bulletLocation.getY()) < 0.24) {
-								headShot = true;
-								PLAYER.playSound(PLAYER.getLocation(), Sound.ENTITY_ARROW_HIT_PLAYER, 1f, 2f);
-							} 
-							Champ pldefend = Champ.getChamp(hit);
-							this.abilityHitscan(pldefend, headShot);
+							if(!Champ.BOARD.getEntryTeam(PLAYER.getName()).getName().equals(Champ.BOARD.getEntryTeam(hit.getName()).getName())) {
+								if (Math.abs(hit.getEyeLocation().getY() - bulletLocation.getY()) < 0.24) {
+									headShot = true;
+									PLAYER.playSound(PLAYER.getLocation(), Sound.ENTITY_ARROW_HIT_PLAYER, 1f, 2.2f);
+								} 
+								Champ pldefend = Champ.getChamp(hit);
+								this.abilityHitscan(pldefend, headShot);
+							}
+								
 							return;
 						}
 					}

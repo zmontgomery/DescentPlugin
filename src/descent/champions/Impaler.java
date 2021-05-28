@@ -1,5 +1,6 @@
 package descent.champions;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -59,12 +60,15 @@ public class Impaler extends Champ {
 			Arrow knife1 = PLAYER.getWorld().spawnArrow(
 					new Location(PLAYER.getWorld(), PLAYER.getLocation().getX(),
 							PLAYER.getLocation().getY() + PLAYER.getEyeHeight(), PLAYER.getLocation().getZ()),
-					PLAYER.getLocation().getDirection(), 3, 0);
+					PLAYER.getLocation().getDirection(), 2, 0);
 			knife1.setShooter(PLAYER);
 			knife1.setPickupStatus(Arrow.PickupStatus.DISALLOWED);
 			knife1.setCustomName(PLAYER.getName());
 			knife1.setBounce(false);
-			PLAYER.playSound(PLAYER.getLocation(), THROW_SOUND, 0.4f, 0.8f);
+			for(Player player : Bukkit.getOnlinePlayers()) {
+				player.playSound(PLAYER.getLocation(), THROW_SOUND, 0.3f, 0.8f);
+			}
+			
 
 			timeAtLastThrow = System.currentTimeMillis();
 		} else if (PLAYER.getInventory().getItemInMainHand().getType() == Material.BLACK_DYE
@@ -103,16 +107,19 @@ public class Impaler extends Champ {
 				wraith = false;
 			});
 			runout.start();
-			PLAYER.playSound(PLAYER.getLocation(), WRAITH_SOUND, 0.4f, 0.8f);
-			
+			for(Player player : Bukkit.getOnlinePlayers()) {
+				player.playSound(PLAYER.getLocation(), WRAITH_SOUND, 0.4f, 0.8f);
+			}
 			timeAtLastWraith = System.currentTimeMillis();
 		}
 	}
 
 	@Override
 	public void abilityRanged(Champ champ, Projectile projectile) {
-		if (projectile instanceof Arrow) {
-			champ.takeDamage(KNIFE_DAMAGE);
+		if (projectile instanceof Arrow && !Champ.BOARD.getEntryTeam(PLAYER.getName()).getName().equals(Champ.BOARD.getEntryTeam(champ.PLAYER.getName()).getName())) {
+			if(champ.takeDamage(KNIFE_DAMAGE)){
+				onKill(champ);
+			}
 			onHit();
 		}
 	}

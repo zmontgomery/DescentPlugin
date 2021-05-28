@@ -16,9 +16,18 @@ public class Deathmatch implements Gamemode {
 	private Random rng;
 
 	private List<Location> spawnPoints;
+	
+	private final float RESPAWN_TIME = 0.5f;;
 
 	@Override
 	public void start() {
+		
+		
+		if(Champ.BOARD.getTeam("blue") != null)
+			Champ.BOARD.getTeam("blue").unregister();
+		if(Champ.BOARD.getTeam("red") != null)
+			Champ.BOARD.getTeam("red").unregister();
+		
 		name = "Deathmatch";
 		rng = new Random();
 		World world = Bukkit.getWorld("world");
@@ -44,10 +53,6 @@ public class Deathmatch implements Gamemode {
 	
 	public Location respawnLocation(Player player) {
 		int rand = rng.nextInt(spawnPoints.size());
-		Champ champ = Champ.getChamp(player);
-		if(champ instanceof Generic) {
-			champ.champSelect();
-		}
 		return spawnPoints.get(rand);	
 	}
 
@@ -56,8 +61,23 @@ public class Deathmatch implements Gamemode {
 	}
 
 	@Override
+	public float getRespawnTime() {
+		return RESPAWN_TIME;
+	}
+
+	@Override
 	public String toString() {
 		return this.name;
+	}
+
+	@Override
+	public void joinTeam(String team, Player player) {
+		return;
+	}
+
+	@Override
+	public void stop() {
+		return;
 	}
 
 }

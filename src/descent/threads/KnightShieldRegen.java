@@ -24,9 +24,11 @@ public class KnightShieldRegen implements Runnable {
 			} catch (InterruptedException e) {
 				// squash
 			}
-			Knight champ = (Knight) Champ.getChamp(player);
-			if (champ != null) {
-				champ.regenShield(2);
+			if(Champ.getChamp(player) instanceof Knight) {
+				Knight champ = (Knight) Champ.getChamp(player);
+				if (champ != null) {
+					champ.regenShield(2);
+				}
 			}
 		}
 	}

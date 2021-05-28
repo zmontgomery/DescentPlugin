@@ -5,8 +5,10 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
 import org.bukkit.Bukkit;
+import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.Sound;
+import org.bukkit.attribute.Attribute;
 import org.bukkit.craftbukkit.v1_16_R3.CraftWorld;
 import org.bukkit.craftbukkit.v1_16_R3.entity.CraftPlayer;
 import org.bukkit.entity.LivingEntity;
@@ -17,6 +19,10 @@ import org.bukkit.event.block.Action;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
+import org.bukkit.scoreboard.Scoreboard;
+import org.bukkit.scoreboard.ScoreboardManager;
+import org.bukkit.util.Vector;
+import descent.Main;
 import net.minecraft.server.v1_16_R3.PacketPlayOutWorldBorder;
 import net.minecraft.server.v1_16_R3.PlayerConnection;
 import net.minecraft.server.v1_16_R3.WorldBorder;
@@ -25,7 +31,9 @@ public abstract class Champ {
 
 	private static Map<Player, Champ> players = new HashMap<>();
 	public static final Random RNG = new Random();
-
+	public static final ScoreboardManager MANAGER = Bukkit.getScoreboardManager();
+	public static final Scoreboard BOARD = MANAGER.getMainScoreboard();
+	
 	public final Player PLAYER;
 	public final String NAME;
 	public final String CHAMP_NAME;
@@ -37,14 +45,14 @@ public abstract class Champ {
 	public final ItemStack LEFT_HAND;
 	public final Sound HURT_SOUND;
 	protected double currentHealth;
-	
+
 	public static final Sound KILL_SOUND = Sound.ENTITY_PLAYER_LEVELUP;
 	public static final Sound HIT_SOUND = Sound.ENTITY_TURTLE_EGG_BREAK;
-	
+
 	public static final double FIRE_DAMAGE = 20;
 
-	protected Champ(Player player, String champName, float moveSpeed, double naturalRegen, double maxHealth, ItemStack[] items,
-			ItemStack[] clothes, ItemStack leftHand, Sound hurtSound) {
+	protected Champ(Player player, String champName, float moveSpeed, double naturalRegen, double maxHealth,
+			ItemStack[] items, ItemStack[] clothes, ItemStack leftHand, Sound hurtSound) {
 		clearChamp(player);
 		addChamp(player, this);
 		this.PLAYER = player;
@@ -76,10 +84,10 @@ public abstract class Champ {
 	public static void clearChamp(Player player) {
 		Champ.players.remove(player);
 	}
-	
+
 	public void champSelect() {
 		Inventory championSelect = Bukkit.createInventory(PLAYER, 18, "Champion Selection");
-		
+
 		championSelect.addItem(new ItemStack(Material.WOODEN_SWORD));
 		championSelect.addItem(new ItemStack(Material.SHIELD));
 		championSelect.addItem(new ItemStack(Material.GOLDEN_AXE));
@@ -89,12 +97,24 @@ public abstract class Champ {
 		championSelect.addItem(new ItemStack(Material.POTION));
 		championSelect.addItem(new ItemStack(Material.GOLDEN_CHESTPLATE));
 		championSelect.addItem(new ItemStack(Material.BLAZE_POWDER));
-		
+
 		PLAYER.openInventory(championSelect);
 	}
-	
+
 	public void teamSelect() {
-		// PLAYER.alsodoSomethinglol();
+		Inventory teamSelect = Bukkit.createInventory(PLAYER, 9, "Champion Selection");
+
+		teamSelect.addItem(new ItemStack(Material.AIR));
+		teamSelect.addItem(new ItemStack(Material.AIR));
+		teamSelect.addItem(new ItemStack(Material.RED_DYE));
+		teamSelect.addItem(new ItemStack(Material.AIR));
+		teamSelect.addItem(new ItemStack(Material.AIR));
+		teamSelect.addItem(new ItemStack(Material.AIR));
+		teamSelect.addItem(new ItemStack(Material.BLUE_DYE));
+		teamSelect.addItem(new ItemStack(Material.AIR));
+		teamSelect.addItem(new ItemStack(Material.AIR));
+
+		PLAYER.openInventory(teamSelect);
 	}
 
 	public double getCurrentHealth() {
@@ -116,7 +136,7 @@ public abstract class Champ {
 	public void abilityRanged(Champ champ, Projectile projectile) {
 		return;
 	}
-	
+
 	public void abilityPotion(ThrownPotion potion, Collection<LivingEntity> hits) {
 		return;
 	}
@@ -124,36 +144,50 @@ public abstract class Champ {
 	public void bow(double force) {
 		return;
 	}
-	
+
 	public void onDrop(Material item) {
 		return;
 	}
-	
+
 	public void onSneak() {
 		return;
 	}
-	
+
 	public void ignite(double time) {
-		PLAYER.setFireTicks((int)(PLAYER.getFireTicks() + (time * 20)));
+
+		Bukkit.getScheduler().runTask(Main.getPlugin(Main.class), () -> {
+			int totalTime = (PLAYER.getFireTicks() + (int) (time * 20));
+			PLAYER.setFireTicks(totalTime);
+		});
+
 		return;
 	}
 
 	public void initialize() {
+
 		currentHealth = MAX_HEALTH;
 		PLAYER.setHealth(20);
-		PLAYER.setFoodLevel(5);
 		PLAYER.setLevel(0);
+		PLAYER.setFlySpeed(0.1f);
 		PLAYER.setWalkSpeed(MOVE_SPEED);
 		PLAYER.getInventory().clear();
 		PLAYER.getInventory().setContents(ITEMS);
 		PLAYER.getInventory().setItemInOffHand(LEFT_HAND);
 		PLAYER.getInventory().setArmorContents(CLOTHES);
-		PLAYER.setFireTicks(0);
+		PLAYER.setVelocity(new Vector());
+		PLAYER.setGameMode(GameMode.SURVIVAL);
+		PLAYER.getAttribute(Attribute.GENERIC_ATTACK_SPEED).setBaseValue(64);
+		PLAYER.setAllowFlight(false);
+		clearEffects();
+		extinguish();
+		Bukkit.getScheduler().runTaskLater(Main.getPlugin(Main.class), () -> {
+			PLAYER.setFoodLevel(5);
+		}, 10);
 		return;
 	}
 
 	public void heal(double amount) {
-		if(!PLAYER.isDead()) {
+		if (!PLAYER.isDead()) {
 			currentHealth += amount;
 			if (this.currentHealth > this.MAX_HEALTH) {
 				this.currentHealth = MAX_HEALTH;
@@ -161,7 +195,7 @@ public abstract class Champ {
 			updatePlayerHealth();
 		}
 	}
-	
+
 	public boolean takeDamage(double amount) {
 		boolean killed = false;
 		this.currentHealth -= amount;
@@ -169,7 +203,7 @@ public abstract class Champ {
 			this.currentHealth = 0;
 			killed = true;
 		}
-		for(Player player : Bukkit.getOnlinePlayers()) {
+		for (Player player : Bukkit.getOnlinePlayers()) {
 			player.playSound(PLAYER.getLocation(), HURT_SOUND, 1f, 0.6f);
 		}
 		updatePlayerHealth();
@@ -178,7 +212,8 @@ public abstract class Champ {
 		wb.setSize(300000);
 		wb.setWarningDistance(600000);
 		wb.world = ((CraftWorld) PLAYER.getWorld()).getHandle();
-		PacketPlayOutWorldBorder packet = new PacketPlayOutWorldBorder(wb, PacketPlayOutWorldBorder.EnumWorldBorderAction.INITIALIZE);
+		PacketPlayOutWorldBorder packet = new PacketPlayOutWorldBorder(wb,
+				PacketPlayOutWorldBorder.EnumWorldBorderAction.INITIALIZE);
 		PlayerConnection conn = ((CraftPlayer) PLAYER).getHandle().playerConnection;
 		conn.sendPacket(packet);
 		Thread th = new Thread(() -> {
@@ -188,34 +223,68 @@ public abstract class Champ {
 				wb.setSize(300000);
 				wb.setWarningDistance(0);
 				wb.world = ((CraftWorld) PLAYER.getWorld()).getHandle();
-				conn.sendPacket(new PacketPlayOutWorldBorder(wb, PacketPlayOutWorldBorder.EnumWorldBorderAction.INITIALIZE));
-			} catch (InterruptedException e) {}
+				conn.sendPacket(
+						new PacketPlayOutWorldBorder(wb, PacketPlayOutWorldBorder.EnumWorldBorderAction.INITIALIZE));
+			} catch (InterruptedException e) {
+			}
 		});
 		th.start();
 		return killed;
 	}
-	
+
 	public void takeEffect(PotionEffect effect) {
 		PLAYER.addPotionEffect(effect);
 		return;
 	}
-	
+
+	public void clearEffects() {
+		for (PotionEffect p : PLAYER.getActivePotionEffects())
+			PLAYER.removePotionEffect(p.getType());
+	}
+
+	public void extinguish() {
+		PLAYER.setFireTicks(0);
+	}
+
 	public void onHit() {
-		PLAYER.playSound(PLAYER.getLocation(), HIT_SOUND, 3f, 4.0f);
+		PLAYER.playSound(PLAYER.getLocation(), HIT_SOUND, 3f, 6.0f);
 		return;
 	}
-	
+
 	public void onKill(Champ champ) {
 		PLAYER.playSound(PLAYER.getLocation(), KILL_SOUND, 3f, 4.0f);
 		return;
 	}
-	
+
 	public void kill() {
 		this.takeDamage(this.MAX_HEALTH + 5);
 	}
 
 	public void updatePlayerHealth() {
-		this.PLAYER.setHealth(20 * (this.currentHealth / this.MAX_HEALTH));
+		double newPlayerHealth = 20 * (this.currentHealth / this.MAX_HEALTH);
+		if (newPlayerHealth == 0) {
+			onDeath();
+			return;
+		}
+		this.PLAYER.setHealth(newPlayerHealth);
+		return;
+	}
+
+	public void onDeath() {
+		Bukkit.broadcastMessage(PLAYER.getName() + "(" + CHAMP_NAME + ") died!");
+		initialize();
+		PLAYER.setGameMode(GameMode.SPECTATOR);
+		PLAYER.setFlySpeed(0);
+		PLAYER.setWalkSpeed(0);
+		Bukkit.getScheduler().runTaskLater(Main.getPlugin(Main.class), () -> {
+			PLAYER.teleport(Main.gamemode.respawnLocation(PLAYER));
+			initialize();
+		}, (long) (Main.gamemode.getRespawnTime() * 20));
+
+		if (this instanceof Generic) {
+			this.champSelect();
+		}
+		return;
 	}
 
 	@Override

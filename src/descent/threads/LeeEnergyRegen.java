@@ -24,9 +24,11 @@ public class LeeEnergyRegen implements Runnable {
 			} catch (InterruptedException e) {
 				// squash
 			}
-			Fighter champ = (Fighter) Champ.getChamp(player);
-			if (champ != null) {
-				champ.regenEnergy(1);
+			if(Champ.getChamp(player) instanceof Fighter) {
+				Fighter champ = (Fighter) Champ.getChamp(player);
+				if (champ != null) {
+					champ.regenEnergy(1);
+				}
 			}
 		}
 	}

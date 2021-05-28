@@ -2,6 +2,7 @@ package descent.champions;
 
 import java.util.Collection;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Color;
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -25,12 +26,15 @@ public class Alchemist extends Champ {
 	public static final ItemStack LEFT_HAND = null;
 	public static final Sound HURT_SOUND = Sound.BLOCK_GRASS_BREAK;
 
+	public static final Sound THROW_SOUND = Sound.ENTITY_EGG_THROW;
+	
+	
 	// Damage
-	public static final int POTION_HEAL = 45;
-	public static final int POTION_DAMAGE = 60;
+	public static final int POTION_HEAL = 40;
+	public static final int POTION_DAMAGE = 55;
 
 	// Cool downs
-	public static final float POTION_COOLDOWN = 1.2f;
+	public static final float POTION_COOLDOWN = 1.4f;
 
 	private long timeAtLastPotion;
 
@@ -61,6 +65,9 @@ public class Alchemist extends Champ {
 			tp.setCustomName("HEAL");
 
 			tp.setVelocity(PLAYER.getLocation().getDirection());
+			for(Player player : Bukkit.getOnlinePlayers()) {
+				player.playSound(PLAYER.getLocation(), THROW_SOUND, 1f, 0.9f);
+			}
 
 			timeAtLastPotion = System.currentTimeMillis();
 		}
@@ -84,7 +91,9 @@ public class Alchemist extends Champ {
 			tp.setCustomName("DAMAGE");
 
 			tp.setVelocity(PLAYER.getLocation().getDirection());
-
+			for(Player player : Bukkit.getOnlinePlayers()) {
+				player.playSound(PLAYER.getLocation(), THROW_SOUND, 1f, 0.9f);
+			}
 			timeAtLastPotion = System.currentTimeMillis();
 		}
 	}
@@ -94,14 +103,16 @@ public class Alchemist extends Champ {
 
 		for (Entity ent : hits) {
 			if (ent instanceof Player) {
-				Player pl = (Player) ent;
-				Champ c = Champ.getChamp(pl);
+				Player player = (Player) ent;
+				Champ champ = Champ.getChamp(player);
 				
 				
-				if(potion.getCustomName().equals("HEAL")) {
-					c.heal(POTION_HEAL);
-				} else if (potion.getCustomName().equals("DAMAGE")) {
-					c.takeDamage(Alchemist.POTION_DAMAGE);
+				if(potion.getCustomName().equals("HEAL") && Champ.BOARD.getEntryTeam(PLAYER.getName()).getName().equals(Champ.BOARD.getEntryTeam(player.getName()).getName()) ) {
+					champ.heal(POTION_HEAL);
+				} else if (potion.getCustomName().equals("DAMAGE") && !Champ.BOARD.getEntryTeam(PLAYER.getName()).getName().equals(Champ.BOARD.getEntryTeam(player.getName()).getName())) {
+					if(champ.takeDamage(Alchemist.POTION_DAMAGE)) {
+						onKill(champ);
+					}
 					onHit();
 				}
 				

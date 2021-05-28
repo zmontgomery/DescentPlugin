@@ -2,12 +2,22 @@ name: DescentPlugin
 main: descent.Main
 version: 0.1.0
 api-version: 1.16
+permissions:
+ command:
+  default: op
 commands:
  start:
+  permission: command
  stats:
  setgame:
+  permission: command
  setteam:
+  permission: command
  setchamp:
- die:
+  permission: command
+ stopgame:
+  permission: command
+
+ 
   
    

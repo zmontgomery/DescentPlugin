@@ -37,6 +37,14 @@ public class Fighter extends Champ {
 			new ItemStack(Material.GOLDEN_CHESTPLATE), null };
 	public static final ItemStack LEFT_HAND = null;
 	public static final Sound HURT_SOUND = Sound.BLOCK_NETHERITE_BLOCK_BREAK;
+	
+	public static final Sound SONIC_SHOOT_SOUND = Sound.BLOCK_SHROOMLIGHT_BREAK;
+	public static final Sound SONIC_LEAP_SOUND = Sound.BLOCK_PUMPKIN_CARVE;
+	public static final Sound PUNCH_SOUND = Sound.ENTITY_PLAYER_ATTACK_CRIT;
+	public static final Sound KICK_SOUND = Sound.ENTITY_DRAGON_FIREBALL_EXPLODE;
+	public static final Sound SAFE_SOUND = Sound.BLOCK_ENCHANTMENT_TABLE_USE;
+	public static final Sound SLOW_SOUND = Sound.ITEM_TRIDENT_THUNDER;
+	
 
 	public static final short MAX_ENERGY = 200;
 
@@ -110,11 +118,14 @@ public class Fighter extends Champ {
 		Player defend = champ.PLAYER;
 
 		if (PLAYER.getInventory().getItemInMainHand().getType() == Material.AIR
-				&& (System.currentTimeMillis() - timeAtLastPunch > (1000 * PUNCH_COOLDOWN))) {
+				&& (System.currentTimeMillis() - timeAtLastPunch > (1000 * PUNCH_COOLDOWN)) && !Champ.BOARD.getEntryTeam(PLAYER.getName()).getName().equals(Champ.BOARD.getEntryTeam(defend.getName()).getName())) {
 			boolean killed = champ.takeDamage(PUNCH_DAMAGE);
 			onHit();
 			if (killed) {
 				onKill(champ);
+			}
+			for(Player player : Bukkit.getOnlinePlayers()) {
+				player.playSound(PLAYER.getLocation(), PUNCH_SOUND, 1f, 0.4f);
 			}
 			this.heal(PUNCH_DAMAGE * lifeSteal);
 			this.regenEnergy(10);
@@ -122,14 +133,14 @@ public class Fighter extends Champ {
 
 		} else if (PLAYER.getInventory().getItemInMainHand().getType() == Material.NETHERITE_AXE
 				&& (System.currentTimeMillis() - timeAtLastRoundhouse > (1000 * ROUNDHOUSE_COOLDOWN))
-				&& energy >= ROUNDHOUSE_ENERGY) {
+				&& energy >= ROUNDHOUSE_ENERGY && !Champ.BOARD.getEntryTeam(PLAYER.getName()).getName().equals(Champ.BOARD.getEntryTeam(defend.getName()).getName())) {
 			this.heal(ROUNDHOUSE_DAMAGE * lifeSteal);
 			champ.PLAYER.setVelocity(new Vector(PLAYER.getLocation().getDirection().getX() * ROUNDHOUSE_VELOCITY,
 					PLAYER.getLocation().getDirection().getY() * ROUNDHOUSE_VELOCITY + 1,
 					PLAYER.getLocation().getDirection().getZ() * ROUNDHOUSE_VELOCITY));
 			timeAtLastRoundhouse = System.currentTimeMillis();
 			for(Player player : Bukkit.getOnlinePlayers()) {
-				player.playSound(defend.getLocation(), Sound.ENTITY_DRAGON_FIREBALL_EXPLODE, 2f, 0.5f);
+				player.playSound(defend.getLocation(), KICK_SOUND, 2f, 0.5f);
 			}
 			useEnergy(ROUNDHOUSE_ENERGY);
 			boolean killed = champ.takeDamage(ROUNDHOUSE_DAMAGE);
@@ -170,6 +181,9 @@ public class Fighter extends Champ {
 					timeAtLastSonicWave = System.currentTimeMillis();
 				}
 			});
+			for(Player player : Bukkit.getOnlinePlayers()) {
+				player.playSound(PLAYER.getLocation(), SONIC_SHOOT_SOUND, 1f, 0.4f);
+			}
 			sonicTimer = timer;
 			timer.start();
 
@@ -187,6 +201,9 @@ public class Fighter extends Champ {
 			PLAYER.teleport(sonicMark.PLAYER);
 			if (killed) {
 				onKill(sonicMark);
+			}
+			for(Player player : Bukkit.getOnlinePlayers()) {
+				player.playSound(PLAYER.getLocation(), SONIC_LEAP_SOUND, 1f, 0.7f);
 			}
 			this.sonicMark = null;
 			timeAtLastSonicWave = System.currentTimeMillis();
@@ -207,6 +224,9 @@ public class Fighter extends Champ {
 					timeAtLastSafe = System.currentTimeMillis() - (long) (1000 * SAFE_COOLDOWN);
 				}
 			});
+			for(Player player : Bukkit.getOnlinePlayers()) {
+				player.playSound(PLAYER.getLocation(), SAFE_SOUND, 1f, 1.5f);
+			}
 			safeTimer = timer;
 			timer.start();
 			timeAtLastSafe = System.currentTimeMillis();
@@ -231,6 +251,9 @@ public class Fighter extends Champ {
 				}
 				this.lifeSteal = 0;
 			});
+			for(Player player : Bukkit.getOnlinePlayers()) {
+				player.playSound(PLAYER.getLocation(), SAFE_SOUND, 1f, 0.5f);
+			}
 			timer.start();
 			PLAYER.getInventory().setItem(2, new ItemStack(Material.SLIME_BALL));
 			timeAtLastSafe = System.currentTimeMillis();
@@ -242,7 +265,7 @@ public class Fighter extends Champ {
 			for (Entity e : entities) {
 				if (e instanceof Player) {
 					Player p = (Player) e;
-					if (p != PLAYER) {
+					if (p != PLAYER && !Champ.BOARD.getEntryTeam(PLAYER.getName()).getName().equals(Champ.BOARD.getEntryTeam(p.getName()).getName())) {
 						Champ c = Champ.getChamp(p);
 						slamMarks.add(c);
 						boolean killed = c.takeDamage(SLAM_DAMAGE);
@@ -257,7 +280,7 @@ public class Fighter extends Champ {
 			useEnergy(SLAM_ENERGY);
 			
 			for(Player player : Bukkit.getOnlinePlayers()) {
-				player.playSound(PLAYER.getLocation(), Sound.ENTITY_DRAGON_FIREBALL_EXPLODE, 1f, 1f);
+				player.playSound(PLAYER.getLocation(), Sound.ENTITY_DRAGON_FIREBALL_EXPLODE, 1f, 1.2f);
 			}
 			if (slamMarks.size() < 1) {
 				timeAtLastSlam = System.currentTimeMillis();
@@ -286,6 +309,9 @@ public class Fighter extends Champ {
 			}
 			slamTimer.interrupt();
 			useEnergy(SLOW_ENERGY);
+			for(Player player : Bukkit.getOnlinePlayers()) {
+				player.playSound(PLAYER.getLocation(), SLOW_SOUND, 1f, 0.6f);
+			}
 			slamMarks.clear();
 			PLAYER.getInventory().setItem(3, new ItemStack(Material.GOLDEN_HORSE_ARMOR));
 			timeAtLastSlam = System.currentTimeMillis();
@@ -296,7 +322,7 @@ public class Fighter extends Champ {
 	public void abilityRanged(Champ champ, Projectile projectile) {
 		if (projectile instanceof Arrow) {
 			Arrow arrow = (Arrow) projectile;
-			if (arrow.getCustomName().equals("MARK")) {
+			if (arrow.getCustomName().equals("MARK") && !Champ.BOARD.getEntryTeam(PLAYER.getName()).getName().equals(Champ.BOARD.getEntryTeam(champ.PLAYER.getName()).getName())) {
 				
 				PacketPlayOutEntityEffect packet = new PacketPlayOutEntityEffect(champ.PLAYER.getEntityId(), new MobEffect(new MobEffect(MobEffectList.fromId(24), 10, 0)));
 				
@@ -326,7 +352,7 @@ public class Fighter extends Champ {
 				timeAtLastSonicWave = System.currentTimeMillis();
 			}
 
-		} else if (projectile == null) {
+		} else if (projectile == null && Champ.BOARD.getEntryTeam(PLAYER.getName()).getName().equals(Champ.BOARD.getEntryTeam(champ.PLAYER.getName()).getName())) {
 			if (energy >= SAFE_ENERGY) {
 				useEnergy(SAFE_ENERGY);
 				PLAYER.teleport(champ.PLAYER);
@@ -344,6 +370,9 @@ public class Fighter extends Champ {
 						timeAtLastSafe = System.currentTimeMillis() + (long) (1000 * SAFE_COOLDOWN);
 					}
 				});
+				for(Player player : Bukkit.getOnlinePlayers()) {
+					player.playSound(PLAYER.getLocation(), SAFE_SOUND, 1f, 1.5f);
+				}
 				safeTimer = timer;
 				timer.start();
 				timeAtLastSafe = System.currentTimeMillis();
@@ -419,9 +448,11 @@ public class Fighter extends Champ {
 					for (Entity ent : entities) {
 						if (ent instanceof Player) {
 							Player hit = (Player) ent;
-							PLAYER.playSound(PLAYER.getLocation(), Sound.ENTITY_ARROW_HIT_PLAYER, 1f, 1f);
-							Champ pldefend = Champ.getChamp(hit);
-							this.abilityRanged(pldefend, null);
+							if(Champ.BOARD.getEntryTeam(PLAYER.getName()).getName().equals(Champ.BOARD.getEntryTeam(hit.getName()).getName())) {
+								PLAYER.playSound(PLAYER.getLocation(), Sound.ENTITY_ARROW_HIT_PLAYER, 1f, 1f);
+								Champ pldefend = Champ.getChamp(hit);
+								this.abilityRanged(pldefend, null);
+							}
 							return;
 						}
 					}

@@ -19,16 +19,19 @@ public class Beserker extends Champ {
 	public static final ItemStack LEFT_HAND = null;
 	public static final Sound HURT_SOUND = Sound.BLOCK_GILDED_BLACKSTONE_STEP;
 	
-
+	public static final Sound LEAP_SOUND = Sound.ENTITY_WOLF_GROWL;
+	public static final Sound AXE_SOUND = Sound.ITEM_SHIELD_BLOCK;
+	public static final Sound BLOOD_SOUND = Sound.ENTITY_ZOMBIFIED_PIGLIN_ANGRY;
+	
 	// Damage
-	public static final float VERT_LEAP_STRENGTH = 1.6f;
+	public static final float VERT_LEAP_STRENGTH = 1.7f;
 	public static final float HORIZ_LEAP_STRENGTH = 1.5f;
-	public static final short VELOCITY_MULTIPLIER = 20;
+	public static final short VELOCITY_MULTIPLIER = 25;
 	public static final short AXE_DAMAGE = 55;
 
 	// Cool downs
-	public static final float AXE_COOLDOWN = 0.80f;
-	public static final float AXE_LEAP_COOLDOWN = 4.0f;
+	public static final float AXE_COOLDOWN = 0.78f;
+	public static final float AXE_LEAP_COOLDOWN = 4.1f;
 	private long timeAtLastSwing;
 	private long timeAtLastLeap;
 
@@ -47,6 +50,9 @@ public class Beserker extends Champ {
 					PLAYER.getLocation().getDirection().getY() * VERT_LEAP_STRENGTH,
 					PLAYER.getLocation().getDirection().getZ() * HORIZ_LEAP_STRENGTH));
 			timeAtLastLeap = System.currentTimeMillis();
+			for(Player player : Bukkit.getOnlinePlayers()) {
+				player.playSound(PLAYER.getLocation(), LEAP_SOUND, 1f, 0.9f);
+			}
 		}
 	}
 
@@ -54,19 +60,34 @@ public class Beserker extends Champ {
 	public void abilityMelee(Champ champ) {
 		Player defend = champ.PLAYER;
 		if (PLAYER.getInventory().getItemInMainHand().getType() == Material.GOLDEN_AXE
-				&& (System.currentTimeMillis() - timeAtLastSwing > (1000 * AXE_COOLDOWN))) {
+				&& (System.currentTimeMillis() - timeAtLastSwing > (1000 * AXE_COOLDOWN)) && !Champ.BOARD.getEntryTeam(PLAYER.getName()).getName().equals(Champ.BOARD.getEntryTeam(defend.getName()).getName())) {
 			double velocity = Math.abs(PLAYER.getVelocity().getX()) + Math.abs(PLAYER.getVelocity().getY())
 					+ Math.abs(PLAYER.getVelocity().getZ());
 			int damage = AXE_DAMAGE;
 			damage += (velocity * VELOCITY_MULTIPLIER);
-			if (velocity > 1) {
+			if (velocity > 1.1) {
 				for(Player player : Bukkit.getOnlinePlayers()) {
 					player.playSound(defend.getLocation(), Sound.BLOCK_ANVIL_LAND, 1f, 0.5f);
 				}
 			} 
-			champ.takeDamage(damage);
+			for(Player player : Bukkit.getOnlinePlayers()) {
+				player.playSound(PLAYER.getLocation(), AXE_SOUND, 0.5f, 2f);
+			}
+			if(champ.takeDamage(damage)) {
+				onKill(champ);
+			}
 			onHit();
 			timeAtLastSwing = System.currentTimeMillis();
 		}
 	}
+	
+	@Override
+	public void onKill(Champ champ) {
+		super.onKill(champ);
+		for(Player player : Bukkit.getOnlinePlayers()) {
+			player.playSound(PLAYER.getLocation(), BLOOD_SOUND, 3f, 1.2f);
+		}
+		timeAtLastLeap = 0;
+	}
+	
 }
