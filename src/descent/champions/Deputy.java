@@ -28,9 +28,9 @@ public class Deputy extends Champ {
 	public static final Sound HEAL_SOUND = Sound.ENTITY_EXPERIENCE_ORB_PICKUP;
 
 	// Damage
-	public static final int GUN_DAMAGE = 40;
+	public static final int GUN_DAMAGE = 20;
 	// Cool downs
-	public static final float SHOOT_COOLDOWN = 0.65f;
+	public static final float SHOOT_COOLDOWN = 0.325f;
 	public static final float HEAL_COOLDOWN = 9.0f;
 	
 	public static final int HEAL_AMOUNT = 50;

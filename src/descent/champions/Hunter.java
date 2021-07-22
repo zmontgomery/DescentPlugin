@@ -12,10 +12,10 @@ import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
 public class Hunter extends Champ {
-	public static final double MAX_HEALTH = 150;
+	public static final double MAX_HEALTH = 175;
 	public static final String CHAMP_NAME = "Hunter";
-	public static final float MOVE_SPEED = 0.26f;
-	public static final double NATURAL_REGEN = 7.0;
+	public static final float MOVE_SPEED = 0.29f;
+	public static final double NATURAL_REGEN = 10.0;
 	public static final ItemStack[] ITEMS = new ItemStack[] { new ItemStack(Material.BOW) };
 	public static final ItemStack[] CLOTHES = new ItemStack[] { null, null, null,
 			new ItemStack(Material.CHAINMAIL_HELMET) };

@@ -19,7 +19,7 @@ public class Alchemist extends Champ {
 	public static final double MAX_HEALTH = 175;
 	public static final String CHAMP_NAME = "Alchemist";
 	public static final float MOVE_SPEED = 0.26f;
-	public static final double NATURAL_REGEN = 8.0;
+	public static final double NATURAL_REGEN = 2.0;
 	public static final ItemStack[] ITEMS = new ItemStack[] { new ItemStack(Material.GLASS_BOTTLE) };
 	public static final ItemStack[] CLOTHES = new ItemStack[] { new ItemStack(Material.GOLDEN_BOOTS), null, null,
 			null };
@@ -30,11 +30,11 @@ public class Alchemist extends Champ {
 	
 	
 	// Damage
-	public static final int POTION_HEAL = 40;
-	public static final int POTION_DAMAGE = 55;
+	public static final int POTION_HEAL = 30;
+	public static final int POTION_DAMAGE = 45;
 
 	// Cool downs
-	public static final float POTION_COOLDOWN = 1.4f;
+	public static final float POTION_COOLDOWN = 1.7f;
 
 	private long timeAtLastPotion;
 
