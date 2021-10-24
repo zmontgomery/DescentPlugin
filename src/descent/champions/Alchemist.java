@@ -25,7 +25,8 @@ public class Alchemist extends Champ {
 			null };
 	public static final ItemStack LEFT_HAND = null;
 	public static final Sound HURT_SOUND = Sound.BLOCK_GRASS_BREAK;
-
+	public static final int HURT_PITCH = 3;
+	
 	public static final Sound THROW_SOUND = Sound.ENTITY_EGG_THROW;
 	
 	
@@ -39,7 +40,7 @@ public class Alchemist extends Champ {
 	private long timeAtLastPotion;
 
 	public Alchemist(Player player) {
-		super(player, CHAMP_NAME, MOVE_SPEED, NATURAL_REGEN, MAX_HEALTH, ITEMS, CLOTHES, LEFT_HAND, HURT_SOUND);
+		super(player, CHAMP_NAME, MOVE_SPEED, NATURAL_REGEN, MAX_HEALTH, ITEMS, CLOTHES, LEFT_HAND, HURT_SOUND, HURT_PITCH);
 		timeAtLastPotion = 0;
 	}
 

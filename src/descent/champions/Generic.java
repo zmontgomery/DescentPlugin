@@ -6,7 +6,7 @@ import org.bukkit.inventory.ItemStack;
 public class Generic extends Champ{
 
 	public Generic(Player player) {
-		super(player, "NONE", 0.2f, 2000, 0, new ItemStack[0], new ItemStack[0], null, null);
+		super(player, "NONE", 0.2f, 2000, 0, new ItemStack[0], new ItemStack[0], null, null, 1);
 	}
 	
 	@Override

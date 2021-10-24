@@ -24,6 +24,7 @@ public class Deputy extends Champ {
 			null };
 	public static final ItemStack LEFT_HAND = null;
 	public static final Sound HURT_SOUND = Sound.ENTITY_ARMOR_STAND_BREAK;
+	public static final int HURT_PITCH = 3;
 	
 	public static final Sound HEAL_SOUND = Sound.ENTITY_EXPERIENCE_ORB_PICKUP;
 
@@ -40,7 +41,7 @@ public class Deputy extends Champ {
 	private long timeAtLastHeal;
 
 	public Deputy(Player player) {
-		super(player, CHAMP_NAME, MOVE_SPEED, NATURAL_REGEN, MAX_HEALTH, ITEMS, CLOTHES, LEFT_HAND, HURT_SOUND);
+		super(player, CHAMP_NAME, MOVE_SPEED, NATURAL_REGEN, MAX_HEALTH, ITEMS, CLOTHES, LEFT_HAND, HURT_SOUND, HURT_PITCH);
 		timeAtLastShot = 0;
 		timeAtLastHeal = 0;
 	}

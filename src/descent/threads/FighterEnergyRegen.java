@@ -6,11 +6,11 @@ import descent.champions.Champ;
 import descent.champions.Generic;
 import descent.champions.Fighter;
 
-public class LeeEnergyRegen implements Runnable {
+public class FighterEnergyRegen implements Runnable {
 	private Player player;
 	private Champ champ;
 
-	public LeeEnergyRegen(Player player, Champ champ) {
+	public FighterEnergyRegen(Player player, Champ champ) {
 		this.player = player;
 		this.champ = champ;
 

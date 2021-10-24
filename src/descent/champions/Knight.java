@@ -18,7 +18,8 @@ public class Knight extends Champ {
 			new ItemStack(Material.IRON_HELMET) };
 	public static final ItemStack LEFT_HAND = new ItemStack(Material.SHIELD);
 	public static final Sound HURT_SOUND = Sound.BLOCK_LANTERN_BREAK;
-
+	public static final int HURT_PITCH = 3;
+	
 	public static final Sound SWORD_SOUND = Sound.ENTITY_DOLPHIN_SPLASH;
 	public static final Sound SHIELD_HIT_SOUND = Sound.ITEM_SHIELD_BLOCK;
 	public static final Sound SHIELD_BREAK_SOUND = Sound.ITEM_SHIELD_BREAK;
@@ -47,7 +48,7 @@ public class Knight extends Champ {
 	private Thread runoutTimer;
 
 	public Knight(Player player) {
-		super(player, CHAMP_NAME, MOVE_SPEED, NATURAL_REGEN, MAX_HEALTH, ITEMS, CLOTHES, LEFT_HAND, HURT_SOUND);
+		super(player, CHAMP_NAME, MOVE_SPEED, NATURAL_REGEN, MAX_HEALTH, ITEMS, CLOTHES, LEFT_HAND, HURT_SOUND, HURT_PITCH);
 		Thread regen = new Thread(new KnightShieldRegen(player, this));
 		regen.start();
 

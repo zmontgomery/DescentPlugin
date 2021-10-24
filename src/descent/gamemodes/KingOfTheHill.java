@@ -31,12 +31,10 @@ public class KingOfTheHill implements Gamemode {
 		manager = Bukkit.getScoreboardManager();
 		board = manager.getMainScoreboard();
 		
-		if(board.getTeam("blue") != null)
-			board.getTeam("blue").unregister();
-		if(board.getTeam("red") != null)
-			board.getTeam("red").unregister();
-		if(board.getTeam("spec") != null)
-			board.getTeam("spec").unregister();
+		for(Team team : board.getTeams()) {
+			team.unregister();
+		}
+		
 		if(board.getObjective("cp") != null) {
 			board.getObjective("cp").unregister();
 		}

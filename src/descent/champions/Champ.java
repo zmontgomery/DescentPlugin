@@ -44,6 +44,7 @@ public abstract class Champ {
 	public final ItemStack[] CLOTHES;
 	public final ItemStack LEFT_HAND;
 	public final Sound HURT_SOUND;
+	public final float HURT_PITCH;
 	protected double currentHealth;
 
 	public static final Sound KILL_SOUND = Sound.ENTITY_PLAYER_LEVELUP;
@@ -52,7 +53,7 @@ public abstract class Champ {
 	public static final double FIRE_DAMAGE = 20;
 
 	protected Champ(Player player, String champName, float moveSpeed, double naturalRegen, double maxHealth,
-			ItemStack[] items, ItemStack[] clothes, ItemStack leftHand, Sound hurtSound) {
+			ItemStack[] items, ItemStack[] clothes, ItemStack leftHand, Sound hurtSound, float hurtPitch) {
 		clearChamp(player);
 		addChamp(player, this);
 		this.PLAYER = player;
@@ -66,6 +67,7 @@ public abstract class Champ {
 		this.CLOTHES = clothes;
 		this.LEFT_HAND = leftHand;
 		this.HURT_SOUND = hurtSound;
+		this.HURT_PITCH = hurtPitch;
 		initialize();
 	}
 
@@ -97,6 +99,7 @@ public abstract class Champ {
 		championSelect.addItem(new ItemStack(Material.POTION));
 		championSelect.addItem(new ItemStack(Material.GOLDEN_CHESTPLATE));
 		championSelect.addItem(new ItemStack(Material.BLAZE_POWDER));
+		championSelect.addItem(new ItemStack(Material.GOLDEN_BOOTS));
 
 		PLAYER.openInventory(championSelect);
 	}
@@ -204,7 +207,7 @@ public abstract class Champ {
 			killed = true;
 		}
 		for (Player player : Bukkit.getOnlinePlayers()) {
-			player.playSound(PLAYER.getLocation(), HURT_SOUND, 1f, 0.6f);
+			player.playSound(PLAYER.getLocation(), HURT_SOUND, 1f, HURT_PITCH);
 		}
 		updatePlayerHealth();
 		WorldBorder wb = new WorldBorder();

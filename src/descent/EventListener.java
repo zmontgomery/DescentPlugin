@@ -34,6 +34,7 @@ import org.bukkit.scoreboard.Scoreboard;
 import org.bukkit.scoreboard.ScoreboardManager;
 import descent.champions.Alchemist;
 import descent.champions.Beserker;
+import descent.champions.Monkey;
 import descent.champions.Champ;
 import descent.champions.Deputy;
 import descent.champions.Generic;
@@ -403,6 +404,11 @@ public class EventListener implements Listener {
 			new Pyromancer(player);
 			player.closeInventory();
 		}
+		if (item == Material.GOLDEN_BOOTS) {
+			new Monkey(player);
+			player.closeInventory();
+		}
+		
 		if (item == Material.RED_DYE) {
 			Main.gamemode.joinTeam("red", player);
 			player.teleport(Main.gamemode.respawnLocation(player));

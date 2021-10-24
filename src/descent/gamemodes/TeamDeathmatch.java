@@ -29,12 +29,9 @@ public class TeamDeathmatch implements Gamemode {
 		manager = Bukkit.getScoreboardManager();
 		board = manager.getMainScoreboard();
 
-		if (board.getTeam("blue") != null)
-			board.getTeam("blue").unregister();
-		if (board.getTeam("red") != null)
-			board.getTeam("red").unregister();
-		if (board.getTeam("spec") != null)
-			board.getTeam("spec").unregister();
+		for(Team team : board.getTeams()) {
+			team.unregister();
+		}
 
 		name = "Team Deathmatch";
 		World world = Bukkit.getWorld("world");

@@ -19,7 +19,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.Vector;
-import descent.threads.LeeEnergyRegen;
+import descent.threads.FighterEnergyRegen;
 import net.minecraft.server.v1_16_R3.MobEffect;
 import net.minecraft.server.v1_16_R3.MobEffectList;
 import net.minecraft.server.v1_16_R3.PacketPlayOutEntityEffect;
@@ -37,6 +37,7 @@ public class Fighter extends Champ {
 			new ItemStack(Material.GOLDEN_CHESTPLATE), null };
 	public static final ItemStack LEFT_HAND = null;
 	public static final Sound HURT_SOUND = Sound.BLOCK_NETHERITE_BLOCK_BREAK;
+	public static final int HURT_PITCH = 3;
 	
 	public static final Sound SONIC_SHOOT_SOUND = Sound.BLOCK_SHROOMLIGHT_BREAK;
 	public static final Sound SONIC_LEAP_SOUND = Sound.BLOCK_PUMPKIN_CARVE;
@@ -95,7 +96,7 @@ public class Fighter extends Champ {
 	private Thread slamTimer;
 
 	public Fighter(Player player) {
-		super(player, CHAMP_NAME, MOVE_SPEED, NATURAL_REGEN, MAX_HEALTH, ITEMS, CLOTHES, LEFT_HAND, HURT_SOUND);
+		super(player, CHAMP_NAME, MOVE_SPEED, NATURAL_REGEN, MAX_HEALTH, ITEMS, CLOTHES, LEFT_HAND, HURT_SOUND, HURT_PITCH);
 		timeAtLastPunch = 0;
 		timeAtLastSonicWave = 0;
 		timeAtLastSafe = 0;
@@ -108,7 +109,7 @@ public class Fighter extends Champ {
 		this.slamMarks = new ArrayList<>();
 		this.safeTimer = null;
 		this.slamTimer = null;
-		Thread regen = new Thread(new LeeEnergyRegen(player, this));
+		Thread regen = new Thread(new FighterEnergyRegen(player, this));
 		regen.start();
 		initialize();
 	}

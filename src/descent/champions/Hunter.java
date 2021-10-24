@@ -21,7 +21,8 @@ public class Hunter extends Champ {
 			new ItemStack(Material.CHAINMAIL_HELMET) };
 	public static final ItemStack LEFT_HAND = new ItemStack(Material.ARROW, 64);
 	public static final Sound HURT_SOUND = Sound.ENTITY_ITEM_BREAK;
-
+	public static final int HURT_PITCH = 3;
+	
 	public static final Sound SHOOT_SOUND = Sound.ENTITY_ARROW_SHOOT;
 	public static final Sound FLAME_ARROW_SOUND = Sound.ENTITY_BLAZE_AMBIENT;
 	public static final Sound ICE_ARROW_SOUND = Sound.BLOCK_GLASS_BREAK;
@@ -44,7 +45,7 @@ public class Hunter extends Champ {
 	Thread arrowTimer;
 
 	public Hunter(Player player) {
-		super(player, CHAMP_NAME, MOVE_SPEED, NATURAL_REGEN, MAX_HEALTH, ITEMS, CLOTHES, LEFT_HAND, HURT_SOUND);
+		super(player, CHAMP_NAME, MOVE_SPEED, NATURAL_REGEN, MAX_HEALTH, ITEMS, CLOTHES, LEFT_HAND, HURT_SOUND, HURT_PITCH);
 		timeAtLastFire = 0;
 		timeAtLastIce = 0;
 		currentArrow = "DEFAULT";

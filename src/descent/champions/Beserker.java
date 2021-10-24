@@ -18,6 +18,7 @@ public class Beserker extends Champ {
 			new ItemStack(Material.CHAINMAIL_HELMET) };
 	public static final ItemStack LEFT_HAND = null;
 	public static final Sound HURT_SOUND = Sound.BLOCK_GILDED_BLACKSTONE_STEP;
+	public static final int HURT_PITCH = 3;
 	
 	public static final Sound LEAP_SOUND = Sound.ENTITY_WOLF_GROWL;
 	public static final Sound AXE_SOUND = Sound.ITEM_SHIELD_BLOCK;
@@ -36,7 +37,7 @@ public class Beserker extends Champ {
 	private long timeAtLastLeap;
 
 	public Beserker(Player player) {
-		super(player, CHAMP_NAME, MOVE_SPEED, NATURAL_REGEN, MAX_HEALTH, ITEMS, CLOTHES, LEFT_HAND, HURT_SOUND);
+		super(player, CHAMP_NAME, MOVE_SPEED, NATURAL_REGEN, MAX_HEALTH, ITEMS, CLOTHES, LEFT_HAND, HURT_SOUND, HURT_PITCH);
 		timeAtLastSwing = 0;
 		timeAtLastLeap = 0;
 	}

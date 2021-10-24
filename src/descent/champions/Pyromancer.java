@@ -29,7 +29,8 @@ public class Pyromancer extends Champ {
 			new ItemStack(Material.LEATHER_CHESTPLATE), null };
 	public static final ItemStack LEFT_HAND = null;
 	public static final Sound HURT_SOUND = Sound.ENTITY_DROWNED_STEP;
-
+	public static final int HURT_PITCH = 3;
+	
 	public static final Sound FIRE_SOUND = Sound.BLOCK_FIRE_EXTINGUISH;
 	public static final Sound JUMP_SOUND = Sound.ENTITY_LIGHTNING_BOLT_THUNDER;
 
@@ -44,7 +45,7 @@ public class Pyromancer extends Champ {
 	private long timeAtLastJump;
 
 	public Pyromancer(Player player) {
-		super(player, CHAMP_NAME, MOVE_SPEED, NATURAL_REGEN, MAX_HEALTH, ITEMS, CLOTHES, LEFT_HAND, HURT_SOUND);
+		super(player, CHAMP_NAME, MOVE_SPEED, NATURAL_REGEN, MAX_HEALTH, ITEMS, CLOTHES, LEFT_HAND, HURT_SOUND, HURT_PITCH);
 		timeAtLastFire = 0;
 		timeAtLastJump = 0;
 	}
