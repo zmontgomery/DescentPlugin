@@ -18,7 +18,7 @@ public class Beserker extends Champ {
 			new ItemStack(Material.CHAINMAIL_HELMET) };
 	public static final ItemStack LEFT_HAND = null;
 	public static final Sound HURT_SOUND = Sound.BLOCK_GILDED_BLACKSTONE_STEP;
-	public static final int HURT_PITCH = 3;
+	public static final float HURT_PITCH = 3.0f;
 	
 	public static final Sound LEAP_SOUND = Sound.ENTITY_WOLF_GROWL;
 	public static final Sound AXE_SOUND = Sound.ITEM_SHIELD_BLOCK;
@@ -27,8 +27,8 @@ public class Beserker extends Champ {
 	// Damage
 	public static final float VERT_LEAP_STRENGTH = 1.7f;
 	public static final float HORIZ_LEAP_STRENGTH = 1.5f;
-	public static final short VELOCITY_MULTIPLIER = 25;
-	public static final short AXE_DAMAGE = 55;
+	public static final short VELOCITY_MULTIPLIER = 35;
+	public static final short AXE_DAMAGE = 50;
 
 	// Cool downs
 	public static final float AXE_COOLDOWN = 0.78f;
@@ -88,6 +88,7 @@ public class Beserker extends Champ {
 		for(Player player : Bukkit.getOnlinePlayers()) {
 			player.playSound(PLAYER.getLocation(), BLOOD_SOUND, 3f, 1.2f);
 		}
+		heal(20);
 		timeAtLastLeap = 0;
 	}
 	

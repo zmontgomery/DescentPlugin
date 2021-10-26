@@ -50,7 +50,7 @@ public abstract class Champ {
 	public static final Sound KILL_SOUND = Sound.ENTITY_PLAYER_LEVELUP;
 	public static final Sound HIT_SOUND = Sound.ENTITY_TURTLE_EGG_BREAK;
 
-	public static final double FIRE_DAMAGE = 20;
+	public static final double FIRE_DAMAGE = 15;
 
 	protected Champ(Player player, String champName, float moveSpeed, double naturalRegen, double maxHealth,
 			ItemStack[] items, ItemStack[] clothes, ItemStack leftHand, Sound hurtSound, float hurtPitch) {
@@ -100,6 +100,7 @@ public abstract class Champ {
 		championSelect.addItem(new ItemStack(Material.GOLDEN_CHESTPLATE));
 		championSelect.addItem(new ItemStack(Material.BLAZE_POWDER));
 		championSelect.addItem(new ItemStack(Material.GOLDEN_BOOTS));
+		championSelect.addItem(new ItemStack(Material.YELLOW_DYE));
 
 		PLAYER.openInventory(championSelect);
 	}

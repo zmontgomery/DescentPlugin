@@ -22,24 +22,24 @@ public class Pyromancer extends Champ {
 
 	public static final double MAX_HEALTH = 150;
 	public static final String CHAMP_NAME = "Pyromancer";
-	public static final float MOVE_SPEED = 0.29f;
-	public static final double NATURAL_REGEN = 7.0;
+	public static final float MOVE_SPEED = 0.28f;
+	public static final double NATURAL_REGEN = 6.0;
 	public static final ItemStack[] ITEMS = new ItemStack[] { new ItemStack(Material.BLAZE_POWDER) };
 	public static final ItemStack[] CLOTHES = new ItemStack[] { new ItemStack(Material.LEATHER_BOOTS), null,
 			new ItemStack(Material.LEATHER_CHESTPLATE), null };
 	public static final ItemStack LEFT_HAND = null;
 	public static final Sound HURT_SOUND = Sound.ENTITY_DROWNED_STEP;
-	public static final int HURT_PITCH = 3;
+	public static final float HURT_PITCH = 3.0f;
 	
 	public static final Sound FIRE_SOUND = Sound.BLOCK_FIRE_EXTINGUISH;
 	public static final Sound JUMP_SOUND = Sound.ENTITY_LIGHTNING_BOLT_THUNDER;
 
-	public static final double FIRE_DAMAGE = 26;
+	public static final double FIRE_DAMAGE = 19;
 	// Cool downs
-	public static final float FIRE_COOLDOWN = 0.63f;
-	public static final float JUMP_COOLDOWN = 6.7f;
+	public static final float FIRE_COOLDOWN = 0.8f;
+	public static final float JUMP_COOLDOWN = 6.9f;
 
-	public static final float JUMP_RUNOUT = 3.0f;
+	public static final float JUMP_RUNOUT = 2.7f;
 
 	private long timeAtLastFire;
 	private long timeAtLastJump;

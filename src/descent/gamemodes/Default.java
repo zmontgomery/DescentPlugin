@@ -3,7 +3,7 @@ package descent.gamemodes;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
-public class Default implements Gamemode{
+public class Default extends Gamemode{
 	
 	private String name;
 	private final float RESPAWN_TIME = 1.0f;

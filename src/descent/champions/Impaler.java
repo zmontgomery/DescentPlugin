@@ -25,7 +25,7 @@ public class Impaler extends Champ {
 			new ItemStack(Material.LEATHER_HELMET) };
 	public static final ItemStack LEFT_HAND = null;
 	public static final Sound HURT_SOUND = Sound.ITEM_AXE_STRIP;
-	public static final int HURT_PITCH = 3;
+	public static final float HURT_PITCH = 3.0f;
 	
 	public static final Sound THROW_SOUND = Sound.ENTITY_BAT_TAKEOFF;
 	public static final Sound WRAITH_SOUND = Sound.ENTITY_ENDERMAN_SCREAM;

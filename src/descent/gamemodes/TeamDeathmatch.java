@@ -10,7 +10,7 @@ import org.bukkit.scoreboard.ScoreboardManager;
 import org.bukkit.scoreboard.Team;
 import descent.champions.Champ;
 
-public class TeamDeathmatch implements Gamemode {
+public class TeamDeathmatch extends Gamemode {
 
 	private String name;
 
@@ -28,11 +28,6 @@ public class TeamDeathmatch implements Gamemode {
 	public void start() {
 		manager = Bukkit.getScoreboardManager();
 		board = manager.getMainScoreboard();
-
-		for(Team team : board.getTeams()) {
-			team.unregister();
-		}
-
 		name = "Team Deathmatch";
 		World world = Bukkit.getWorld("world");
 		redSpawn = new Location(world, -55.5, 23, 100.5);

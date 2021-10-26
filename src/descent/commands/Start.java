@@ -11,7 +11,7 @@ public class Start implements CommandExecutor {
 	@Override
 	public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
 		if (label.equalsIgnoreCase("start")) {
-			Main.gamemode.start();
+			Main.gamemode.initialize(); 
 		}
 		return true;
 	}

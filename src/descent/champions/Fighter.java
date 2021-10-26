@@ -37,15 +37,14 @@ public class Fighter extends Champ {
 			new ItemStack(Material.GOLDEN_CHESTPLATE), null };
 	public static final ItemStack LEFT_HAND = null;
 	public static final Sound HURT_SOUND = Sound.BLOCK_NETHERITE_BLOCK_BREAK;
-	public static final int HURT_PITCH = 3;
-	
+	public static final float HURT_PITCH = 3.0f;
+
 	public static final Sound SONIC_SHOOT_SOUND = Sound.BLOCK_SHROOMLIGHT_BREAK;
 	public static final Sound SONIC_LEAP_SOUND = Sound.BLOCK_PUMPKIN_CARVE;
 	public static final Sound PUNCH_SOUND = Sound.ENTITY_PLAYER_ATTACK_CRIT;
 	public static final Sound KICK_SOUND = Sound.ENTITY_DRAGON_FIREBALL_EXPLODE;
 	public static final Sound SAFE_SOUND = Sound.BLOCK_ENCHANTMENT_TABLE_USE;
 	public static final Sound SLOW_SOUND = Sound.ITEM_TRIDENT_THUNDER;
-	
 
 	public static final short MAX_ENERGY = 200;
 
@@ -75,7 +74,7 @@ public class Fighter extends Champ {
 	public static final short SLOW_ENERGY = 65;
 	public static final short ROUNDHOUSE_ENERGY = 75;
 	public static final short ENERGY_ON_KILL = 50;
-	
+
 	public static final short ROUNDHOUSE_VELOCITY = 3;
 	public static final float SLOW_TIME = 3.0f;
 	public static final float LIFESTEAL_AMOUNT = 0.4f;
@@ -96,7 +95,8 @@ public class Fighter extends Champ {
 	private Thread slamTimer;
 
 	public Fighter(Player player) {
-		super(player, CHAMP_NAME, MOVE_SPEED, NATURAL_REGEN, MAX_HEALTH, ITEMS, CLOTHES, LEFT_HAND, HURT_SOUND, HURT_PITCH);
+		super(player, CHAMP_NAME, MOVE_SPEED, NATURAL_REGEN, MAX_HEALTH, ITEMS, CLOTHES, LEFT_HAND, HURT_SOUND,
+				HURT_PITCH);
 		timeAtLastPunch = 0;
 		timeAtLastSonicWave = 0;
 		timeAtLastSafe = 0;
@@ -119,13 +119,15 @@ public class Fighter extends Champ {
 		Player defend = champ.PLAYER;
 
 		if (PLAYER.getInventory().getItemInMainHand().getType() == Material.AIR
-				&& (System.currentTimeMillis() - timeAtLastPunch > (1000 * PUNCH_COOLDOWN)) && !Champ.BOARD.getEntryTeam(PLAYER.getName()).getName().equals(Champ.BOARD.getEntryTeam(defend.getName()).getName())) {
+				&& (System.currentTimeMillis() - timeAtLastPunch > (1000 * PUNCH_COOLDOWN))
+				&& !Champ.BOARD.getEntryTeam(PLAYER.getName()).getName()
+						.equals(Champ.BOARD.getEntryTeam(defend.getName()).getName())) {
 			boolean killed = champ.takeDamage(PUNCH_DAMAGE);
 			onHit();
 			if (killed) {
 				onKill(champ);
 			}
-			for(Player player : Bukkit.getOnlinePlayers()) {
+			for (Player player : Bukkit.getOnlinePlayers()) {
 				player.playSound(PLAYER.getLocation(), PUNCH_SOUND, 1f, 0.4f);
 			}
 			this.heal(PUNCH_DAMAGE * lifeSteal);
@@ -134,13 +136,14 @@ public class Fighter extends Champ {
 
 		} else if (PLAYER.getInventory().getItemInMainHand().getType() == Material.NETHERITE_AXE
 				&& (System.currentTimeMillis() - timeAtLastRoundhouse > (1000 * ROUNDHOUSE_COOLDOWN))
-				&& energy >= ROUNDHOUSE_ENERGY && !Champ.BOARD.getEntryTeam(PLAYER.getName()).getName().equals(Champ.BOARD.getEntryTeam(defend.getName()).getName())) {
+				&& energy >= ROUNDHOUSE_ENERGY && !Champ.BOARD.getEntryTeam(PLAYER.getName()).getName()
+						.equals(Champ.BOARD.getEntryTeam(defend.getName()).getName())) {
 			this.heal(ROUNDHOUSE_DAMAGE * lifeSteal);
 			champ.PLAYER.setVelocity(new Vector(PLAYER.getLocation().getDirection().getX() * ROUNDHOUSE_VELOCITY,
 					PLAYER.getLocation().getDirection().getY() * ROUNDHOUSE_VELOCITY + 1,
 					PLAYER.getLocation().getDirection().getZ() * ROUNDHOUSE_VELOCITY));
 			timeAtLastRoundhouse = System.currentTimeMillis();
-			for(Player player : Bukkit.getOnlinePlayers()) {
+			for (Player player : Bukkit.getOnlinePlayers()) {
 				player.playSound(defend.getLocation(), KICK_SOUND, 2f, 0.5f);
 			}
 			useEnergy(ROUNDHOUSE_ENERGY);
@@ -149,7 +152,7 @@ public class Fighter extends Champ {
 			if (killed) {
 				onKill(champ);
 			}
-			
+
 		}
 	}
 
@@ -182,7 +185,7 @@ public class Fighter extends Champ {
 					timeAtLastSonicWave = System.currentTimeMillis();
 				}
 			});
-			for(Player player : Bukkit.getOnlinePlayers()) {
+			for (Player player : Bukkit.getOnlinePlayers()) {
 				player.playSound(PLAYER.getLocation(), SONIC_SHOOT_SOUND, 1f, 0.4f);
 			}
 			sonicTimer = timer;
@@ -203,7 +206,7 @@ public class Fighter extends Champ {
 			if (killed) {
 				onKill(sonicMark);
 			}
-			for(Player player : Bukkit.getOnlinePlayers()) {
+			for (Player player : Bukkit.getOnlinePlayers()) {
 				player.playSound(PLAYER.getLocation(), SONIC_LEAP_SOUND, 1f, 0.7f);
 			}
 			this.sonicMark = null;
@@ -225,7 +228,7 @@ public class Fighter extends Champ {
 					timeAtLastSafe = System.currentTimeMillis() - (long) (1000 * SAFE_COOLDOWN);
 				}
 			});
-			for(Player player : Bukkit.getOnlinePlayers()) {
+			for (Player player : Bukkit.getOnlinePlayers()) {
 				player.playSound(PLAYER.getLocation(), SAFE_SOUND, 1f, 1.5f);
 			}
 			safeTimer = timer;
@@ -252,7 +255,7 @@ public class Fighter extends Champ {
 				}
 				this.lifeSteal = 0;
 			});
-			for(Player player : Bukkit.getOnlinePlayers()) {
+			for (Player player : Bukkit.getOnlinePlayers()) {
 				player.playSound(PLAYER.getLocation(), SAFE_SOUND, 1f, 0.5f);
 			}
 			timer.start();
@@ -266,7 +269,8 @@ public class Fighter extends Champ {
 			for (Entity e : entities) {
 				if (e instanceof Player) {
 					Player p = (Player) e;
-					if (p != PLAYER && !Champ.BOARD.getEntryTeam(PLAYER.getName()).getName().equals(Champ.BOARD.getEntryTeam(p.getName()).getName())) {
+					if (p != PLAYER && !Champ.BOARD.getEntryTeam(PLAYER.getName()).getName()
+							.equals(Champ.BOARD.getEntryTeam(p.getName()).getName())) {
 						Champ c = Champ.getChamp(p);
 						slamMarks.add(c);
 						boolean killed = c.takeDamage(SLAM_DAMAGE);
@@ -279,8 +283,8 @@ public class Fighter extends Champ {
 				}
 			}
 			useEnergy(SLAM_ENERGY);
-			
-			for(Player player : Bukkit.getOnlinePlayers()) {
+
+			for (Player player : Bukkit.getOnlinePlayers()) {
 				player.playSound(PLAYER.getLocation(), Sound.ENTITY_DRAGON_FIREBALL_EXPLODE, 1f, 1.2f);
 			}
 			if (slamMarks.size() < 1) {
@@ -310,7 +314,7 @@ public class Fighter extends Champ {
 			}
 			slamTimer.interrupt();
 			useEnergy(SLOW_ENERGY);
-			for(Player player : Bukkit.getOnlinePlayers()) {
+			for (Player player : Bukkit.getOnlinePlayers()) {
 				player.playSound(PLAYER.getLocation(), SLOW_SOUND, 1f, 0.6f);
 			}
 			slamMarks.clear();
@@ -323,13 +327,15 @@ public class Fighter extends Champ {
 	public void abilityRanged(Champ champ, Projectile projectile) {
 		if (projectile instanceof Arrow) {
 			Arrow arrow = (Arrow) projectile;
-			if (arrow.getCustomName().equals("MARK") && !Champ.BOARD.getEntryTeam(PLAYER.getName()).getName().equals(Champ.BOARD.getEntryTeam(champ.PLAYER.getName()).getName())) {
-				
-				PacketPlayOutEntityEffect packet = new PacketPlayOutEntityEffect(champ.PLAYER.getEntityId(), new MobEffect(new MobEffect(MobEffectList.fromId(24), 10, 0)));
-				
+			if (arrow.getCustomName().equals("MARK") && !Champ.BOARD.getEntryTeam(PLAYER.getName()).getName()
+					.equals(Champ.BOARD.getEntryTeam(champ.PLAYER.getName()).getName())) {
+
+				PacketPlayOutEntityEffect packet = new PacketPlayOutEntityEffect(champ.PLAYER.getEntityId(),
+						new MobEffect(new MobEffect(MobEffectList.fromId(24), 10, 0)));
+
 				PlayerConnection conn = ((CraftPlayer) PLAYER).getHandle().playerConnection;
 				conn.sendPacket(packet);
-				
+
 				PLAYER.getInventory().setItem(1, new ItemStack(Material.WHITE_DYE));
 				this.sonicMark = champ;
 				arrow.remove();
@@ -353,7 +359,8 @@ public class Fighter extends Champ {
 				timeAtLastSonicWave = System.currentTimeMillis();
 			}
 
-		} else if (projectile == null && Champ.BOARD.getEntryTeam(PLAYER.getName()).getName().equals(Champ.BOARD.getEntryTeam(champ.PLAYER.getName()).getName())) {
+		} else if (projectile == null && Champ.BOARD.getEntryTeam(PLAYER.getName()).getName()
+				.equals(Champ.BOARD.getEntryTeam(champ.PLAYER.getName()).getName())) {
 			if (energy >= SAFE_ENERGY) {
 				useEnergy(SAFE_ENERGY);
 				PLAYER.teleport(champ.PLAYER);
@@ -371,7 +378,7 @@ public class Fighter extends Champ {
 						timeAtLastSafe = System.currentTimeMillis() + (long) (1000 * SAFE_COOLDOWN);
 					}
 				});
-				for(Player player : Bukkit.getOnlinePlayers()) {
+				for (Player player : Bukkit.getOnlinePlayers()) {
 					player.playSound(PLAYER.getLocation(), SAFE_SOUND, 1f, 1.5f);
 				}
 				safeTimer = timer;
@@ -404,33 +411,33 @@ public class Fighter extends Champ {
 		regenEnergy(Fighter.MAX_ENERGY);
 		return;
 	}
-	
+
 	@Override
 	public void onKill(Champ champ) {
 		super.onKill(champ);
 		regenEnergy(ENERGY_ON_KILL);
-		if(champ == sonicMark) {
+		if (champ == sonicMark) {
 			sonicTimer.interrupt();
 			PLAYER.getInventory().setItem(1, new ItemStack(Material.FEATHER));
 			this.sonicMark = null;
 		}
-		if(slamMarks.contains(champ)) {
+		if (slamMarks.contains(champ)) {
 			slamMarks.remove(champ);
-			if(slamMarks.size() == 0) {
+			if (slamMarks.size() == 0) {
 				slamTimer.interrupt();
 				if (PLAYER.getInventory().getItem(3).getType() == Material.LEATHER_HORSE_ARMOR) {
 					PLAYER.getInventory().setItem(3, new ItemStack(Material.GOLDEN_HORSE_ARMOR));
 					timeAtLastSlam = System.currentTimeMillis();
 				}
 			}
-		}		
+		}
 	}
 
 	private void safeRayCast() {
 
 		World w = PLAYER.getWorld();
-		Location l = new Location(w, PLAYER.getLocation().getX(),
-				PLAYER.getLocation().getY() + PLAYER.getEyeHeight(), PLAYER.getLocation().getZ());
+		Location l = new Location(w, PLAYER.getLocation().getX(), PLAYER.getLocation().getY() + PLAYER.getEyeHeight(),
+				PLAYER.getLocation().getZ());
 		Vector v = PLAYER.getLocation().getDirection();
 
 		double x = v.getX();
@@ -449,7 +456,8 @@ public class Fighter extends Champ {
 					for (Entity ent : entities) {
 						if (ent instanceof Player) {
 							Player hit = (Player) ent;
-							if(Champ.BOARD.getEntryTeam(PLAYER.getName()).getName().equals(Champ.BOARD.getEntryTeam(hit.getName()).getName())) {
+							if (Champ.BOARD.getEntryTeam(PLAYER.getName()).getName()
+									.equals(Champ.BOARD.getEntryTeam(hit.getName()).getName())) {
 								PLAYER.playSound(PLAYER.getLocation(), Sound.ENTITY_ARROW_HIT_PLAYER, 1f, 1f);
 								Champ pldefend = Champ.getChamp(hit);
 								this.abilityRanged(pldefend, null);

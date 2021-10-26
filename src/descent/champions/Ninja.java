@@ -25,7 +25,7 @@ public class Ninja extends Champ {
 			new ItemStack(Material.CHAINMAIL_HELMET) };
 	public static final ItemStack LEFT_HAND = null;
 	public static final Sound HURT_SOUND = Sound.ENTITY_ENDERMAN_HURT;
-	public static final int HURT_PITCH = 3;
+	public static final float HURT_PITCH = 3.0f;
 	
 	public static final Sound STAB_SOUND = Sound.ENTITY_PLAYER_ATTACK_SWEEP;
 	public static final Sound FLASH_SOUND = Sound.ENTITY_FIREWORK_ROCKET_BLAST;

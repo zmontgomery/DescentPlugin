@@ -15,7 +15,7 @@ import org.bukkit.scoreboard.Team;
 import descent.champions.Champ;
 import descent.champions.Generic;
 
-public class Deathmatch implements Gamemode {
+public class Deathmatch extends Gamemode {
 
 	private String name;
 	private Random rng;
@@ -29,14 +29,8 @@ public class Deathmatch implements Gamemode {
 
 	@Override
 	public void start() {
-		
 		manager = Bukkit.getScoreboardManager();
 		board = manager.getMainScoreboard();
-		
-		for(Team team : board.getTeams()) {
-			team.unregister();
-		}
-		
 		name = "Deathmatch";
 		rng = new Random();
 		World world = Bukkit.getWorld("world");
@@ -50,6 +44,9 @@ public class Deathmatch implements Gamemode {
 		spawnPoints.add(new Location(world, 36, 24, 101));
 		spawnPoints.add(new Location(world, -20, 24, 85));
 		spawnPoints.add(new Location(world, 4, 28, 82));
+		spawnPoints.add(new Location(world, 6, 24, 119));
+		spawnPoints.add(new Location(world, -19, 21, 65));
+		spawnPoints.add(new Location(world, 25, 22, 77));
 
 		for (Player player : Bukkit.getOnlinePlayers()) {
 			Champ champ = new Generic(player);

@@ -10,7 +10,7 @@ import org.bukkit.entity.Player;
 import descent.champions.Champ;
 import descent.champions.Generic;
 
-public class Testing implements Gamemode {
+public class Testing extends Gamemode {
 
 	private String name;
 	private Random rng;

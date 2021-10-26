@@ -42,6 +42,7 @@ import descent.champions.Hunter;
 import descent.champions.Impaler;
 import descent.champions.Knight;
 import descent.champions.Pyromancer;
+import descent.champions.Trainer;
 import descent.champions.Ninja;
 import descent.champions.Fighter;
 import descent.threads.Regen;
@@ -250,8 +251,6 @@ public class EventListener implements Listener {
 					event.getItem().remove();
 					
 					
-					
-
 				}
 			}
 		}
@@ -406,6 +405,10 @@ public class EventListener implements Listener {
 		}
 		if (item == Material.GOLDEN_BOOTS) {
 			new Monkey(player);
+			player.closeInventory();
+		}
+		if (item == Material.YELLOW_DYE) {
+			new Trainer(player);
 			player.closeInventory();
 		}
 		

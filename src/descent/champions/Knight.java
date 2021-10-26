@@ -18,7 +18,7 @@ public class Knight extends Champ {
 			new ItemStack(Material.IRON_HELMET) };
 	public static final ItemStack LEFT_HAND = new ItemStack(Material.SHIELD);
 	public static final Sound HURT_SOUND = Sound.BLOCK_LANTERN_BREAK;
-	public static final int HURT_PITCH = 3;
+	public static final float HURT_PITCH = 3.0f;
 	
 	public static final Sound SWORD_SOUND = Sound.ENTITY_DOLPHIN_SPLASH;
 	public static final Sound SHIELD_HIT_SOUND = Sound.ITEM_SHIELD_BLOCK;
@@ -35,7 +35,7 @@ public class Knight extends Champ {
 	public static final float SHIELD_COOLDOWN = 4.0f;
 
 	public static final int DAMAGE_PER_INTERVAL = 7;
-	public static final float STAMPEDE_RUNOUT = 0.32f;
+	public static final float STAMPEDE_RUNOUT = 0.325f;
 	public static final float STAMPEDE_INTERVAL = 2.5f;
 	public static final int MAX_INTERVALS = 4;
 	public static final float INCREASE_AMOUNT = 0.041f;

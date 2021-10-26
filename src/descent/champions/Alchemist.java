@@ -25,7 +25,7 @@ public class Alchemist extends Champ {
 			null };
 	public static final ItemStack LEFT_HAND = null;
 	public static final Sound HURT_SOUND = Sound.BLOCK_GRASS_BREAK;
-	public static final int HURT_PITCH = 3;
+	public static final float HURT_PITCH = 3.0f;
 	
 	public static final Sound THROW_SOUND = Sound.ENTITY_EGG_THROW;
 	

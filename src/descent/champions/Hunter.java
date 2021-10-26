@@ -21,7 +21,7 @@ public class Hunter extends Champ {
 			new ItemStack(Material.CHAINMAIL_HELMET) };
 	public static final ItemStack LEFT_HAND = new ItemStack(Material.ARROW, 64);
 	public static final Sound HURT_SOUND = Sound.ENTITY_ITEM_BREAK;
-	public static final int HURT_PITCH = 3;
+	public static final float HURT_PITCH = 3.0f;
 	
 	public static final Sound SHOOT_SOUND = Sound.ENTITY_ARROW_SHOOT;
 	public static final Sound FLAME_ARROW_SOUND = Sound.ENTITY_BLAZE_AMBIENT;
