@@ -26,7 +26,7 @@ public class Ninja extends Champ {
 	public static final ItemStack LEFT_HAND = null;
 	public static final Sound HURT_SOUND = Sound.ENTITY_ENDERMAN_HURT;
 	public static final float HURT_PITCH = 3.0f;
-	
+
 	public static final Sound STAB_SOUND = Sound.ENTITY_PLAYER_ATTACK_SWEEP;
 	public static final Sound FLASH_SOUND = Sound.ENTITY_FIREWORK_ROCKET_BLAST;
 	public static final Sound CLOAK_SOUND = Sound.ITEM_FIRECHARGE_USE;
@@ -34,18 +34,20 @@ public class Ninja extends Champ {
 	// Damage
 	public static final int DAGGAR_DAMAGE = 22;
 	// Cool downs
-	public static final float DAGGAR_COOLDOWN = 0.19f;
-	public static final float FLASH_COOLDOWN = 2.5f;
+	public static final float DAGGAR_COOLDOWN = 0.17f;
+	public static final float FLASH_COOLDOWN = 2.3f;
 	public static final float CLOAK_COOLDOWN = 11.0f;
 
 	public static final double FLASH_DISTANCE = 10;
+	public static final float LIFE_STEAL = 0.4f;
 
 	private long timeAtLastSwing;
 	private long timeAtLastFlash;
 	private long timeAtLastCloak;
 
 	public Ninja(Player player) {
-		super(player, CHAMP_NAME, MOVE_SPEED, NATURAL_REGEN, MAX_HEALTH, ITEMS, CLOTHES, LEFT_HAND, HURT_SOUND, HURT_PITCH);
+		super(player, CHAMP_NAME, MOVE_SPEED, NATURAL_REGEN, MAX_HEALTH, ITEMS, CLOTHES, LEFT_HAND, HURT_SOUND,
+				HURT_PITCH);
 		timeAtLastSwing = 0;
 		timeAtLastFlash = 0;
 		timeAtLastCloak = 0;
@@ -66,6 +68,7 @@ public class Ninja extends Champ {
 				&& (System.currentTimeMillis() - timeAtLastSwing > (1000 * DAGGAR_COOLDOWN))
 				&& !Champ.BOARD.getEntryTeam(PLAYER.getName()).getName()
 						.equals(Champ.BOARD.getEntryTeam(champ.PLAYER.getName()).getName())) {
+			heal(DAGGAR_DAMAGE * LIFE_STEAL);
 			if (champ.takeDamage(DAGGAR_DAMAGE)) {
 				onKill(champ);
 			}
@@ -87,7 +90,7 @@ public class Ninja extends Champ {
 		if (PLAYER.getInventory().getItemInMainHand().getType() == Material.GOLDEN_SWORD
 				&& (click == Action.RIGHT_CLICK_AIR || click == Action.RIGHT_CLICK_BLOCK)
 				&& (System.currentTimeMillis() - timeAtLastFlash > (1000 * FLASH_COOLDOWN))) {
-			teleportRayCast(FLASH_DISTANCE);
+			//teleportRayCast(FLASH_DISTANCE);
 			PLAYER.setInvisible(false);
 			Main.sendEquipmentInvisiblePacket(PLAYER, false);
 			for (Player player : Bukkit.getOnlinePlayers()) {
@@ -141,7 +144,7 @@ public class Ninja extends Champ {
 	private void teleportRayCast(double distance) {
 		World w = PLAYER.getWorld();
 		Location eye = PLAYER.getEyeLocation();
-		Location l = PLAYER.getLocation();
+		Location l = PLAYER.getEyeLocation();
 		Vector v = PLAYER.getLocation().getDirection();
 
 		double x = v.getX();
@@ -151,31 +154,38 @@ public class Ninja extends Champ {
 		Location endLocation = l;
 		Location oldEnd = null;
 		int j = 0;
-		for (double i = 0; i < distance; i = i + 0.5) {
-			if(j % 8 == 0) {
+		for (double i = 0; i < distance; i = i + 0.6) {
+			if (j % 7 == 0) {
 				oldEnd = new Location(w, l.getX() + (i * x), l.getY() + (i * y), l.getZ() + (i * z), l.getYaw(),
 						l.getPitch());
 			}
 			endLocation = new Location(w, l.getX() + (i * x), l.getY() + (i * y), l.getZ() + (i * z), l.getYaw(),
 					l.getPitch());
 
+			
+			//Particle
 			if (PLAYER.getWorld().getBlockAt(endLocation).getType().isSolid() == false) {
-
-				w.spawnParticle(Particle.CRIT, eye, 1, 0, 0,
-						0, 0);
-
+				w.spawnParticle(Particle.CRIT, eye, 1, 0, 0, 0, 0);
 			} else {
-				if(oldEnd != null) {
-					PLAYER.teleport(oldEnd);
+				if (oldEnd != null) {
+					Location rounded = new Location(PLAYER.getWorld(), oldEnd.getX(), oldEnd.getY() - 1, oldEnd.getZ(), oldEnd.getYaw(), oldEnd.getPitch());
+					PLAYER.teleport(rounded);
 				}
 				return;
 			}
 			j++;
 
 		}
-		endLocation = new Location(w, endLocation.getX(), endLocation.getY(), endLocation.getZ(), l.getYaw(),
+		endLocation = new Location(w, endLocation.getX(), endLocation.getY() - 1, endLocation.getZ(), l.getYaw(),
 				l.getPitch());
 		PLAYER.teleport(endLocation);
-
+	}
+	
+	private Location refine(Location loc) {
+		Location newLoc = new Location(PLAYER.getWorld(), loc.getX(), loc.getY(), loc.getZ(), loc.getYaw(), loc.getPitch());
+		if(PLAYER.getWorld().getBlockAt(newLoc).getType().isSolid() == false) {
+			
+		}
+		return null;
 	}
 }

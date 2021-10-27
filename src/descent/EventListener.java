@@ -84,8 +84,15 @@ public class EventListener implements Listener {
 		ScoreboardManager manager = Bukkit.getScoreboardManager();
 		Scoreboard board = manager.getMainScoreboard();
 		if (event.getAction() == Action.RIGHT_CLICK_BLOCK) {
-			if (event.getClickedBlock().getType() == Material.OAK_SIGN
+			if (event.getClickedBlock().getType() == Material.CRIMSON_WALL_SIGN
 					&& board.getEntryTeam(player.getName()).getName().equals("red")) {
+				Sign sign = (Sign) event.getClickedBlock().getState();
+				if (sign.getLine(1).equals("[Select Champ]")) {
+					Champ.getChamp(player).champSelect();
+				}
+			}
+			if (event.getClickedBlock().getType() == Material.WARPED_WALL_SIGN
+					&& board.getEntryTeam(player.getName()).getName().equals("blue")) {
 				Sign sign = (Sign) event.getClickedBlock().getState();
 				if (sign.getLine(1).equals("[Select Champ]")) {
 					Champ.getChamp(player).champSelect();

@@ -12,12 +12,13 @@ public class PatchNotes implements CommandExecutor {
 	public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
 		if (label.equalsIgnoreCase("patchnotes")) {
 			Player player = Bukkit.getPlayerExact(sender.getName());
-			player.sendMessage("PATCHNOTES: ");
+			player.sendMessage("RELEASE v0.1.1: +Buff  -Nerf  xRework");
 			player.sendMessage("-Knight");
-			player.sendMessage("-Ninja");
+			player.sendMessage("xNinja");
 			player.sendMessage("+Monkey");
 			player.sendMessage("-Beserker");
-			player.sendMessage("+Trainer");
+			player.sendMessage("+xTrainer");
+			player.sendMessage("-xFighter");
 		}
 		return true;
 	}

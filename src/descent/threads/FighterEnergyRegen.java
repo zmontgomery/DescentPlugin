@@ -20,14 +20,14 @@ public class FighterEnergyRegen implements Runnable {
 	public void run() {
 		while (Champ.getChamp(player) != null && !(Champ.getChamp(player) instanceof Generic) && Champ.getChamp(player) == this.champ) {
 			try {
-				Thread.sleep(100);
+				Thread.sleep(300);
 			} catch (InterruptedException e) {
 				// squash
 			}
 			if(Champ.getChamp(player) instanceof Fighter) {
 				Fighter champ = (Fighter) Champ.getChamp(player);
 				if (champ != null) {
-					champ.regenEnergy(1);
+					champ.regenEnergy(2);
 				}
 			}
 		}

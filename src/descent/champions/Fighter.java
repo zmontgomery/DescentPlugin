@@ -1,9 +1,7 @@
 package descent.champions;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
 
+import java.util.Collection;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -16,8 +14,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
 import org.bukkit.event.block.Action;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.potion.PotionEffect;
-import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.Vector;
 import descent.threads.FighterEnergyRegen;
 import net.minecraft.server.v1_16_R3.MobEffect;
@@ -28,11 +24,10 @@ import net.minecraft.server.v1_16_R3.PlayerConnection;
 public class Fighter extends Champ {
 	public static final double MAX_HEALTH = 275;
 	public static final String CHAMP_NAME = "Fighter";
-	public static final float MOVE_SPEED = 0.25f;
+	public static final float MOVE_SPEED = 0.257f;
 	public static final double NATURAL_REGEN = 8.0;
 	public static final ItemStack[] ITEMS = new ItemStack[] { null, new ItemStack(Material.FEATHER),
-			new ItemStack(Material.SLIME_BALL), new ItemStack(Material.GOLDEN_HORSE_ARMOR),
-			new ItemStack(Material.NETHERITE_AXE) };
+			new ItemStack(Material.SLIME_BALL), new ItemStack(Material.NETHERITE_AXE) };
 	public static final ItemStack[] CLOTHES = new ItemStack[] { new ItemStack(Material.GOLDEN_BOOTS), null,
 			new ItemStack(Material.GOLDEN_CHESTPLATE), null };
 	public static final ItemStack LEFT_HAND = null;
@@ -44,55 +39,45 @@ public class Fighter extends Champ {
 	public static final Sound PUNCH_SOUND = Sound.ENTITY_PLAYER_ATTACK_CRIT;
 	public static final Sound KICK_SOUND = Sound.ENTITY_DRAGON_FIREBALL_EXPLODE;
 	public static final Sound SAFE_SOUND = Sound.BLOCK_ENCHANTMENT_TABLE_USE;
-	public static final Sound SLOW_SOUND = Sound.ITEM_TRIDENT_THUNDER;
 
 	public static final short MAX_ENERGY = 200;
 
 	// Damage
-	public static final double PUNCH_DAMAGE = 38;
+	public static final double PUNCH_DAMAGE = 37;
 	public static final double SONIC_HIT_DAMAGE = 35;
 	public static final double SONIC_KICK_DAMAGE = 45;
 	public static final double SAFE_HEAL_AMOUNT = 20;
-	public static final double SLAM_DAMAGE = 35;
 	public static final double ROUNDHOUSE_DAMAGE = 70;
 	// Cool downs
 	public static final float PUNCH_COOLDOWN = 1.1f;
 	public static final float SONIC_WAVE_COOLDOWN = 7.0f;
 	public static final float SAFE_COOLDOWN = 5.0f;
-	public static final float SLAM_COOLDOWN = 7.0f;
 	public static final float ROUNDHOUSE_COOLDOWN = 20.0f;
 	public static final long LIFE_STEAL_DURATION = 5;
 	public static final long LIFE_STEAL_RUNOUT = 4;
-	public static final long SLAM_RUNOUT = 3;
 	public static final long SONIC_RUNOUT = 4;
 	// Energy usage
-	public static final short SONIC_WAVE_ENERGY = 30;
-	public static final short SONIC_KICK_ENERGY = 50;
-	public static final short SAFE_ENERGY = 30;
-	public static final short LIFESTEAL_ENERGY = 50;
-	public static final short SLAM_ENERGY = 60;
-	public static final short SLOW_ENERGY = 65;
-	public static final short ROUNDHOUSE_ENERGY = 75;
-	public static final short ENERGY_ON_KILL = 50;
+	public static final short SONIC_WAVE_ENERGY = 40;
+	public static final short SONIC_KICK_ENERGY = 70;
+	public static final short SAFE_ENERGY = 40;
+	public static final short LIFESTEAL_ENERGY = 60;
+	public static final short ROUNDHOUSE_ENERGY = 85;
+	public static final short ENERGY_ON_KILL = 40;
 
 	public static final short ROUNDHOUSE_VELOCITY = 3;
-	public static final float SLOW_TIME = 3.0f;
-	public static final float LIFESTEAL_AMOUNT = 0.4f;
+	public static final float LIFESTEAL_AMOUNT = 0.5f;
 	public static final int SAFE_DISTANCE = 10;
 
 	private long timeAtLastPunch;
 	private long timeAtLastSonicWave;
 	private long timeAtLastSafe;
-	private long timeAtLastSlam;
 	private long timeAtLastRoundhouse;
 
 	private float energy;
 	private float lifeSteal;
 	private Champ sonicMark;
-	private List<Champ> slamMarks;
 	private Thread sonicTimer;
 	private Thread safeTimer;
-	private Thread slamTimer;
 
 	public Fighter(Player player) {
 		super(player, CHAMP_NAME, MOVE_SPEED, NATURAL_REGEN, MAX_HEALTH, ITEMS, CLOTHES, LEFT_HAND, HURT_SOUND,
@@ -100,15 +85,12 @@ public class Fighter extends Champ {
 		timeAtLastPunch = 0;
 		timeAtLastSonicWave = 0;
 		timeAtLastSafe = 0;
-		timeAtLastSlam = 0;
 		timeAtLastRoundhouse = 0;
 
 		this.energy = MAX_ENERGY;
 		this.sonicMark = null;
 		this.lifeSteal = 0.0f;
-		this.slamMarks = new ArrayList<>();
 		this.safeTimer = null;
-		this.slamTimer = null;
 		Thread regen = new Thread(new FighterEnergyRegen(player, this));
 		regen.start();
 		initialize();
@@ -199,10 +181,10 @@ public class Fighter extends Champ {
 			sonicTimer.interrupt();
 			PLAYER.getInventory().setItem(1, new ItemStack(Material.FEATHER));
 			useEnergy(SONIC_KICK_ENERGY);
+			PLAYER.teleport(sonicMark.PLAYER);
 			boolean killed = sonicMark.takeDamage(SONIC_KICK_DAMAGE);
 			onHit();
 			this.heal(SONIC_KICK_DAMAGE * lifeSteal);
-			PLAYER.teleport(sonicMark.PLAYER);
 			if (killed) {
 				onKill(sonicMark);
 			}
@@ -262,64 +244,6 @@ public class Fighter extends Champ {
 			PLAYER.getInventory().setItem(2, new ItemStack(Material.SLIME_BALL));
 			timeAtLastSafe = System.currentTimeMillis();
 
-		} else if (PLAYER.getInventory().getItemInMainHand().getType() == Material.GOLDEN_HORSE_ARMOR
-				&& (click == Action.RIGHT_CLICK_AIR || click == Action.RIGHT_CLICK_BLOCK)
-				&& (System.currentTimeMillis() - timeAtLastSlam > (1000 * SLAM_COOLDOWN)) && energy >= SLAM_ENERGY) {
-			Collection<Entity> entities = PLAYER.getWorld().getNearbyEntities(PLAYER.getLocation(), 6, 6, 6);
-			for (Entity e : entities) {
-				if (e instanceof Player) {
-					Player p = (Player) e;
-					if (p != PLAYER && !Champ.BOARD.getEntryTeam(PLAYER.getName()).getName()
-							.equals(Champ.BOARD.getEntryTeam(p.getName()).getName())) {
-						Champ c = Champ.getChamp(p);
-						slamMarks.add(c);
-						boolean killed = c.takeDamage(SLAM_DAMAGE);
-						onHit();
-						if (killed) {
-							onKill(c);
-						}
-						this.heal(SLAM_DAMAGE * lifeSteal);
-					}
-				}
-			}
-			useEnergy(SLAM_ENERGY);
-
-			for (Player player : Bukkit.getOnlinePlayers()) {
-				player.playSound(PLAYER.getLocation(), Sound.ENTITY_DRAGON_FIREBALL_EXPLODE, 1f, 1.2f);
-			}
-			if (slamMarks.size() < 1) {
-				timeAtLastSlam = System.currentTimeMillis();
-				return;
-			}
-			PLAYER.getInventory().setItem(3, new ItemStack(Material.LEATHER_HORSE_ARMOR));
-			Thread timer = new Thread(() -> {
-				try {
-					Thread.sleep(SLAM_RUNOUT * 1000);
-				} catch (InterruptedException e) {
-					return;
-				}
-				if (PLAYER.getInventory().getItem(3).getType() == Material.LEATHER_HORSE_ARMOR) {
-					PLAYER.getInventory().setItem(3, new ItemStack(Material.GOLDEN_HORSE_ARMOR));
-					timeAtLastSlam = System.currentTimeMillis();
-				}
-			});
-			slamTimer = timer;
-			timer.start();
-			timeAtLastSlam = System.currentTimeMillis();
-
-		} else if (PLAYER.getInventory().getItemInMainHand().getType() == Material.LEATHER_HORSE_ARMOR
-				&& (click == Action.RIGHT_CLICK_AIR || click == Action.RIGHT_CLICK_BLOCK) && energy >= SLOW_ENERGY) {
-			for (Champ c : slamMarks) {
-				c.takeEffect(new PotionEffect(PotionEffectType.SLOW, (int) (20 * SLOW_TIME), 3));
-			}
-			slamTimer.interrupt();
-			useEnergy(SLOW_ENERGY);
-			for (Player player : Bukkit.getOnlinePlayers()) {
-				player.playSound(PLAYER.getLocation(), SLOW_SOUND, 1f, 0.6f);
-			}
-			slamMarks.clear();
-			PLAYER.getInventory().setItem(3, new ItemStack(Material.GOLDEN_HORSE_ARMOR));
-			timeAtLastSlam = System.currentTimeMillis();
 		}
 	}
 
@@ -420,16 +344,6 @@ public class Fighter extends Champ {
 			sonicTimer.interrupt();
 			PLAYER.getInventory().setItem(1, new ItemStack(Material.FEATHER));
 			this.sonicMark = null;
-		}
-		if (slamMarks.contains(champ)) {
-			slamMarks.remove(champ);
-			if (slamMarks.size() == 0) {
-				slamTimer.interrupt();
-				if (PLAYER.getInventory().getItem(3).getType() == Material.LEATHER_HORSE_ARMOR) {
-					PLAYER.getInventory().setItem(3, new ItemStack(Material.GOLDEN_HORSE_ARMOR));
-					timeAtLastSlam = System.currentTimeMillis();
-				}
-			}
 		}
 	}
 

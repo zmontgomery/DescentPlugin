@@ -15,11 +15,11 @@ public class SetGame implements CommandExecutor {
 	@Override
 	public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
 		if (label.equalsIgnoreCase("setgame")) {
+			Main.gamemode.stop();
 			if (args.length == 1) {
 				if(args[0].equals("deathmatch")) {
 					Main.gamemode = new Deathmatch();
-				}
-				else if(args[0].equals("koth")) {
+				} else if(args[0].equals("koth")) {
 					Main.gamemode = new KingOfTheHill();
 				} else if(args[0].equals("testing")) {
 					Main.gamemode = new Testing();
