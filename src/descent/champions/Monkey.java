@@ -25,7 +25,7 @@ import descent.Main;
 public class Monkey extends Champ {
 	public static final double MAX_HEALTH = 225;
 	public static final String CHAMP_NAME = "Monkey";
-	public static final float MOVE_SPEED = 0.26f;
+	public static final float MOVE_SPEED = 0.265f;
 	public static final double NATURAL_REGEN = 4.0;
 	public static final ItemStack[] ITEMS = new ItemStack[] { null, new ItemStack(Material.CROSSBOW),
 			new ItemStack(Material.GOLDEN_BOOTS) };

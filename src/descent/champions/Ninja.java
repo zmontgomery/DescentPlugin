@@ -32,10 +32,10 @@ public class Ninja extends Champ {
 	public static final Sound CLOAK_SOUND = Sound.ITEM_FIRECHARGE_USE;
 
 	// Damage
-	public static final int DAGGAR_DAMAGE = 23;
+	public static final int DAGGAR_DAMAGE = 22;
 	// Cool downs
-	public static final float DAGGAR_COOLDOWN = 0.20f;
-	public static final float FLASH_COOLDOWN = 1.5f;
+	public static final float DAGGAR_COOLDOWN = 0.22f;
+	public static final float FLASH_COOLDOWN = 2.5f;
 	public static final float CLOAK_COOLDOWN = 12.0f;
 
 	public static final double FLASH_DISTANCE = 12;

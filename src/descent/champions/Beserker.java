@@ -28,7 +28,7 @@ public class Beserker extends Champ {
 	public static final float VERT_LEAP_STRENGTH = 1.7f;
 	public static final float HORIZ_LEAP_STRENGTH = 1.5f;
 	public static final short VELOCITY_MULTIPLIER = 35;
-	public static final short AXE_DAMAGE = 50;
+	public static final short AXE_DAMAGE = 48;
 
 	// Cool downs
 	public static final float AXE_COOLDOWN = 0.78f;

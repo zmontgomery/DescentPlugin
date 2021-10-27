@@ -36,7 +36,7 @@ public class Pyromancer extends Champ {
 
 	public static final double FIRE_DAMAGE = 19;
 	// Cool downs
-	public static final float FIRE_COOLDOWN = 0.8f;
+	public static final float FIRE_COOLDOWN = 0.81f;
 	public static final float JUMP_COOLDOWN = 6.9f;
 
 	public static final float JUMP_RUNOUT = 2.7f;

@@ -8,6 +8,8 @@ import org.bukkit.scoreboard.Scoreboard;
 import org.bukkit.scoreboard.ScoreboardManager;
 import org.bukkit.scoreboard.Team;
 
+import descent.Main;
+
 public abstract class Gamemode {
 	private void preInit() {
 		for(Player player : Bukkit.getOnlinePlayers()) {
@@ -21,7 +23,7 @@ public abstract class Gamemode {
 		for(Objective objective : board.getObjectives()) {
 			objective.unregister();
 		}
-		
+		Bukkit.getScheduler().cancelTasks(Main.getPlugin(Main.class));
 	}
 	public void initialize() {
 		preInit();

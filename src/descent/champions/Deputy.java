@@ -17,7 +17,7 @@ import org.bukkit.util.Vector;
 public class Deputy extends Champ {
 	public static final double MAX_HEALTH = 200;
 	public static final String CHAMP_NAME = "Deputy";
-	public static final float MOVE_SPEED = 0.25f;
+	public static final float MOVE_SPEED = 0.255f;
 	public static final double NATURAL_REGEN = 2.0;
 	public static final ItemStack[] ITEMS = new ItemStack[] { new ItemStack(Material.NETHERITE_HOE),
 			new ItemStack(Material.RED_DYE) };
@@ -30,9 +30,9 @@ public class Deputy extends Champ {
 	public static final Sound HEAL_SOUND = Sound.ENTITY_EXPERIENCE_ORB_PICKUP;
 
 	// Damage
-	public static final int GUN_DAMAGE = 20;
+	public static final int GUN_DAMAGE = 30;
 	// Cool downs
-	public static final float SHOOT_COOLDOWN = 0.325f;
+	public static final float SHOOT_COOLDOWN = 0.35f;
 	public static final float HEAL_COOLDOWN = 9.0f;
 
 	public static final int HEAL_AMOUNT = 50;

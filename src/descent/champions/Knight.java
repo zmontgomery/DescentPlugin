@@ -35,7 +35,7 @@ public class Knight extends Champ {
 	public static final float SHIELD_COOLDOWN = 4.0f;
 
 	public static final int DAMAGE_PER_INTERVAL = 7;
-	public static final float STAMPEDE_RUNOUT = 0.325f;
+	public static final float STAMPEDE_RUNOUT = 0.327f;
 	public static final float STAMPEDE_INTERVAL = 2.5f;
 	public static final int MAX_INTERVALS = 4;
 	public static final float INCREASE_AMOUNT = 0.041f;
