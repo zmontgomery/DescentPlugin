@@ -6,6 +6,7 @@ import java.util.Map;
 import java.util.Random;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.attribute.Attribute;
@@ -280,6 +281,7 @@ public abstract class Champ {
 		PLAYER.setGameMode(GameMode.SPECTATOR);
 		PLAYER.setFlySpeed(0);
 		PLAYER.setWalkSpeed(0);
+		PLAYER.teleport(PLAYER.getWorld().getSpawnLocation().add(new Location(PLAYER.getWorld(), 0.5, 0, 0.5)));
 		Bukkit.getScheduler().runTaskLater(Main.getPlugin(Main.class), () -> {
 			PLAYER.teleport(Main.gamemode.respawnLocation(PLAYER));
 			initialize();

@@ -1,0 +1,24 @@
+package descent.commands;
+
+import org.bukkit.Bukkit;
+import org.bukkit.command.Command;
+import org.bukkit.command.CommandExecutor;
+import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
+
+public class PatchNotes implements CommandExecutor {
+
+	@Override
+	public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+		if (label.equalsIgnoreCase("patchnotes")) {
+			Player player = Bukkit.getPlayerExact(sender.getName());
+			player.sendMessage("PATCHNOTES: ");
+			player.sendMessage("-Knight");
+			player.sendMessage("-Ninja");
+			player.sendMessage("+Monkey");
+			player.sendMessage("-Beserker");
+			player.sendMessage("+Trainer");
+		}
+		return true;
+	}
+}

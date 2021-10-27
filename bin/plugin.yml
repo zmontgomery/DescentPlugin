@@ -17,6 +17,7 @@ commands:
   permission: command
  stopgame:
   permission: command
+ patchnotes:
 
  
   

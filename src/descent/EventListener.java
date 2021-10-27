@@ -84,49 +84,12 @@ public class EventListener implements Listener {
 		ScoreboardManager manager = Bukkit.getScoreboardManager();
 		Scoreboard board = manager.getMainScoreboard();
 		if (event.getAction() == Action.RIGHT_CLICK_BLOCK) {
-			if (event.getClickedBlock().getType() == Material.CRIMSON_WALL_SIGN
+			if (event.getClickedBlock().getType() == Material.OAK_SIGN
 					&& board.getEntryTeam(player.getName()).getName().equals("red")) {
 				Sign sign = (Sign) event.getClickedBlock().getState();
-				if (sign.getLine(1).equals("[Impaler]"))
-					new Impaler(player);
-				if (sign.getLine(1).equals("[Beserker]"))
-					new Beserker(player);
-				if (sign.getLine(1).equals("[Knight]"))
-					new Knight(player);
-				if (sign.getLine(1).equals("[Deputy]"))
-					new Deputy(player);
-				if (sign.getLine(1).equals("[Hunter]"))
-					new Hunter(player);
-				if (sign.getLine(1).equals("[Ninja]"))
-					new Ninja(player);
-				if (sign.getLine(1).equals("[Fighter]"))
-					new Fighter(player);
-				if (sign.getLine(1).equals("[Alchemist]"))
-					new Alchemist(player);
-				if (sign.getLine(1).equals("[Pyromancer]"))
-					new Pyromancer(player);
-				return;
-			} else if (event.getClickedBlock().getType() == Material.WARPED_WALL_SIGN
-					&& board.getEntryTeam(player.getName()).getName().equals("blue")) {
-				Sign sign = (Sign) event.getClickedBlock().getState();
-				if (sign.getLine(1).equals("[Impaler]"))
-					new Impaler(player);
-				if (sign.getLine(1).equals("[Beserker]"))
-					new Beserker(player);
-				if (sign.getLine(1).equals("[Knight]"))
-					new Knight(player);
-				if (sign.getLine(1).equals("[Deputy]"))
-					new Deputy(player);
-				if (sign.getLine(1).equals("[Hunter]"))
-					new Hunter(player);
-				if (sign.getLine(1).equals("[Ninja]"))
-					new Ninja(player);
-				if (sign.getLine(1).equals("[Fighter]"))
-					new Fighter(player);
-				if (sign.getLine(1).equals("[Alchemist]"))
-					new Alchemist(player);
-				if (sign.getLine(1).equals("[Pyromancer]"))
-					new Pyromancer(player);
+				if (sign.getLine(1).equals("[Select Champ]")) {
+					Champ.getChamp(player).champSelect();
+				}
 			}
 		}
 		Champ user = Champ.getChamp(player);
@@ -209,7 +172,8 @@ public class EventListener implements Listener {
 				if (event.getCause() == DamageCause.FIRE_TICK || event.getCause() == DamageCause.FIRE) {
 					champ.takeDamage(Champ.FIRE_DAMAGE);
 				} else if (event.getCause() == DamageCause.VOID) {
-					player.teleport(player.getWorld().getSpawnLocation().add(new Location(player.getWorld(), 0.5, 0, 0.5)));
+					player.teleport(
+							player.getWorld().getSpawnLocation().add(new Location(player.getWorld(), 0.5, 0, 0.5)));
 					champ.kill();
 				}
 			}
@@ -249,8 +213,7 @@ public class EventListener implements Listener {
 				if (pl.getLevel() < Champ.getChamp(pl).MAX_HEALTH) {
 					Champ.getChamp(pl).heal(100);
 					event.getItem().remove();
-					
-					
+
 				}
 			}
 		}
@@ -411,7 +374,7 @@ public class EventListener implements Listener {
 			new Trainer(player);
 			player.closeInventory();
 		}
-		
+
 		if (item == Material.RED_DYE) {
 			Main.gamemode.joinTeam("red", player);
 			player.teleport(Main.gamemode.respawnLocation(player));
@@ -434,7 +397,7 @@ public class EventListener implements Listener {
 
 		// stamp
 		if (champ instanceof Knight && ((int) event.getFrom().getX() != (int) event.getTo().getX()
-				|| (int) event.getFrom().getZ() != (int) event.getTo().getZ()) ) {
+				|| (int) event.getFrom().getZ() != (int) event.getTo().getZ())) {
 			Knight knight = (Knight) champ;
 			knight.stampede();
 		}

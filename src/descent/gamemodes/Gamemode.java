@@ -11,7 +11,7 @@ import org.bukkit.scoreboard.Team;
 import descent.Main;
 
 public abstract class Gamemode {
-	private void preInit() {
+	protected void preInit() {
 		for(Player player : Bukkit.getOnlinePlayers()) {
 			player.teleport(player.getWorld().getSpawnLocation().add(new Location(player.getWorld(), 0.5, 0, 0.5)));
 		}

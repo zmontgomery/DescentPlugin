@@ -49,7 +49,7 @@ public class Fighter extends Champ {
 	public static final short MAX_ENERGY = 200;
 
 	// Damage
-	public static final double PUNCH_DAMAGE = 40;
+	public static final double PUNCH_DAMAGE = 38;
 	public static final double SONIC_HIT_DAMAGE = 35;
 	public static final double SONIC_KICK_DAMAGE = 45;
 	public static final double SAFE_HEAL_AMOUNT = 20;

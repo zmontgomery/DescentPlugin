@@ -28,7 +28,7 @@ public class KingOfTheHill extends Gamemode {
 	public static final int CONTROL_X = 0;
 	public static final int CONTROL_Y = 20;
 	public static final int CONTROL_Z = 100;
-	public static final int CAP_TICK_RATE = 5;
+	public static final int CAP_TICK_RATE = 10;
 	public static final int SCORE_TICK_RATE = 5;
 
 	private String name;
@@ -43,12 +43,16 @@ public class KingOfTheHill extends Gamemode {
 	private Location controlPoint;
 	private Team winner;
 
-	private double blueProgress = 0.0f;
-	private double redProgress = 0.0f;
-	private double captureStatus = 0.0f;
+	private double blueProgress;
+	private double redProgress;
+	private double captureStatus;
 
 	@Override
 	public void start() {
+		Bukkit.getScheduler().cancelTasks(Main.getPlugin(Main.class));
+		blueProgress = 0.0f;
+		redProgress = 0.0f;
+		captureStatus = 0.0f;
 		owner = null;
 		winner = null;
 		manager = Bukkit.getScoreboardManager();
@@ -115,21 +119,25 @@ public class KingOfTheHill extends Gamemode {
 				}
 
 				// CAP CHECKER
+				int reds = 0;
+				int blues = 0;
 				Collection<Entity> entities = world.getNearbyEntities(controlPoint, 5, 5, 5);
 				for (Entity entity : entities) {
 					if (entity instanceof Player) {
 						Player player = (Player) entity;
 						if (board.getEntryTeam(player.getName()).equals(blue)) {
-							if (owner != blue) {
-								captureStatus -= CAP_TICK_RATE;
-							}
+							blues++;
 						} else if (board.getEntryTeam(player.getName()).equals(red)) {
-							if (owner != red) {
-								captureStatus += CAP_TICK_RATE;
-							}
+							reds++;
 						}
 					}
 				}
+				
+				int difference = reds - blues;
+				if(!((difference > 0 && owner == red) || (difference < 0 && owner == blue))) {
+					captureStatus += difference * CAP_TICK_RATE;
+				}
+				
 
 				// CAP RUNOUT
 				if (entities.size() == 0) {
@@ -164,15 +172,21 @@ public class KingOfTheHill extends Gamemode {
 				// OVERTIME SCORE INCREASE
 				if (owner == blue) {
 					blueProgress += SCORE_TICK_RATE;
+					if(blueProgress > POINTS_TO_WIN) {
+						blueProgress = POINTS_TO_WIN;
+					}
 				} else if (owner == red) {
 					redProgress += SCORE_TICK_RATE;
+					if(redProgress > POINTS_TO_WIN) {
+						redProgress = POINTS_TO_WIN;
+					}
 				}
 
 				// WIN CHECKER / EXECUTER
-				if (blueProgress == POINTS_TO_WIN && captureStatus == 0 && owner == blue) {
+				if (blueProgress >= POINTS_TO_WIN && captureStatus <= 0 && owner == blue && reds == 0) {
 					winner = blue;
 				}
-				if (redProgress == POINTS_TO_WIN && captureStatus == 0 && owner == red) {
+				if (redProgress >= POINTS_TO_WIN && captureStatus >= 0 && owner == red && blues == 0) {
 					winner = red;
 				}
 				if (winner != null) {
@@ -194,6 +208,7 @@ public class KingOfTheHill extends Gamemode {
 					}
 					Bukkit.getScheduler().cancelTasks(Main.getPlugin(Main.class));
 					winner = null;
+					stop();
 				}
 
 				// SCORESET
@@ -245,7 +260,16 @@ public class KingOfTheHill extends Gamemode {
 
 	@Override
 	public void stop() {
-		return;
+		preInit();
+		Bukkit.getScheduler().cancelTasks(Main.getPlugin(Main.class));
+		blueProgress = 0.0f;
+		redProgress = 0.0f;
+		captureStatus = 0.0f;
+		owner = null;
+		winner = null;
+		board.resetScores(ChatColor.YELLOW + "Reactor: " + ownerName);
+		board.resetScores(ChatColor.BLUE + "Blue: " + (int) ((blueProgress / POINTS_TO_WIN) * 100) + "%");
+		board.resetScores(ChatColor.RED + "Red: " + (int) ((redProgress / POINTS_TO_WIN) * 100) + "%");
 	}
 
 }

@@ -12,7 +12,7 @@ public class Beserker extends Champ {
 	public static final double MAX_HEALTH = 225;
 	public static final String CHAMP_NAME = "Beserker";
 	public static final float MOVE_SPEED = 0.27f;
-	public static final double NATURAL_REGEN = 5.0;
+	public static final double NATURAL_REGEN = 4.5;
 	public static final ItemStack[] ITEMS = new ItemStack[] { new ItemStack(Material.GOLDEN_AXE) };
 	public static final ItemStack[] CLOTHES = new ItemStack[] { new ItemStack(Material.CHAINMAIL_BOOTS), null, null,
 			new ItemStack(Material.CHAINMAIL_HELMET) };
@@ -28,10 +28,10 @@ public class Beserker extends Champ {
 	public static final float VERT_LEAP_STRENGTH = 1.7f;
 	public static final float HORIZ_LEAP_STRENGTH = 1.5f;
 	public static final short VELOCITY_MULTIPLIER = 35;
-	public static final short AXE_DAMAGE = 48;
+	public static final short AXE_DAMAGE = 42;
 
 	// Cool downs
-	public static final float AXE_COOLDOWN = 0.78f;
+	public static final float AXE_COOLDOWN = 0.8f;
 	public static final float AXE_LEAP_COOLDOWN = 4.1f;
 	private long timeAtLastSwing;
 	private long timeAtLastLeap;

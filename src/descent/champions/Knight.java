@@ -26,19 +26,19 @@ public class Knight extends Champ {
 	public static final Sound SPEED_UP_SOUND = Sound.ENTITY_HORSE_GALLOP;
 	public static final Sound NEW_SHIELD_SOUND = Sound.ITEM_ARMOR_EQUIP_NETHERITE;
 
-	public static final short MAX_SHIELD_HEALTH = 150;
+	public static final short MAX_SHIELD_HEALTH = 125;
 
 	// Damage
-	public static final int SWORD_DAMAGE = 30;
+	public static final int SWORD_DAMAGE = 20;
 	// Cool downs
-	public static final float MELEE_COOLDOWN = 0.41f;
-	public static final float SHIELD_COOLDOWN = 4.0f;
+	public static final float MELEE_COOLDOWN = 0.43f;
+	public static final float SHIELD_COOLDOWN = 6.0f;
 
-	public static final int DAMAGE_PER_INTERVAL = 7;
+	public static final int DAMAGE_PER_INTERVAL = 10;
 	public static final float STAMPEDE_RUNOUT = 0.327f;
-	public static final float STAMPEDE_INTERVAL = 2.5f;
+	public static final float STAMPEDE_INTERVAL = 2.2f;
 	public static final int MAX_INTERVALS = 4;
-	public static final float INCREASE_AMOUNT = 0.041f;
+	public static final float INCREASE_AMOUNT = 0.042f;
 
 	private long timeAtLastSwing;
 	private long timeAtLastIncrease;

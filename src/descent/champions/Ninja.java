@@ -34,11 +34,11 @@ public class Ninja extends Champ {
 	// Damage
 	public static final int DAGGAR_DAMAGE = 22;
 	// Cool downs
-	public static final float DAGGAR_COOLDOWN = 0.22f;
+	public static final float DAGGAR_COOLDOWN = 0.19f;
 	public static final float FLASH_COOLDOWN = 2.5f;
-	public static final float CLOAK_COOLDOWN = 12.0f;
+	public static final float CLOAK_COOLDOWN = 11.0f;
 
-	public static final double FLASH_DISTANCE = 12;
+	public static final double FLASH_DISTANCE = 10;
 
 	private long timeAtLastSwing;
 	private long timeAtLastFlash;
