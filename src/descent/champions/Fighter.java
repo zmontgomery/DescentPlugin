@@ -14,6 +14,8 @@ import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
 import org.bukkit.event.block.Action;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.Vector;
 import descent.threads.FighterEnergyRegen;
 import net.minecraft.server.v1_16_R3.MobEffect;
@@ -67,6 +69,7 @@ public class Fighter extends Champ {
 	public static final short ROUNDHOUSE_VELOCITY = 3;
 	public static final float LIFESTEAL_AMOUNT = 0.5f;
 	public static final int SAFE_DISTANCE = 10;
+	public static final float SPEED_TIME = 4.0f;
 
 	private long timeAtLastPunch;
 	private long timeAtLastSonicWave;
@@ -181,7 +184,9 @@ public class Fighter extends Champ {
 			sonicTimer.interrupt();
 			PLAYER.getInventory().setItem(1, new ItemStack(Material.FEATHER));
 			useEnergy(SONIC_KICK_ENERGY);
+			Vector direction = PLAYER.getLocation().getDirection();
 			PLAYER.teleport(sonicMark.PLAYER);
+			PLAYER.getLocation().setDirection(direction);
 			boolean killed = sonicMark.takeDamage(SONIC_KICK_DAMAGE);
 			onHit();
 			this.heal(SONIC_KICK_DAMAGE * lifeSteal);
@@ -345,6 +350,8 @@ public class Fighter extends Champ {
 			PLAYER.getInventory().setItem(1, new ItemStack(Material.FEATHER));
 			this.sonicMark = null;
 		}
+		PotionEffect effect = new PotionEffect(PotionEffectType.SPEED, (int) (20 * SPEED_TIME), 1);
+		takeEffect(effect);
 	}
 
 	private void safeRayCast() {

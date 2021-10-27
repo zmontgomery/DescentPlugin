@@ -51,7 +51,7 @@ public class Monkey extends Champ {
 
 	public static final float GUN_CHARGE_TIME = 0.85f;
 
-	public static final float SLOW_TIME = 1.8f;
+	public static final float STUN_TIME = 1.8f;
 
 	public Monkey(Player player) {
 		super(player, CHAMP_NAME, MOVE_SPEED, NATURAL_REGEN, MAX_HEALTH, ITEMS, CLOTHES, LEFT_HAND, HURT_SOUND,
@@ -67,8 +67,7 @@ public class Monkey extends Champ {
 				&& (click == Action.LEFT_CLICK_AIR || click == Action.LEFT_CLICK_BLOCK)
 				&& (System.currentTimeMillis() - timeAtLastShoot > (1000 * SHOOT_COOLDOWN))) {
 
-			takeEffect(new PotionEffect(PotionEffectType.SLOW, 100000, 10));
-			takeEffect(new PotionEffect(PotionEffectType.JUMP, 100000, -30));
+			stun(GUN_CHARGE_TIME);
 			timeAtLastShoot = System.currentTimeMillis();
 			Runnable timer = new Runnable() {
 				@Override
@@ -85,7 +84,6 @@ public class Monkey extends Champ {
 						player.playSound(PLAYER.getLocation(), GUN_SOUND, 0.3f, 0.8f);
 					}
 					timeAtLastShoot = System.currentTimeMillis();
-					clearEffects();
 				}
 
 			};
@@ -157,7 +155,8 @@ public class Monkey extends Champ {
 				Champ champ = Champ.getChamp(player);
 				if (!Champ.BOARD.getEntryTeam(PLAYER.getName()).getName()
 						.equals(Champ.BOARD.getEntryTeam(champ.PLAYER.getName()).getName())) {
-					champ.takeEffect(new PotionEffect(PotionEffectType.SLOW, (int) (20 * SLOW_TIME), 3));
+					champ.stun(STUN_TIME);
+					player.setVelocity(PLAYER.getVelocity().setY(0.45));
 					onHit();
 				}
 			}

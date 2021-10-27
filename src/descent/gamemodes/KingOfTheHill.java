@@ -22,14 +22,14 @@ import descent.champions.Champ;
 
 public class KingOfTheHill extends Gamemode {
 
-	public static final float RESPAWN_TIME = 3.0f;
+	public static final float RESPAWN_TIME = 4.0f;
 	public static final double POINTS_TO_WIN = 1000.0f;
 	public static final double POINTS_FOR_CAPTURE = 100.0f;
 	public static final int CONTROL_X = 0;
 	public static final int CONTROL_Y = 20;
 	public static final int CONTROL_Z = 100;
-	public static final int CAP_TICK_RATE = 10;
-	public static final int SCORE_TICK_RATE = 5;
+	public static final int CAP_TICK_RATE = 15;
+	public static final int SCORE_TICK_RATE = 10;
 
 	private String name;
 	private Location redSpawn;
@@ -221,7 +221,7 @@ public class KingOfTheHill extends Gamemode {
 				blueScore.setScore(2);
 				redScore.setScore(1);
 			}
-		}, 0L, 10L);
+		}, 0L, 15L);
 
 	}
 

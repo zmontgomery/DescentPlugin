@@ -20,6 +20,7 @@ import org.bukkit.event.block.Action;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scoreboard.Scoreboard;
 import org.bukkit.scoreboard.ScoreboardManager;
 import org.bukkit.util.Vector;
@@ -166,6 +167,16 @@ public abstract class Champ {
 		});
 
 		return;
+	}
+	
+	public void stun(double time) {
+		takeEffect(new PotionEffect(PotionEffectType.JUMP, 100000, -30));
+		PLAYER.setWalkSpeed(0);
+		Bukkit.getScheduler().runTaskLater(Main.getPlugin(Main.class), () -> {
+			PLAYER.setWalkSpeed(MOVE_SPEED);
+			clearEffects();
+		}, (long)(20 * time));
+
 	}
 
 	public void initialize() {

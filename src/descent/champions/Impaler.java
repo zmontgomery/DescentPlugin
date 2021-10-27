@@ -25,7 +25,7 @@ public class Impaler extends Champ {
 			new ItemStack(Material.LEATHER_HELMET) };
 	public static final ItemStack LEFT_HAND = null;
 	public static final Sound HURT_SOUND = Sound.ITEM_AXE_STRIP;
-	public static final float HURT_PITCH = 3.0f;
+	public static final float HURT_PITCH = 2.0f;
 	
 	public static final Sound THROW_SOUND = Sound.ENTITY_BAT_TAKEOFF;
 	public static final Sound WRAITH_SOUND = Sound.ENTITY_ENDERMAN_SCREAM;
@@ -67,7 +67,7 @@ public class Impaler extends Champ {
 			knife1.setCustomName(PLAYER.getName());
 			knife1.setBounce(false);
 			for(Player player : Bukkit.getOnlinePlayers()) {
-				player.playSound(PLAYER.getLocation(), THROW_SOUND, 0.3f, 0.8f);
+				player.playSound(PLAYER.getLocation(), THROW_SOUND, 1.0f, 0.8f);
 			}
 			
 
@@ -90,6 +90,7 @@ public class Impaler extends Champ {
 			ItemStack[] wraithClothes = {boot, leg, chest, helm};
 			PotionEffect inv = new PotionEffect(PotionEffectType.INVISIBILITY, (int) (WRAITH_RUNOUT * 20), 1);
 			this.takeEffect(inv);
+			extinguish();
 			PLAYER.getInventory().setContents(new ItemStack[] {null, null});
 			PLAYER.getInventory().setArmorContents(wraithClothes);
 			PLAYER.getInventory().setItemInOffHand(null);
@@ -109,7 +110,7 @@ public class Impaler extends Champ {
 			});
 			runout.start();
 			for(Player player : Bukkit.getOnlinePlayers()) {
-				player.playSound(PLAYER.getLocation(), WRAITH_SOUND, 0.4f, 0.8f);
+				player.playSound(PLAYER.getLocation(), WRAITH_SOUND, 0.2f, 1.0f);
 			}
 			timeAtLastWraith = System.currentTimeMillis();
 		}

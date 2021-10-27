@@ -11,6 +11,8 @@ import org.bukkit.scoreboard.Team;
 import descent.Main;
 
 public abstract class Gamemode {
+	public static final float DELAY_TIME = 2.0f;
+	
 	protected void preInit() {
 		for(Player player : Bukkit.getOnlinePlayers()) {
 			player.teleport(player.getWorld().getSpawnLocation().add(new Location(player.getWorld(), 0.5, 0, 0.5)));
@@ -27,7 +29,10 @@ public abstract class Gamemode {
 	}
 	public void initialize() {
 		preInit();
-		start();
+		Bukkit.getScheduler().runTaskLater(Main.getPlugin(Main.class), () -> {
+			start();
+		}, (long)(20 * DELAY_TIME));
+		
 	}
 	public abstract void joinTeam(String team, Player player);
 	public abstract void start();

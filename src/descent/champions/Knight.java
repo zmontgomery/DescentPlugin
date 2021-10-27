@@ -10,7 +10,7 @@ import descent.threads.KnightShieldRegen;
 public class Knight extends Champ {
 	public static final double MAX_HEALTH = 300;
 	public static final String CHAMP_NAME = "Knight";
-	public static final float MOVE_SPEED = 0.22f;
+	public static final float MOVE_SPEED = 0.217f;
 	public static final double NATURAL_REGEN = 2.0;
 	public static final ItemStack[] ITEMS = new ItemStack[] { new ItemStack(Material.IRON_SWORD) };
 	public static final ItemStack[] CLOTHES = new ItemStack[] { new ItemStack(Material.IRON_BOOTS),
@@ -18,9 +18,9 @@ public class Knight extends Champ {
 			new ItemStack(Material.IRON_HELMET) };
 	public static final ItemStack LEFT_HAND = new ItemStack(Material.SHIELD);
 	public static final Sound HURT_SOUND = Sound.BLOCK_LANTERN_BREAK;
-	public static final float HURT_PITCH = 3.0f;
+	public static final float HURT_PITCH = 0.6f;
 	
-	public static final Sound SWORD_SOUND = Sound.ENTITY_DOLPHIN_SPLASH;
+	public static final Sound SWORD_SOUND = Sound.BLOCK_STONE_HIT;
 	public static final Sound SHIELD_HIT_SOUND = Sound.ITEM_SHIELD_BLOCK;
 	public static final Sound SHIELD_BREAK_SOUND = Sound.ITEM_SHIELD_BREAK;
 	public static final Sound SPEED_UP_SOUND = Sound.ENTITY_HORSE_GALLOP;
@@ -36,9 +36,9 @@ public class Knight extends Champ {
 
 	public static final int DAMAGE_PER_INTERVAL = 10;
 	public static final float STAMPEDE_RUNOUT = 0.327f;
-	public static final float STAMPEDE_INTERVAL = 2.2f;
+	public static final float STAMPEDE_INTERVAL = 2.15f;
 	public static final int MAX_INTERVALS = 4;
-	public static final float INCREASE_AMOUNT = 0.042f;
+	public static final float INCREASE_AMOUNT = 0.043f;
 
 	private long timeAtLastSwing;
 	private long timeAtLastIncrease;
@@ -74,7 +74,7 @@ public class Knight extends Champ {
 			}
 			onHit();
 			for (Player player : Bukkit.getOnlinePlayers()) {
-				player.playSound(PLAYER.getLocation(), SWORD_SOUND, 1f, 3f);
+				player.playSound(PLAYER.getLocation(), SWORD_SOUND, 2f, 3f);
 			}
 
 			PLAYER.setWalkSpeed(Knight.MOVE_SPEED);
