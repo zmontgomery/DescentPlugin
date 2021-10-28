@@ -11,7 +11,7 @@ import org.bukkit.scoreboard.Team;
 import descent.Main;
 
 public abstract class Gamemode {
-	public static final float DELAY_TIME = 2.0f;
+	public static final float DELAY_TIME = 1.5f;
 	
 	protected void preInit() {
 		for(Player player : Bukkit.getOnlinePlayers()) {

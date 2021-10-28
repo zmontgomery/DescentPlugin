@@ -12,8 +12,8 @@ public class PatchNotes implements CommandExecutor {
 	public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
 		if (label.equalsIgnoreCase("patchnotes")) {
 			Player player = Bukkit.getPlayerExact(sender.getName());
-			player.sendMessage("RELEASE v0.1.1: +Buff  -Nerf  xRework");
-			player.sendMessage("-Knight");
+			player.sendMessage("RELEASE v0.1.2: +Buff  -Nerf  xRework");
+			player.sendMessage("+xAlchemist");
 			player.sendMessage("xNinja");
 			player.sendMessage("+Monkey");
 			player.sendMessage("-Beserker");

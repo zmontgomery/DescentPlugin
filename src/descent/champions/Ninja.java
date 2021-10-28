@@ -39,7 +39,7 @@ public class Ninja extends Champ {
 	public static final float CLOAK_COOLDOWN = 11.0f;
 
 	public static final double FLASH_DISTANCE = 10;
-	public static final float LIFE_STEAL = 0.4f;
+	public static final float LIFE_STEAL = 0.35f;
 
 	private long timeAtLastSwing;
 	private long timeAtLastFlash;
@@ -90,6 +90,7 @@ public class Ninja extends Champ {
 		if (PLAYER.getInventory().getItemInMainHand().getType() == Material.GOLDEN_SWORD
 				&& (click == Action.RIGHT_CLICK_AIR || click == Action.RIGHT_CLICK_BLOCK)
 				&& (System.currentTimeMillis() - timeAtLastFlash > (1000 * FLASH_COOLDOWN))) {
+			PLAYER.setVelocity(PLAYER.getVelocity().setY(1.1));
 			//teleportRayCast(FLASH_DISTANCE);
 			PLAYER.setInvisible(false);
 			Main.sendEquipmentInvisiblePacket(PLAYER, false);

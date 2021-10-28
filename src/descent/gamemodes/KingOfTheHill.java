@@ -134,10 +134,9 @@ public class KingOfTheHill extends Gamemode {
 				}
 				
 				int difference = reds - blues;
-				if(!((difference > 0 && owner == red) || (difference < 0 && owner == blue))) {
+				if((owner != red && difference > 0) || (owner != blue && difference < 0) || (owner == red && captureStatus < 0) || (owner == blue && captureStatus > 0)) {
 					captureStatus += difference * CAP_TICK_RATE;
 				}
-				
 
 				// CAP RUNOUT
 				if (entities.size() == 0) {
@@ -147,7 +146,7 @@ public class KingOfTheHill extends Gamemode {
 						captureStatus += CAP_TICK_RATE;
 					}
 				}
-
+				
 				// CAPTURE EVENT
 				if (captureStatus >= POINTS_FOR_CAPTURE) {
 					owner = red;

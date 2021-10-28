@@ -17,8 +17,6 @@ import org.bukkit.entity.ThrownPotion;
 import org.bukkit.event.block.Action;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.PotionMeta;
-import org.bukkit.potion.PotionEffect;
-import org.bukkit.potion.PotionEffectType;
 
 import descent.Main;
 
@@ -43,7 +41,7 @@ public class Monkey extends Champ {
 	private long timeAtLastBanana;
 
 	public static final int SHOOT_DAMAGE = 62;
-	public static final int PUNCH_DAMAGE = 17;
+	public static final int PUNCH_DAMAGE = 15;
 
 	public static final float MELEE_COOLDOWN = 0.11f;
 	public static final float SHOOT_COOLDOWN = 1.5f;
@@ -51,7 +49,7 @@ public class Monkey extends Champ {
 
 	public static final float GUN_CHARGE_TIME = 0.85f;
 
-	public static final float STUN_TIME = 1.8f;
+	public static final float STUN_TIME = 1.6f;
 
 	public Monkey(Player player) {
 		super(player, CHAMP_NAME, MOVE_SPEED, NATURAL_REGEN, MAX_HEALTH, ITEMS, CLOTHES, LEFT_HAND, HURT_SOUND,

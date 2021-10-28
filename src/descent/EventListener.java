@@ -12,6 +12,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
+import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
@@ -101,8 +102,15 @@ public class EventListener implements Listener {
 		}
 		Champ user = Champ.getChamp(player);
 		Action click = event.getAction();
-		if (player.getGameMode() == GameMode.SURVIVAL && user != null) {
+		if (player.getGameMode() == GameMode.SURVIVAL && user != null ) {
 			user.use(click);
+		}
+	}
+	
+	@EventHandler
+	public static void BlockPlace(BlockPlaceEvent event) {
+		if(event.getPlayer().getGameMode() == GameMode.SURVIVAL) {
+			event.setCancelled(true);
 		}
 	}
 
@@ -320,6 +328,7 @@ public class EventListener implements Listener {
 //			player.openInventory(event.getInventory());
 //		}
 	}
+	
 
 	@EventHandler
 	public void inventoryClickEvent(InventoryClickEvent event) {

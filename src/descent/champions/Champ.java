@@ -170,11 +170,10 @@ public abstract class Champ {
 	}
 	
 	public void stun(double time) {
-		takeEffect(new PotionEffect(PotionEffectType.JUMP, 100000, -30));
+		takeEffect(new PotionEffect(PotionEffectType.JUMP,(int)(20 * time), -30));
 		PLAYER.setWalkSpeed(0);
 		Bukkit.getScheduler().runTaskLater(Main.getPlugin(Main.class), () -> {
 			PLAYER.setWalkSpeed(MOVE_SPEED);
-			clearEffects();
 		}, (long)(20 * time));
 
 	}

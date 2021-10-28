@@ -32,7 +32,7 @@ public class Deputy extends Champ {
 	// Damage
 	public static final int GUN_DAMAGE = 30;
 	// Cool downs
-	public static final float SHOOT_COOLDOWN = 0.35f;
+	public static final float SHOOT_COOLDOWN = 0.45f;
 	public static final float HEAL_COOLDOWN = 9.0f;
 
 	public static final int HEAL_AMOUNT = 50;

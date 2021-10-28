@@ -36,12 +36,12 @@ public class Trainer extends Champ {
 	// Damage
 	public static final float PUNCH_DAMAGE = 27.0f;
 	public static final float SUN_DAMAGE = 40.0f;
-	public static final double SLAM_DAMAGE = 35;
+	public static final double SLAM_DAMAGE = 45;
 
 	// Cool downs
 	public static final float SUN_COOLDOWN = 4.5f;
 	public static final float PUNCH_COOLDOWN = 0.45f;
-	public static final float SLAM_COOLDOWN = 7.0f;
+	public static final float SLAM_COOLDOWN = 6.0f;
 	public static final float SPEED_TIME = 4.0f;
 	private long timeAtLastPunch;
 	private long timeAtLastSun;
@@ -79,7 +79,7 @@ public class Trainer extends Champ {
 		} else if (PLAYER.getInventory().getItemInMainHand().getType() == Material.GOLDEN_HORSE_ARMOR
 				&& (click == Action.RIGHT_CLICK_AIR || click == Action.RIGHT_CLICK_BLOCK)
 				&& (System.currentTimeMillis() - timeAtLastSlam > (1000 * SLAM_COOLDOWN))) {
-			Collection<Entity> entities = PLAYER.getWorld().getNearbyEntities(PLAYER.getLocation(), 6, 4, 6);
+			Collection<Entity> entities = PLAYER.getWorld().getNearbyEntities(PLAYER.getLocation(), 6.5, 4, 6.5);
 			for (Entity e : entities) {
 				if (e instanceof Player) {
 					Player p = (Player) e;
