@@ -1,6 +1,7 @@
 package descent.gamemodes;
 
 import org.bukkit.Bukkit;
+import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.scoreboard.Objective;
@@ -11,11 +12,12 @@ import org.bukkit.scoreboard.Team;
 import descent.Main;
 
 public abstract class Gamemode {
-	public static final float DELAY_TIME = 1.5f;
+	public static final float DELAY_TIME = 1.0f;
 	
 	protected void preInit() {
 		for(Player player : Bukkit.getOnlinePlayers()) {
 			player.teleport(player.getWorld().getSpawnLocation().add(new Location(player.getWorld(), 0.5, 0, 0.5)));
+			player.setGameMode(GameMode.SURVIVAL);
 		}
 		ScoreboardManager manager = Bukkit.getScoreboardManager();
 		Scoreboard board = manager.getMainScoreboard();

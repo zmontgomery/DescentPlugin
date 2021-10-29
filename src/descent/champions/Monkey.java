@@ -41,7 +41,7 @@ public class Monkey extends Champ {
 	private long timeAtLastBanana;
 
 	public static final int SHOOT_DAMAGE = 62;
-	public static final int PUNCH_DAMAGE = 15;
+	public static final int PUNCH_DAMAGE = 14;
 
 	public static final float MELEE_COOLDOWN = 0.11f;
 	public static final float SHOOT_COOLDOWN = 1.5f;

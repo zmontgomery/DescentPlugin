@@ -13,12 +13,7 @@ public class PatchNotes implements CommandExecutor {
 		if (label.equalsIgnoreCase("patchnotes")) {
 			Player player = Bukkit.getPlayerExact(sender.getName());
 			player.sendMessage("RELEASE v0.1.2: +Buff  -Nerf  xRework");
-			player.sendMessage("+xAlchemist");
-			player.sendMessage("xNinja");
-			player.sendMessage("+Monkey");
-			player.sendMessage("-Beserker");
-			player.sendMessage("+xTrainer");
-			player.sendMessage("-xFighter");
+			player.sendMessage("+xNinja");
 		}
 		return true;
 	}

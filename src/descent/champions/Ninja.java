@@ -35,11 +35,11 @@ public class Ninja extends Champ {
 	public static final int DAGGAR_DAMAGE = 22;
 	// Cool downs
 	public static final float DAGGAR_COOLDOWN = 0.17f;
-	public static final float FLASH_COOLDOWN = 2.3f;
+	public static final float FLASH_COOLDOWN = 2.0f;
 	public static final float CLOAK_COOLDOWN = 11.0f;
 
-	public static final double FLASH_DISTANCE = 10;
-	public static final float LIFE_STEAL = 0.35f;
+	public static final double FLASH_DISTANCE = 6;
+	public static final float LIFE_STEAL = 0.1f;
 
 	private long timeAtLastSwing;
 	private long timeAtLastFlash;
@@ -79,7 +79,7 @@ public class Ninja extends Champ {
 				Main.sendEquipmentInvisiblePacket(PLAYER, false);
 			}
 			for (Player player : Bukkit.getOnlinePlayers()) {
-				player.playSound(PLAYER.getLocation(), STAB_SOUND, 100, 1.5f);
+				player.playSound(PLAYER.getLocation(), STAB_SOUND, 1, 2.5f);
 			}
 
 		}
@@ -90,8 +90,11 @@ public class Ninja extends Champ {
 		if (PLAYER.getInventory().getItemInMainHand().getType() == Material.GOLDEN_SWORD
 				&& (click == Action.RIGHT_CLICK_AIR || click == Action.RIGHT_CLICK_BLOCK)
 				&& (System.currentTimeMillis() - timeAtLastFlash > (1000 * FLASH_COOLDOWN))) {
-			PLAYER.setVelocity(PLAYER.getVelocity().setY(1.1));
-			//teleportRayCast(FLASH_DISTANCE);
+			double distance = FLASH_DISTANCE;
+			if(PLAYER.isSneaking()) {
+				distance = distance * 2;
+			}
+			teleportRayCast(distance);
 			PLAYER.setInvisible(false);
 			Main.sendEquipmentInvisiblePacket(PLAYER, false);
 			for (Player player : Bukkit.getOnlinePlayers()) {
@@ -143,50 +146,60 @@ public class Ninja extends Champ {
 	}
 
 	private void teleportRayCast(double distance) {
-		World w = PLAYER.getWorld();
+		World world = PLAYER.getWorld();
 		Location eye = PLAYER.getEyeLocation();
-		Location l = PLAYER.getEyeLocation();
-		Vector v = PLAYER.getLocation().getDirection();
+		Vector direction = PLAYER.getLocation().getDirection();
 
-		double x = v.getX();
-		double y = v.getY();
-		double z = v.getZ();
+		double x = direction.getX();
+		double y = direction.getY();
+		double z = direction.getZ();
 
-		Location endLocation = l;
+		Location endLocation = eye;
 		Location oldEnd = null;
 		int j = 0;
-		for (double i = 0; i < distance; i = i + 0.6) {
-			if (j % 7 == 0) {
-				oldEnd = new Location(w, l.getX() + (i * x), l.getY() + (i * y), l.getZ() + (i * z), l.getYaw(),
-						l.getPitch());
+		for (double i = 0; i < distance; i = i + .2) {
+			if (j % 5 == 0) {
+				oldEnd = new Location(world, eye.getX() + (i * x), eye.getY() + (i * y), eye.getZ() + (i * z), eye.getYaw(),
+						eye.getPitch());
 			}
-			endLocation = new Location(w, l.getX() + (i * x), l.getY() + (i * y), l.getZ() + (i * z), l.getYaw(),
-					l.getPitch());
+			endLocation = new Location(world, eye.getX() + (i * x), eye.getY() + (i * y), eye.getZ() + (i * z), eye.getYaw(),
+					eye.getPitch());
 
-			
-			//Particle
-			if (PLAYER.getWorld().getBlockAt(endLocation).getType().isSolid() == false) {
-				w.spawnParticle(Particle.CRIT, eye, 1, 0, 0, 0, 0);
+			// Particle
+			if (isValid(endLocation)) {
+				world.spawnParticle(Particle.CRIT, eye, 1, 0, 0, 0, 0);
 			} else {
 				if (oldEnd != null) {
-					Location rounded = new Location(PLAYER.getWorld(), oldEnd.getX(), oldEnd.getY() - 1, oldEnd.getZ(), oldEnd.getYaw(), oldEnd.getPitch());
-					PLAYER.teleport(rounded);
+					oldEnd.setY(oldEnd.getY() - PLAYER.getEyeHeight() + .2);
+					PLAYER.teleport(oldEnd);
 				}
 				return;
 			}
 			j++;
-
 		}
-		endLocation = new Location(w, endLocation.getX(), endLocation.getY() - 1, endLocation.getZ(), l.getYaw(),
-				l.getPitch());
+		endLocation = new Location(world, endLocation.getX(), endLocation.getY() - PLAYER.getEyeHeight() + .2, endLocation.getZ(), eye.getYaw(),
+				eye.getPitch());
 		PLAYER.teleport(endLocation);
 	}
-	
-	private Location refine(Location loc) {
-		Location newLoc = new Location(PLAYER.getWorld(), loc.getX(), loc.getY(), loc.getZ(), loc.getYaw(), loc.getPitch());
-		if(PLAYER.getWorld().getBlockAt(newLoc).getType().isSolid() == false) {
-			
+
+	private boolean isValid(Location loc) {
+		double height = PLAYER.getEyeHeight();
+		World world = PLAYER.getWorld();
+		float safeAura = 0.32f;
+		Location[] spots = new Location[7];
+		spots[0] = new Location(world, loc.getX() + safeAura, loc.getY(), loc.getZ());
+		spots[1] = new Location(world, loc.getX() - safeAura, loc.getY(), loc.getZ());
+		spots[2] = new Location(world, loc.getX(), loc.getY() + safeAura, loc.getZ());
+		spots[3] = new Location(world, loc.getX(), loc.getY() - height + .1, loc.getZ());
+		spots[4] = new Location(world, loc.getX(), loc.getY(), loc.getZ() + safeAura);
+		spots[5] = new Location(world, loc.getX(), loc.getY(), loc.getZ() - safeAura);
+		spots[6] = loc;
+		for(Location spot : spots) {
+			Material block = world.getBlockAt(spot).getType();
+			if (block != Material.AIR && block != Material.WATER && block != Material.WALL_TORCH && block != Material.TORCH) {
+				return false;
+			} 
 		}
-		return null;
+		return true;
 	}
 }

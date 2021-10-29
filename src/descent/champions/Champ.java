@@ -198,6 +198,7 @@ public abstract class Champ {
 		Bukkit.getScheduler().runTaskLater(Main.getPlugin(Main.class), () -> {
 			PLAYER.setFoodLevel(5);
 		}, 10);
+		//Main.sendEquipmentInvisiblePacket(PLAYER, false);
 		return;
 	}
 
