@@ -342,12 +342,15 @@ public class EventListener implements Listener {
 	public void inventoryClickEvent(InventoryClickEvent event) {
 		Player player = (Player) event.getWhoClicked();
 		Champ champ = Champ.getChamp(player);
-		System.out.print(event.getInventory().getType());
-		//|| !event.getClickedInventory().getType().equals(InventoryType.PLAYER)
-		if (player.getGameMode() == GameMode.CREATIVE ) {
+		
+		
+		if (player.getGameMode() == GameMode.CREATIVE) {
 			return;
 		}
 		event.setCancelled(true);
+		if(event.getInventory().getType().equals(InventoryType.CRAFTING)){
+			return;
+		}
 		ItemStack i = event.getCurrentItem();
 		if (i == null) {
 			return;
