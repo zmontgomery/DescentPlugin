@@ -7,7 +7,7 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.World;
-import org.bukkit.craftbukkit.v1_16_R3.entity.CraftPlayer;
+import org.bukkit.craftbukkit.v1_17_R1.entity.CraftPlayer;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -18,10 +18,10 @@ import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.Vector;
 import descent.threads.FighterEnergyRegen;
-import net.minecraft.server.v1_16_R3.MobEffect;
-import net.minecraft.server.v1_16_R3.MobEffectList;
-import net.minecraft.server.v1_16_R3.PacketPlayOutEntityEffect;
-import net.minecraft.server.v1_16_R3.PlayerConnection;
+import net.minecraft.network.protocol.game.PacketPlayOutEntityEffect;
+import net.minecraft.server.network.PlayerConnection;
+import net.minecraft.world.effect.MobEffect;
+import net.minecraft.world.effect.MobEffectList;
 
 public class Fighter extends Champ {
 	public static final double MAX_HEALTH = 275;
@@ -262,7 +262,7 @@ public class Fighter extends Champ {
 				PacketPlayOutEntityEffect packet = new PacketPlayOutEntityEffect(champ.PLAYER.getEntityId(),
 						new MobEffect(new MobEffect(MobEffectList.fromId(24), 10, 0)));
 
-				PlayerConnection conn = ((CraftPlayer) PLAYER).getHandle().playerConnection;
+				PlayerConnection conn = ((CraftPlayer) PLAYER).getHandle().b;
 				conn.sendPacket(packet);
 
 				PLAYER.getInventory().setItem(1, new ItemStack(Material.WHITE_DYE));

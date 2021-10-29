@@ -2,8 +2,9 @@ package descent;
 
 import java.util.LinkedList;
 import java.util.List;
-import org.bukkit.craftbukkit.v1_16_R3.entity.CraftPlayer;
-import org.bukkit.craftbukkit.v1_16_R3.inventory.CraftItemStack;
+
+import org.bukkit.craftbukkit.v1_17_R1.entity.CraftPlayer;
+import org.bukkit.craftbukkit.v1_17_R1.inventory.CraftItemStack;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -18,9 +19,9 @@ import descent.commands.Stats;
 import descent.commands.StopGame;
 import descent.gamemodes.Default;
 import descent.gamemodes.Gamemode;
-import net.minecraft.server.v1_16_R3.EnumItemSlot;
-import net.minecraft.server.v1_16_R3.PacketPlayOutEntityEquipment;
-import net.minecraft.server.v1_16_R3.PlayerConnection;
+import net.minecraft.network.protocol.game.PacketPlayOutEntityEquipment;
+import net.minecraft.server.network.PlayerConnection;
+import net.minecraft.world.entity.EnumItemSlot;
 
 public class Main extends JavaPlugin {
 	
@@ -48,8 +49,8 @@ public class Main extends JavaPlugin {
 	}
 	
 	public static void sendEquipmentInvisiblePacket(Player player, boolean isInvisible) {
-		List<Pair<EnumItemSlot, net.minecraft.server.v1_16_R3.ItemStack>> l =
-				new LinkedList<Pair<EnumItemSlot, net.minecraft.server.v1_16_R3.ItemStack>>(){private static final long serialVersionUID = 1L;};
+		List<Pair<EnumItemSlot, net.minecraft.world.item.ItemStack>> l =
+				new LinkedList<Pair<EnumItemSlot, net.minecraft.world.item.ItemStack>>(){private static final long serialVersionUID = 1L;};
 
 		ItemStack boots = Champ.getChamp(player).CLOTHES[0];
 		ItemStack legs = Champ.getChamp(player).CLOTHES[1];	
@@ -65,22 +66,22 @@ public class Main extends JavaPlugin {
 			mainhand = null;
 		}
 				
-		l.add(new Pair<EnumItemSlot, net.minecraft.server.v1_16_R3.ItemStack>
-		(EnumItemSlot.FEET, CraftItemStack.asNMSCopy(boots)));
-		l.add(new Pair<EnumItemSlot, net.minecraft.server.v1_16_R3.ItemStack>
-		(EnumItemSlot.LEGS, CraftItemStack.asNMSCopy(legs)));
-		l.add(new Pair<EnumItemSlot, net.minecraft.server.v1_16_R3.ItemStack>
-		(EnumItemSlot.CHEST, CraftItemStack.asNMSCopy(chest)));
-		l.add(new Pair<EnumItemSlot, net.minecraft.server.v1_16_R3.ItemStack>
-		(EnumItemSlot.HEAD, CraftItemStack.asNMSCopy(helm)));
-		l.add(new Pair<EnumItemSlot, net.minecraft.server.v1_16_R3.ItemStack>
-		(EnumItemSlot.MAINHAND, CraftItemStack.asNMSCopy(mainhand)));
+		l.add(new Pair<EnumItemSlot, net.minecraft.world.item.ItemStack>
+		(EnumItemSlot.a, CraftItemStack.asNMSCopy(mainhand)));
+		l.add(new Pair<EnumItemSlot, net.minecraft.world.item.ItemStack>
+		(EnumItemSlot.c, CraftItemStack.asNMSCopy(boots)));
+		l.add(new Pair<EnumItemSlot, net.minecraft.world.item.ItemStack>
+		(EnumItemSlot.d, CraftItemStack.asNMSCopy(legs)));
+		l.add(new Pair<EnumItemSlot, net.minecraft.world.item.ItemStack>
+		(EnumItemSlot.e, CraftItemStack.asNMSCopy(chest)));
+		l.add(new Pair<EnumItemSlot, net.minecraft.world.item.ItemStack>
+		(EnumItemSlot.f, CraftItemStack.asNMSCopy(helm)));
 
 		PacketPlayOutEntityEquipment packet = new PacketPlayOutEntityEquipment(player.getEntityId(), l);
 
 		for (Player otherPlayer : player.getWorld().getPlayers()) {
 			if(!otherPlayer.equals(player)) {
-				PlayerConnection conn = ((CraftPlayer) otherPlayer).getHandle().playerConnection;
+				PlayerConnection conn = ((CraftPlayer) otherPlayer).getHandle().b;
 				conn.sendPacket(packet);
 			}
 		}

@@ -154,7 +154,7 @@ public class Monkey extends Champ {
 				if (!Champ.BOARD.getEntryTeam(PLAYER.getName()).getName()
 						.equals(Champ.BOARD.getEntryTeam(champ.PLAYER.getName()).getName())) {
 					champ.stun(STUN_TIME);
-					player.setVelocity(PLAYER.getVelocity().setY(0.45));
+					player.setVelocity(PLAYER.getVelocity().setY(0.40));
 					onHit();
 				}
 			}

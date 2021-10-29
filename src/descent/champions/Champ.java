@@ -10,8 +10,8 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.attribute.Attribute;
-import org.bukkit.craftbukkit.v1_16_R3.CraftWorld;
-import org.bukkit.craftbukkit.v1_16_R3.entity.CraftPlayer;
+import org.bukkit.craftbukkit.v1_17_R1.CraftWorld;
+import org.bukkit.craftbukkit.v1_17_R1.entity.CraftPlayer;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
@@ -25,9 +25,10 @@ import org.bukkit.scoreboard.Scoreboard;
 import org.bukkit.scoreboard.ScoreboardManager;
 import org.bukkit.util.Vector;
 import descent.Main;
-import net.minecraft.server.v1_16_R3.PacketPlayOutWorldBorder;
-import net.minecraft.server.v1_16_R3.PlayerConnection;
-import net.minecraft.server.v1_16_R3.WorldBorder;
+import net.minecraft.network.protocol.game.ClientboundInitializeBorderPacket;
+import net.minecraft.server.network.PlayerConnection;
+import net.minecraft.world.level.border.WorldBorder;
+
 
 public abstract class Champ {
 
@@ -228,9 +229,9 @@ public abstract class Champ {
 		wb.setSize(300000);
 		wb.setWarningDistance(600000);
 		wb.world = ((CraftWorld) PLAYER.getWorld()).getHandle();
-		PacketPlayOutWorldBorder packet = new PacketPlayOutWorldBorder(wb,
-				PacketPlayOutWorldBorder.EnumWorldBorderAction.INITIALIZE);
-		PlayerConnection conn = ((CraftPlayer) PLAYER).getHandle().playerConnection;
+		
+		ClientboundInitializeBorderPacket packet = new ClientboundInitializeBorderPacket(wb);
+		PlayerConnection conn = ((CraftPlayer) PLAYER).getHandle().b;
 		conn.sendPacket(packet);
 		Thread th = new Thread(() -> {
 			try {
@@ -240,7 +241,7 @@ public abstract class Champ {
 				wb.setWarningDistance(0);
 				wb.world = ((CraftWorld) PLAYER.getWorld()).getHandle();
 				conn.sendPacket(
-						new PacketPlayOutWorldBorder(wb, PacketPlayOutWorldBorder.EnumWorldBorderAction.INITIALIZE));
+						new ClientboundInitializeBorderPacket(wb));
 			} catch (InterruptedException e) {
 			}
 		});
