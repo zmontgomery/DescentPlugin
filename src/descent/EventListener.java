@@ -23,12 +23,15 @@ import org.bukkit.event.entity.PotionSplashEvent;
 import org.bukkit.event.hanging.HangingBreakByEntityEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
+import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.event.player.PlayerSwapHandItemsEvent;
 import org.bukkit.event.player.PlayerToggleSneakEvent;
+import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.scoreboard.Scoreboard;
@@ -78,6 +81,11 @@ public class EventListener implements Listener {
 			}
 		}
 	}
+	
+	@EventHandler
+	public static void swapHand(PlayerSwapHandItemsEvent event) {
+		event.setCancelled(true);
+	}
 
 	@EventHandler
 	public static void playerInteractEvent(PlayerInteractEvent event) {
@@ -102,7 +110,7 @@ public class EventListener implements Listener {
 		}
 		Champ user = Champ.getChamp(player);
 		Action click = event.getAction();
-		if (player.getGameMode() == GameMode.SURVIVAL && user != null ) {
+		if (player.getGameMode() == GameMode.SURVIVAL && user != null  && event.getHand() != EquipmentSlot.OFF_HAND) {
 			user.use(click);
 		}
 	}
@@ -334,7 +342,7 @@ public class EventListener implements Listener {
 	public void inventoryClickEvent(InventoryClickEvent event) {
 		Player player = (Player) event.getWhoClicked();
 		Champ champ = Champ.getChamp(player);
-		if (player.getGameMode() == GameMode.CREATIVE) {
+		if (player.getGameMode() == GameMode.CREATIVE || !event.getClickedInventory().getType().equals(InventoryType.PLAYER)) {
 			return;
 		}
 		event.setCancelled(true);
