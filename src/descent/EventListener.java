@@ -359,7 +359,7 @@ public class EventListener implements Listener {
 		if (item == null) {
 			return;
 		}
-		if (item == Material.WOODEN_SWORD) {
+		if (item == Material.NETHERITE_SWORD) {
 			new Impaler(player);
 			player.closeInventory();
 		}

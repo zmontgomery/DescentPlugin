@@ -11,18 +11,31 @@ import org.bukkit.entity.Projectile;
 import org.bukkit.event.block.Action;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.LeatherArmorMeta;
+import org.bukkit.inventory.meta.PotionMeta;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
 public class Impaler extends Champ {
+	
+	public static final ItemStack helm;
+	public static final ItemStack ultArrow;
+	static {
+		ultArrow = new ItemStack(Material.TIPPED_ARROW);
+		PotionMeta arrowMeta = (PotionMeta) ultArrow.getItemMeta();
+		helm = new ItemStack(Material.LEATHER_HELMET);
+		LeatherArmorMeta meta = (LeatherArmorMeta) helm.getItemMeta();
+		meta.setColor(Color.BLACK);
+		helm.setItemMeta(meta);
+	}
+	
 	public static final double MAX_HEALTH = 200;
 	public static final String CHAMP_NAME = "Impaler";
 	public static final float MOVE_SPEED = 0.28f;
 	public static final double NATURAL_REGEN = 4.0;
-	public static final ItemStack[] ITEMS = new ItemStack[] { new ItemStack(Material.WOODEN_SWORD),
-			new ItemStack(Material.BLACK_DYE) };
+	public static final ItemStack[] ITEMS = new ItemStack[] { new ItemStack(Material.NETHERITE_SWORD),
+			new ItemStack(Material.BLACK_DYE), new ItemStack(Material.TIPPED_ARROW) };
 	public static final ItemStack[] CLOTHES = new ItemStack[] { null, null, null,
-			new ItemStack(Material.LEATHER_HELMET) };
+			helm };
 	public static final ItemStack LEFT_HAND = null;
 	public static final Sound HURT_SOUND = Sound.ITEM_AXE_STRIP;
 	public static final float HURT_PITCH = 2.0f;
@@ -55,7 +68,7 @@ public class Impaler extends Champ {
 		if(wraith) {
 			return;
 		}
-		if (PLAYER.getInventory().getItemInMainHand().getType() == Material.WOODEN_SWORD
+		if (PLAYER.getInventory().getItemInMainHand().getType() == Material.NETHERITE_SWORD
 				&& (click == Action.LEFT_CLICK_AIR || click == Action.LEFT_CLICK_BLOCK)
 				&& (System.currentTimeMillis() - timeAtLastThrow > (1000 * KNIFE_THROW_COOLDOWN))) {
 			Arrow knife1 = PLAYER.getWorld().spawnArrow(
@@ -80,13 +93,17 @@ public class Impaler extends Champ {
 			ItemStack chest = new ItemStack(Material.LEATHER_CHESTPLATE);
 			ItemStack helm =  new ItemStack(Material.LEATHER_HELMET);
 			LeatherArmorMeta bootCol = (LeatherArmorMeta) boot.getItemMeta();
-			bootCol.setColor(Color.fromRGB(0, 0, 0));
+			bootCol.setColor(Color.BLACK);
 			LeatherArmorMeta legCol = (LeatherArmorMeta) leg.getItemMeta();
-			legCol.setColor(Color.fromRGB(0, 0, 0));
+			legCol.setColor(Color.BLACK);
 			LeatherArmorMeta chestCol = (LeatherArmorMeta) chest.getItemMeta();
-			chestCol.setColor(Color.fromRGB(0, 0, 0));
+			chestCol.setColor(Color.BLACK);
 			LeatherArmorMeta helmCol = (LeatherArmorMeta) helm.getItemMeta();
 			helmCol.setColor(Color.BLACK);
+			boot.setItemMeta(bootCol);
+			leg.setItemMeta(legCol);
+			chest.setItemMeta(chestCol);
+			helm.setItemMeta(helmCol);
 			ItemStack[] wraithClothes = {boot, leg, chest, helm};
 			PotionEffect inv = new PotionEffect(PotionEffectType.INVISIBILITY, (int) (WRAITH_RUNOUT * 20), 1);
 			this.takeEffect(inv);
@@ -123,6 +140,7 @@ public class Impaler extends Champ {
 				onKill(champ);
 			}
 			onHit();
+			projectile.remove();
 		}
 	}
 	

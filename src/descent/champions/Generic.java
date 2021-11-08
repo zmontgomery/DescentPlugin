@@ -10,8 +10,12 @@ public class Generic extends Champ{
 	}
 	
 	@Override
+	public boolean takeDamage(double amount) {
+		return false;
+	}
+	
+	@Override
 	public void updatePlayerHealth() {
 		return;
 	}
-
 }

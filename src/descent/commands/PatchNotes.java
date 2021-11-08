@@ -14,6 +14,9 @@ public class PatchNotes implements CommandExecutor {
 			Player player = Bukkit.getPlayerExact(sender.getName());
 			player.sendMessage("RELEASE v0.1.2: +Buff  -Nerf  xRework");
 			player.sendMessage("+xNinja");
+			player.sendMessage("+xHunter");
+			player.sendMessage("+xAlchemist");
+			player.sendMessage("+xImpaler");
 		}
 		return true;
 	}

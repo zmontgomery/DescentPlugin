@@ -93,7 +93,7 @@ public abstract class Champ {
 	public void champSelect() {
 		Inventory championSelect = Bukkit.createInventory(PLAYER, 18, "Champion Selection");
 
-		championSelect.addItem(new ItemStack(Material.WOODEN_SWORD));
+		championSelect.addItem(new ItemStack(Material.NETHERITE_SWORD));
 		championSelect.addItem(new ItemStack(Material.SHIELD));
 		championSelect.addItem(new ItemStack(Material.GOLDEN_AXE));
 		championSelect.addItem(new ItemStack(Material.NETHERITE_HOE));
