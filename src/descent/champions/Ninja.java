@@ -98,7 +98,7 @@ public class Ninja extends Champ {
 			PLAYER.setInvisible(false);
 			Main.sendEquipmentInvisiblePacket(PLAYER, false);
 			for (Player player : Bukkit.getOnlinePlayers()) {
-				player.playSound(PLAYER.getLocation(), FLASH_SOUND, 100, 1.5f);
+				player.playSound(PLAYER.getLocation(), FLASH_SOUND, 1.5f, 100f);
 			}
 
 			timeAtLastFlash = System.currentTimeMillis();

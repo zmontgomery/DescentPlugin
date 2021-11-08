@@ -226,6 +226,7 @@ public class Fighter extends Champ {
 		} else if (PLAYER.getInventory().getItemInMainHand().getType() == Material.SLIME_BALL
 				&& (click == Action.LEFT_CLICK_AIR || click == Action.LEFT_CLICK_BLOCK)
 				&& (System.currentTimeMillis() - timeAtLastSafe > (1000 * SAFE_COOLDOWN))) {
+			System.out.println("CAST");
 			safeRayCast();
 
 		} else if (PLAYER.getInventory().getItemInMainHand().getType() == Material.MAGMA_CREAM
@@ -291,6 +292,7 @@ public class Fighter extends Champ {
 		} else if (projectile == null && Champ.BOARD.getEntryTeam(PLAYER.getName()).getName()
 				.equals(Champ.BOARD.getEntryTeam(champ.PLAYER.getName()).getName())) {
 			if (energy >= SAFE_ENERGY) {
+				System.out.println("HIT!");
 				useEnergy(SAFE_ENERGY);
 				PLAYER.teleport(champ.PLAYER);
 				champ.heal(SAFE_HEAL_AMOUNT);
@@ -304,7 +306,7 @@ public class Fighter extends Champ {
 					}
 					if (PLAYER.getInventory().getItem(2).getType() == Material.MAGMA_CREAM) {
 						PLAYER.getInventory().setItem(2, new ItemStack(Material.SLIME_BALL));
-						timeAtLastSafe = System.currentTimeMillis() + (long) (1000 * SAFE_COOLDOWN);
+						timeAtLastSafe = System.currentTimeMillis() - (long) (1000 * SAFE_COOLDOWN);
 					}
 				});
 				for (Player player : Bukkit.getOnlinePlayers()) {
