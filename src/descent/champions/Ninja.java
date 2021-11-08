@@ -170,14 +170,14 @@ public class Ninja extends Champ {
 				world.spawnParticle(Particle.CRIT, eye, 1, 0, 0, 0, 0);
 			} else {
 				if (oldEnd != null) {
-					oldEnd.setY(oldEnd.getY() - PLAYER.getEyeHeight() + .2);
+					oldEnd.setY(oldEnd.getY() - PLAYER.getEyeHeight() + .22);
 					PLAYER.teleport(oldEnd);
 				}
 				return;
 			}
 			j++;
 		}
-		endLocation = new Location(world, endLocation.getX(), endLocation.getY() - PLAYER.getEyeHeight() + .2, endLocation.getZ(), eye.getYaw(),
+		endLocation = new Location(world, endLocation.getX(), endLocation.getY() - PLAYER.getEyeHeight() + .22, endLocation.getZ(), eye.getYaw(),
 				eye.getPitch());
 		PLAYER.teleport(endLocation);
 	}

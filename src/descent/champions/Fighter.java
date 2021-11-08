@@ -88,7 +88,7 @@ public class Fighter extends Champ {
 		timeAtLastPunch = 0;
 		timeAtLastSonicWave = 0;
 		timeAtLastSafe = 0;
-		timeAtLastRoundhouse = 0;
+		timeAtLastRoundhouse = System.currentTimeMillis();
 
 		this.energy = MAX_ENERGY;
 		this.sonicMark = null;
@@ -129,7 +129,8 @@ public class Fighter extends Champ {
 					PLAYER.getLocation().getDirection().getZ() * ROUNDHOUSE_VELOCITY));
 			timeAtLastRoundhouse = System.currentTimeMillis();
 			for (Player player : Bukkit.getOnlinePlayers()) {
-				player.playSound(defend.getLocation(), KICK_SOUND, 2f, 0.5f);
+				player.playSound(defend.getLocation(), KICK_SOUND, 50f, 0.4f);
+				player.playSound(defend.getLocation(), Sound.ENTITY_IRON_GOLEM_DEATH, 50f, 0.3f);
 			}
 			useEnergy(ROUNDHOUSE_ENERGY);
 			boolean killed = champ.takeDamage(ROUNDHOUSE_DAMAGE);
