@@ -1,5 +1,7 @@
 package descent.champions;
 
+import java.util.Random;
+
 import org.bukkit.Bukkit;
 import org.bukkit.Color;
 import org.bukkit.Location;
@@ -14,6 +16,7 @@ import org.bukkit.inventory.meta.LeatherArmorMeta;
 import org.bukkit.inventory.meta.PotionMeta;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
+import org.bukkit.util.Vector;
 
 import descent.Main;
 
@@ -21,6 +24,7 @@ public class Impaler extends Champ {
 
 	public static final ItemStack helm;
 	public static final ItemStack ultArrow;
+	
 	static {
 		ultArrow = new ItemStack(Material.TIPPED_ARROW);
 		PotionMeta arrowMeta = (PotionMeta) ultArrow.getItemMeta();
@@ -50,9 +54,11 @@ public class Impaler extends Champ {
 	public static final float BARRAGE_COOLDOWN = 30.0f;
 
 	public static final float WRAITH_RUNOUT = 5.0f;
-	public static final float BARRAGE_RUNOUT = 4.0f;
+	public static float DEFAULT_BARRAGE_RUNOUT = 4.0f;
+	private float barrageRunout;
 
 	private boolean wraith;
+	private boolean inBarrage;
 
 	private long timeAtLastWraith;
 	private long timeAtLastThrow;
@@ -65,6 +71,8 @@ public class Impaler extends Champ {
 				HURT_PITCH);
 		timeAtLastWraith = 0;
 		timeAtLastThrow = 0;
+		inBarrage = false;
+		barrageRunout = DEFAULT_BARRAGE_RUNOUT;
 		timeAtLastBarrage = System.currentTimeMillis();
 		wraith = false;
 	}
@@ -86,7 +94,7 @@ public class Impaler extends Champ {
 			knife1.setCustomName(PLAYER.getName());
 			knife1.setBounce(false);
 			for (Player player : Bukkit.getOnlinePlayers()) {
-				player.playSound(PLAYER.getLocation(), THROW_SOUND, 1.0f, 0.8f);
+				player.playSound(PLAYER.getLocation(), THROW_SOUND, 0.5f, 0.8f);
 			}
 			timeAtLastThrow = System.currentTimeMillis();
 		} else if (PLAYER.getInventory().getItemInMainHand().getType() == Material.BLACK_DYE
@@ -131,7 +139,7 @@ public class Impaler extends Champ {
 			});
 			runout.start();
 			for (Player player : Bukkit.getOnlinePlayers()) {
-				player.playSound(PLAYER.getLocation(), WRAITH_SOUND, 0.2f, 1.0f);
+				player.playSound(PLAYER.getLocation(), WRAITH_SOUND, 1f, 0.5f);
 			}
 			timeAtLastWraith = System.currentTimeMillis();
 		} else if (PLAYER.getInventory().getItemInMainHand().getType() == Material.TIPPED_ARROW
@@ -158,44 +166,45 @@ public class Impaler extends Champ {
 			PLAYER.getInventory().setContents(new ItemStack[] { null, null });
 			PLAYER.getInventory().setArmorContents(wraithClothes);
 			PLAYER.getInventory().setItemInOffHand(null);
-			Thread runout = new Thread(() -> {
-				try {
-					Thread.sleep((long) (BARRAGE_RUNOUT * 1000));
-				} catch (InterruptedException e) {
-					// squash
-				}
-				PLAYER.getInventory().setContents(Impaler.ITEMS);
-				PLAYER.getInventory().setArmorContents(CLOTHES);
-				PLAYER.getInventory().setItemInOffHand(Impaler.LEFT_HAND);
-				PLAYER.setWalkSpeed(Impaler.MOVE_SPEED);
-				wraith = false;
-			});
-			runout.start();
+			inBarrage = true;
 			for (Player player : Bukkit.getOnlinePlayers()) {
 				player.playSound(PLAYER.getLocation(), Sound.ENTITY_ENDERMAN_SCREAM, 50.0f, 0.3f);
-				player.playSound(PLAYER.getLocation(), Sound.ENTITY_ENDERMAN_STARE, 50.0f, 1.5f);
+				player.playSound(PLAYER.getLocation(), Sound.ENTITY_ENDERMAN_STARE, 50.0f, 2f);
 			}
 			timeAtLastBarrage = System.currentTimeMillis();
+			Random rng = new Random();
 			Thread barrage = new Thread(() -> {
-				while (System.currentTimeMillis() - timeAtLastBarrage < (1000 * BARRAGE_RUNOUT)) {
+				while (System.currentTimeMillis() - timeAtLastBarrage < (1000 * barrageRunout)) {
 					try {
-						Thread.sleep((long) (80));
+						Thread.sleep((long) (100));
 					} catch (InterruptedException e) {
 						// squash
 					}
 					Bukkit.getScheduler().runTask(Main.getPlugin(Main.class), () -> {
+						Vector copyDir = PLAYER.getLocation().getDirection().clone();
+						copyDir.setX(copyDir.getX() + ((rng.nextDouble() - 0.5) / 8.0));
+						copyDir.setY(copyDir.getY() + ((rng.nextDouble() - 0.5) / 8.0));
+						copyDir.setZ(copyDir.getZ() + ((rng.nextDouble() - 0.5) / 8.0));
 						Arrow knife1 = PLAYER.getWorld().spawnArrow(new Location(PLAYER.getWorld(),
 								PLAYER.getLocation().getX(), PLAYER.getLocation().getY() + PLAYER.getEyeHeight(),
-								PLAYER.getLocation().getZ()), PLAYER.getLocation().getDirection(), 2, 0);
+								PLAYER.getLocation().getZ()), copyDir, 2, 0);
 						knife1.setShooter(PLAYER);
 						knife1.setPickupStatus(Arrow.PickupStatus.DISALLOWED);
 						knife1.setCustomName(PLAYER.getName());
 						knife1.setBounce(false);
 						for (Player player : Bukkit.getOnlinePlayers()) {
-							player.playSound(PLAYER.getLocation(), THROW_SOUND, 1.0f, 0.8f);
+							player.playSound(PLAYER.getLocation(), THROW_SOUND, 0.5f, 0.8f);
 						}
 					});
 				}
+				barrageRunout = DEFAULT_BARRAGE_RUNOUT;
+				inBarrage = false;
+				Bukkit.getScheduler().runTask(Main.getPlugin(Main.class), () -> {
+					PLAYER.getInventory().setContents(Impaler.ITEMS);
+					PLAYER.getInventory().setArmorContents(CLOTHES);
+					PLAYER.getInventory().setItemInOffHand(Impaler.LEFT_HAND);
+					PLAYER.setWalkSpeed(Impaler.MOVE_SPEED);
+				});
 				timeAtLastBarrage = System.currentTimeMillis();
 			});
 			barrage.start();
@@ -223,5 +232,12 @@ public class Impaler extends Champ {
 		}
 		return killed;
 	}
-
+	
+	@Override
+	public void onKill(Champ champ) {
+		super.onKill(champ);
+		if(inBarrage) {
+			barrageRunout = barrageRunout + 2.0f;
+		}
+	}
 }

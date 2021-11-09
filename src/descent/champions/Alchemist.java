@@ -38,14 +38,14 @@ public class Alchemist extends Champ {
 	public static final Sound THROW_SOUND = Sound.ENTITY_EGG_THROW;
 	
 	// Damage
-	public static final int POTION_HEAL = 27;
-	public static final int POTION_DAMAGE = 48;
+	public static final int POTION_HEAL = 28;
+	public static final int POTION_DAMAGE = 40;
 
 	// Cool downs
-	public static final float POTION_COOLDOWN = 1.65f;
+	public static final float POTION_COOLDOWN = 1.5f;
 
-	public static final float SPEED_TIME = 4.0f;
-	public static final float SLOW_TIME = 4.0f;
+	public static final float SPEED_TIME = 3.0f;
+	public static final float SLOW_TIME = 3.0f;
 	
 	private BrewType currentBrew;
 	private long timeAtLastPotion;
