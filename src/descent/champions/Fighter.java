@@ -340,6 +340,8 @@ public class Fighter extends Champ {
 	@Override
 	public void initialize() {
 		super.initialize();
+		this.sonicMark = null;
+		this.lifeSteal = 0;
 		regenEnergy(Fighter.MAX_ENERGY);
 		return;
 	}

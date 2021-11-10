@@ -39,8 +39,8 @@ public class Hunter extends Champ {
 
 	public static final float ARROW_RUNOUT = 4.0f;
 
-	public static final float FIRE_TIME = 3.0f;
-	public static final float SLOW_TIME = 3.0f;
+	public static final float FIRE_TIME = 6.0f;
+	public static final float SLOW_TIME = 4.0f;
 
 	private ArrowType currentArrow;
 	private long timeAtLastFire;
@@ -132,6 +132,12 @@ public class Hunter extends Champ {
 		arrowTimer.interrupt();
 		setArrow(ArrowType.NORMAL);
 
+	}
+	
+	@Override
+	public void initialize() {
+		super.initialize();
+		this.currentArrow = ArrowType.NORMAL;
 	}
 
 	public void setArrow(ArrowType arrowType) {

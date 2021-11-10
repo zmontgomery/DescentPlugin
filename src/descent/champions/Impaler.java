@@ -14,8 +14,10 @@ import org.bukkit.event.block.Action;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.LeatherArmorMeta;
 import org.bukkit.inventory.meta.PotionMeta;
+import org.bukkit.potion.PotionData;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
+import org.bukkit.potion.PotionType;
 import org.bukkit.util.Vector;
 
 import descent.Main;
@@ -28,6 +30,8 @@ public class Impaler extends Champ {
 	static {
 		ultArrow = new ItemStack(Material.TIPPED_ARROW);
 		PotionMeta arrowMeta = (PotionMeta) ultArrow.getItemMeta();
+		arrowMeta.setBasePotionData(new PotionData(PotionType.INSTANT_DAMAGE));
+		ultArrow.setItemMeta(arrowMeta);
 		helm = new ItemStack(Material.LEATHER_HELMET);
 		LeatherArmorMeta meta = (LeatherArmorMeta) helm.getItemMeta();
 		meta.setColor(Color.BLACK);
@@ -39,7 +43,7 @@ public class Impaler extends Champ {
 	public static final float MOVE_SPEED = 0.28f;
 	public static final double NATURAL_REGEN = 4.0;
 	public static final ItemStack[] ITEMS = new ItemStack[] { new ItemStack(Material.NETHERITE_SWORD),
-			new ItemStack(Material.BLACK_DYE), new ItemStack(Material.TIPPED_ARROW) };
+			new ItemStack(Material.BLACK_DYE), ultArrow };
 	public static final ItemStack[] CLOTHES = new ItemStack[] { null, null, null, helm };
 	public static final ItemStack LEFT_HAND = null;
 	public static final Sound HURT_SOUND = Sound.ITEM_AXE_STRIP;
@@ -63,6 +67,7 @@ public class Impaler extends Champ {
 	private long timeAtLastWraith;
 	private long timeAtLastThrow;
 	private long timeAtLastBarrage;
+	
 	// Damage
 	public static final int KNIFE_DAMAGE = 16;
 
@@ -174,7 +179,7 @@ public class Impaler extends Champ {
 			timeAtLastBarrage = System.currentTimeMillis();
 			Random rng = new Random();
 			Thread barrage = new Thread(() -> {
-				while (System.currentTimeMillis() - timeAtLastBarrage < (1000 * barrageRunout)) {
+				while (System.currentTimeMillis() - timeAtLastBarrage < (1000 * barrageRunout) && inBarrage) {
 					try {
 						Thread.sleep((long) (100));
 					} catch (InterruptedException e) {
@@ -239,5 +244,11 @@ public class Impaler extends Champ {
 		if(inBarrage) {
 			barrageRunout = barrageRunout + 2.0f;
 		}
+	}
+	
+	@Override
+	public void initialize() {
+		super.initialize();
+		inBarrage = false;
 	}
 }

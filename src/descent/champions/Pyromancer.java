@@ -103,11 +103,13 @@ public class Pyromancer extends Champ {
 		Vector dir;
 		double distance;
 		int wallsHit;
+		int particleMod;
 		public Collection<Entity> entities;
 
 		private FireRay(Location startLocation, Vector dir, double distance, int wallsHit) {
 			this.startLocation = startLocation;
 			this.dir = dir;
+			particleMod = 1;
 			this.distance = distance;
 			this.wallsHit = wallsHit;
 		}
@@ -161,7 +163,10 @@ public class Pyromancer extends Champ {
 					}
 				}
 				if (PLAYER.getWorld().getBlockAt(bulletLocation).getType().isSolid() == false) {
-					world.spawnParticle(Particle.FLAME, bulletLocation, 1, 0.08, 0.08, 0.08, 0.02);
+					if(particleMod > 0) {
+						world.spawnParticle(Particle.FLAME, bulletLocation, 1, 0.09, 0.09, 0.09, 0.02);
+					}
+					particleMod = particleMod * -1;
 					if (did) {
 						did = false;
 						for (Entity ent : entities) {

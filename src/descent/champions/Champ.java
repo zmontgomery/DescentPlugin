@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
 import org.bukkit.Bukkit;
+import org.bukkit.EntityEffect;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -29,14 +30,13 @@ import net.minecraft.network.protocol.game.ClientboundInitializeBorderPacket;
 import net.minecraft.server.network.PlayerConnection;
 import net.minecraft.world.level.border.WorldBorder;
 
-
 public abstract class Champ {
 
 	private static Map<Player, Champ> players = new HashMap<>();
 	public static final Random RNG = new Random();
 	public static final ScoreboardManager MANAGER = Bukkit.getScoreboardManager();
 	public static final Scoreboard BOARD = MANAGER.getMainScoreboard();
-	
+
 	public final Player PLAYER;
 	public final String NAME;
 	public final String CHAMP_NAME;
@@ -169,13 +169,13 @@ public abstract class Champ {
 
 		return;
 	}
-	
+
 	public void stun(double time) {
-		takeEffect(new PotionEffect(PotionEffectType.JUMP,(int)(20 * time), -30));
+		takeEffect(new PotionEffect(PotionEffectType.JUMP, (int) (20 * time), -30));
 		PLAYER.setWalkSpeed(0);
 		Bukkit.getScheduler().runTaskLater(Main.getPlugin(Main.class), () -> {
 			PLAYER.setWalkSpeed(MOVE_SPEED);
-		}, (long)(20 * time));
+		}, (long) (20 * time));
 
 	}
 
@@ -199,7 +199,7 @@ public abstract class Champ {
 		Bukkit.getScheduler().runTaskLater(Main.getPlugin(Main.class), () -> {
 			PLAYER.setFoodLevel(5);
 		}, 10);
-		//Main.sendEquipmentInvisiblePacket(PLAYER, false);
+		// Main.sendEquipmentInvisiblePacket(PLAYER, false);
 		return;
 	}
 
@@ -214,6 +214,8 @@ public abstract class Champ {
 	}
 
 	public boolean takeDamage(double amount) {
+		if (amount > 0)
+			PLAYER.playEffect(EntityEffect.HURT);
 		boolean killed = false;
 		this.currentHealth -= amount;
 		if (this.currentHealth < 0) {
@@ -229,7 +231,7 @@ public abstract class Champ {
 		wb.setSize(300000);
 		wb.setWarningDistance(600000);
 		wb.world = ((CraftWorld) PLAYER.getWorld()).getHandle();
-		
+
 		ClientboundInitializeBorderPacket packet = new ClientboundInitializeBorderPacket(wb);
 		PlayerConnection conn = ((CraftPlayer) PLAYER).getHandle().b;
 		conn.sendPacket(packet);
@@ -240,8 +242,7 @@ public abstract class Champ {
 				wb.setSize(300000);
 				wb.setWarningDistance(0);
 				wb.world = ((CraftWorld) PLAYER.getWorld()).getHandle();
-				conn.sendPacket(
-						new ClientboundInitializeBorderPacket(wb));
+				conn.sendPacket(new ClientboundInitializeBorderPacket(wb));
 			} catch (InterruptedException e) {
 			}
 		});

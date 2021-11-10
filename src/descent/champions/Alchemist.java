@@ -97,6 +97,7 @@ public class Alchemist extends Champ {
 				} else if(potion.getCustomName().equals("SPEED") && Champ.BOARD.getEntryTeam(PLAYER.getName()).getName().equals(Champ.BOARD.getEntryTeam(player.getName()).getName()) ) {
 					champ.takeEffect(new PotionEffect(PotionEffectType.SPEED, (int) (20 * SPEED_TIME), 1));
 				} else if (potion.getCustomName().equals("SLOW") && !Champ.BOARD.getEntryTeam(PLAYER.getName()).getName().equals(Champ.BOARD.getEntryTeam(player.getName()).getName())) {
+					onHit();
 					champ.takeEffect(new PotionEffect(PotionEffectType.SLOW, (int) (20 * SLOW_TIME), 1));
 				}
 			}
@@ -104,8 +105,8 @@ public class Alchemist extends Champ {
 	}
 	
 	@Override
-	public void onDeath() {
-		super.onDeath();
+	public void initialize() {
+		super.initialize();
 		currentBrew = BrewType.HEAL;
 	}
 	
