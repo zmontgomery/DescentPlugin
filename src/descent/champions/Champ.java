@@ -123,6 +123,22 @@ public abstract class Champ {
 
 		PLAYER.openInventory(teamSelect);
 	}
+	
+	public void itemSelect() {
+		Inventory itemSelect = Bukkit.createInventory(PLAYER, 9, "Item Selection");
+
+		itemSelect.addItem(new ItemStack(Material.AIR));
+		itemSelect.addItem(new ItemStack(Material.AIR));
+		itemSelect.addItem(new ItemStack(Material.STICK));
+		itemSelect.addItem(new ItemStack(Material.AIR));
+		itemSelect.addItem(new ItemStack(Material.AIR));
+		itemSelect.addItem(new ItemStack(Material.AIR));
+		itemSelect.addItem(new ItemStack(Material.BLUE_DYE));
+		itemSelect.addItem(new ItemStack(Material.AIR));
+		itemSelect.addItem(new ItemStack(Material.AIR));
+
+		PLAYER.openInventory(itemSelect);
+	}
 
 	public double getCurrentHealth() {
 		return this.currentHealth;

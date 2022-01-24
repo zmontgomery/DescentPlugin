@@ -47,6 +47,8 @@ import descent.champions.Impaler;
 import descent.champions.Knight;
 import descent.champions.Pyromancer;
 import descent.champions.Trainer;
+import descent.items.Flash;
+import descent.items.Item;
 import descent.champions.Ninja;
 import descent.champions.Fighter;
 import descent.threads.Regen;
@@ -111,7 +113,14 @@ public class EventListener implements Listener {
 		Champ user = Champ.getChamp(player);
 		Action click = event.getAction();
 		if (player.getGameMode() == GameMode.SURVIVAL && user != null  && event.getHand() != EquipmentSlot.OFF_HAND) {
-			user.use(click);
+			if(Item.getItem(user.PLAYER.getInventory().getItemInMainHand()) != null) {
+				Item item = Item.getItem(user.PLAYER.getInventory().getItemInMainHand());
+				item.use();
+				System.out.println("yes!");
+				
+			} else {
+				user.use(click);
+			}
 		}
 	}
 	
@@ -416,6 +425,11 @@ public class EventListener implements Listener {
 			player.teleport(Main.gamemode.respawnLocation(player));
 			player.closeInventory();
 			champ.champSelect();
+		}
+		if (item == Material.STICK) {
+			ItemStack stick = new ItemStack(Material.STICK);
+			new Flash(champ, stick);
+			player.getInventory().setItem(8, stick);
 		}
 	}
 

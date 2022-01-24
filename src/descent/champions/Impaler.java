@@ -1,5 +1,7 @@
 package descent.champions;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 import org.bukkit.Bukkit;
@@ -12,6 +14,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
 import org.bukkit.event.block.Action;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.LeatherArmorMeta;
 import org.bukkit.inventory.meta.PotionMeta;
 import org.bukkit.potion.PotionData;
@@ -21,21 +24,26 @@ import org.bukkit.potion.PotionType;
 import org.bukkit.util.Vector;
 
 import descent.Main;
+import descent.items.Flash;
+import descent.items.Item;
 
 public class Impaler extends Champ {
 
-	public static final ItemStack helm;
-	public static final ItemStack ultArrow;
+	public static final ItemStack HELM;
+	public static final ItemStack ULTARROW;
+	public static final ItemStack theItem;
+
 	
 	static {
-		ultArrow = new ItemStack(Material.TIPPED_ARROW);
-		PotionMeta arrowMeta = (PotionMeta) ultArrow.getItemMeta();
+		ULTARROW = new ItemStack(Material.TIPPED_ARROW);
+		PotionMeta arrowMeta = (PotionMeta) ULTARROW.getItemMeta();
 		arrowMeta.setBasePotionData(new PotionData(PotionType.INSTANT_DAMAGE));
-		ultArrow.setItemMeta(arrowMeta);
-		helm = new ItemStack(Material.LEATHER_HELMET);
-		LeatherArmorMeta meta = (LeatherArmorMeta) helm.getItemMeta();
+		ULTARROW.setItemMeta(arrowMeta);
+		HELM = new ItemStack(Material.LEATHER_HELMET);
+		LeatherArmorMeta meta = (LeatherArmorMeta) HELM.getItemMeta();
 		meta.setColor(Color.BLACK);
-		helm.setItemMeta(meta);
+		HELM.setItemMeta(meta);
+		theItem = new ItemStack(Material.STICK);
 	}
 
 	public static final double MAX_HEALTH = 200;
@@ -43,8 +51,8 @@ public class Impaler extends Champ {
 	public static final float MOVE_SPEED = 0.28f;
 	public static final double NATURAL_REGEN = 4.0;
 	public static final ItemStack[] ITEMS = new ItemStack[] { new ItemStack(Material.NETHERITE_SWORD),
-			new ItemStack(Material.BLACK_DYE), ultArrow };
-	public static final ItemStack[] CLOTHES = new ItemStack[] { null, null, null, helm };
+			new ItemStack(Material.BLACK_DYE), ULTARROW };
+	public static final ItemStack[] CLOTHES = new ItemStack[] { null, null, null, HELM };
 	public static final ItemStack LEFT_HAND = null;
 	public static final Sound HURT_SOUND = Sound.ITEM_AXE_STRIP;
 	public static final float HURT_PITCH = 2.0f;
@@ -58,7 +66,7 @@ public class Impaler extends Champ {
 	public static final float BARRAGE_COOLDOWN = 30.0f;
 
 	public static final float WRAITH_RUNOUT = 5.0f;
-	public static float DEFAULT_BARRAGE_RUNOUT = 4.0f;
+	public static final float DEFAULT_BARRAGE_RUNOUT = 4.0f;
 	private float barrageRunout;
 
 	private boolean wraith;
@@ -74,6 +82,8 @@ public class Impaler extends Champ {
 	public Impaler(Player player) {
 		super(player, CHAMP_NAME, MOVE_SPEED, NATURAL_REGEN, MAX_HEALTH, ITEMS, CLOTHES, LEFT_HAND, HURT_SOUND,
 				HURT_PITCH);
+		new Flash(this, theItem);
+		player.getInventory().setItemInMainHand(theItem);
 		timeAtLastWraith = 0;
 		timeAtLastThrow = 0;
 		inBarrage = false;
