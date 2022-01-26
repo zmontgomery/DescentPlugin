@@ -91,8 +91,11 @@ public class Ninja extends Champ {
 				&& (click == Action.RIGHT_CLICK_AIR || click == Action.RIGHT_CLICK_BLOCK)
 				&& (System.currentTimeMillis() - timeAtLastFlash > (1000 * FLASH_COOLDOWN))) {
 			double distance = FLASH_DISTANCE;
+			int refund = 0;
+			refund = (int)(1000 * (FLASH_COOLDOWN / 2));
 			if(PLAYER.isSneaking()) {
 				distance = distance * 2;
+				refund = 0;
 			}
 			teleportRayCast(distance);
 			PLAYER.setInvisible(false);
@@ -101,7 +104,7 @@ public class Ninja extends Champ {
 				player.playSound(PLAYER.getLocation(), FLASH_SOUND, 1.5f, 100f);
 			}
 
-			timeAtLastFlash = System.currentTimeMillis();
+			timeAtLastFlash = System.currentTimeMillis() - refund;
 		}
 	}
 

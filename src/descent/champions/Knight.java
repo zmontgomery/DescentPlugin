@@ -134,7 +134,7 @@ public class Knight extends Champ {
 
 	// ONLY RUNS WHEN A KNIGHT MOVES
 	public void stampede() {
-		if (PLAYER.isBlocking() || PLAYER.getWalkSpeed() == 0) {
+		if (PLAYER.isBlocking() || PLAYER.getWalkSpeed() == 0 || !PLAYER.isOnGround()) {
 			return;
 		}
 		runoutTimer.interrupt();
