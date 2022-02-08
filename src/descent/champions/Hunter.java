@@ -20,7 +20,7 @@ public class Hunter extends Champ {
 	public static final String CHAMP_NAME = "Hunter";
 	public static final float MOVE_SPEED = 0.31f;
 	public static final double NATURAL_REGEN = 10.0;
-	public static final ItemStack[] ITEMS = new ItemStack[] { new ItemStack(Material.BOW), new ItemStack(Material.ARROW) };
+	public static final ItemStack[] ITEMS = new ItemStack[] { new ItemStack(Material.BOW), new ItemStack(Material.ARROW, 2) };
 	public static final ItemStack[] CLOTHES = new ItemStack[] { null, null, null,
 			new ItemStack(Material.CHAINMAIL_HELMET) };
 	public static final ItemStack LEFT_HAND = null;

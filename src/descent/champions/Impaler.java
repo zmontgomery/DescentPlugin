@@ -24,14 +24,13 @@ import org.bukkit.potion.PotionType;
 import org.bukkit.util.Vector;
 
 import descent.Main;
-import descent.items.Flash;
+import descent.items.Teleport;
 import descent.items.Item;
 
 public class Impaler extends Champ {
 
 	public static final ItemStack HELM;
 	public static final ItemStack ULTARROW;
-	public static final ItemStack theItem;
 
 	
 	static {
@@ -43,7 +42,6 @@ public class Impaler extends Champ {
 		LeatherArmorMeta meta = (LeatherArmorMeta) HELM.getItemMeta();
 		meta.setColor(Color.BLACK);
 		HELM.setItemMeta(meta);
-		theItem = new ItemStack(Material.STICK);
 	}
 
 	public static final double MAX_HEALTH = 200;
@@ -82,8 +80,6 @@ public class Impaler extends Champ {
 	public Impaler(Player player) {
 		super(player, CHAMP_NAME, MOVE_SPEED, NATURAL_REGEN, MAX_HEALTH, ITEMS, CLOTHES, LEFT_HAND, HURT_SOUND,
 				HURT_PITCH);
-		new Flash(this, theItem);
-		player.getInventory().setItemInMainHand(theItem);
 		timeAtLastWraith = 0;
 		timeAtLastThrow = 0;
 		inBarrage = false;

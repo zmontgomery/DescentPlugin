@@ -9,19 +9,25 @@ import org.bukkit.util.Vector;
 
 import descent.champions.Champ;
 
-public class Flash extends Item{
-	public static final String NAME = "Flash";
+public class Teleport extends Item{
+	public static final String NAME = "Teleport";
 	public static final short USES = 1;
 	public static final int DISTANCE = 12;
+	public static final float TELEPORT_COOLDOWN = 10;
 	
+	private long timeAtLastTeleport;
 
-	public Flash(Champ owner, ItemStack object) {
+	public Teleport(Champ owner, ItemStack object) {
 		super(NAME, owner, object, USES);
+		timeAtLastTeleport = 0;
 	}
 
 	@Override
 	public void use() {
-		teleportRayCast(DISTANCE);
+		if(System.currentTimeMillis() - timeAtLastTeleport > (1000 * TELEPORT_COOLDOWN)) {
+			teleportRayCast(DISTANCE);
+			timeAtLastTeleport = System.currentTimeMillis();
+		}
 	}
 	
 	

@@ -47,7 +47,7 @@ import descent.champions.Impaler;
 import descent.champions.Knight;
 import descent.champions.Pyromancer;
 import descent.champions.Trainer;
-import descent.items.Flash;
+import descent.items.Teleport;
 import descent.items.Item;
 import descent.champions.Ninja;
 import descent.champions.Fighter;
@@ -116,7 +116,6 @@ public class EventListener implements Listener {
 			if(Item.getItem(user.PLAYER.getInventory().getItemInMainHand()) != null) {
 				Item item = Item.getItem(user.PLAYER.getInventory().getItemInMainHand());
 				item.use();
-				System.out.println("yes!");
 				
 			} else {
 				user.use(click);
@@ -426,10 +425,11 @@ public class EventListener implements Listener {
 			player.closeInventory();
 			champ.champSelect();
 		}
-		if (item == Material.STICK) {
-			ItemStack stick = new ItemStack(Material.STICK);
-			new Flash(champ, stick);
-			player.getInventory().setItem(8, stick);
+		if (item == Material.SPECTRAL_ARROW) {
+			ItemStack dye = new ItemStack(Material.SPECTRAL_ARROW);
+			new Teleport(champ, dye);
+			player.getInventory().setItem(8, dye);
+			player.closeInventory();
 		}
 	}
 

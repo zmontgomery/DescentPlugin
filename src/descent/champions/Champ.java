@@ -72,6 +72,11 @@ public abstract class Champ {
 		this.HURT_SOUND = hurtSound;
 		this.HURT_PITCH = hurtPitch;
 		initialize();
+		if(!(this instanceof Generic)) {
+			Bukkit.getScheduler().scheduleSyncDelayedTask(Main.getPlugin(Main.class), () -> {
+				itemSelect();
+			}, (long) (20.0 * 0.5));
+		}
 	}
 
 	public static void addChamp(Player player, Champ champ) {
@@ -111,15 +116,9 @@ public abstract class Champ {
 	public void teamSelect() {
 		Inventory teamSelect = Bukkit.createInventory(PLAYER, 9, "Champion Selection");
 
-		teamSelect.addItem(new ItemStack(Material.AIR));
-		teamSelect.addItem(new ItemStack(Material.AIR));
 		teamSelect.addItem(new ItemStack(Material.RED_DYE));
-		teamSelect.addItem(new ItemStack(Material.AIR));
-		teamSelect.addItem(new ItemStack(Material.AIR));
-		teamSelect.addItem(new ItemStack(Material.AIR));
 		teamSelect.addItem(new ItemStack(Material.BLUE_DYE));
-		teamSelect.addItem(new ItemStack(Material.AIR));
-		teamSelect.addItem(new ItemStack(Material.AIR));
+
 
 		PLAYER.openInventory(teamSelect);
 	}
@@ -127,16 +126,9 @@ public abstract class Champ {
 	public void itemSelect() {
 		Inventory itemSelect = Bukkit.createInventory(PLAYER, 9, "Item Selection");
 
-		itemSelect.addItem(new ItemStack(Material.AIR));
-		itemSelect.addItem(new ItemStack(Material.AIR));
-		itemSelect.addItem(new ItemStack(Material.STICK));
-		itemSelect.addItem(new ItemStack(Material.AIR));
-		itemSelect.addItem(new ItemStack(Material.AIR));
-		itemSelect.addItem(new ItemStack(Material.AIR));
-		itemSelect.addItem(new ItemStack(Material.BLUE_DYE));
-		itemSelect.addItem(new ItemStack(Material.AIR));
-		itemSelect.addItem(new ItemStack(Material.AIR));
-
+		itemSelect.addItem(new ItemStack(Material.SPECTRAL_ARROW));
+		itemSelect.addItem(new ItemStack(Material.WHITE_DYE));
+		
 		PLAYER.openInventory(itemSelect);
 	}
 
